@@ -15,7 +15,11 @@ namespace graphics
 	class TextureViewImpl;
 	class BufferImpl;
 	class BufferViewImpl;
+	class SamplerImpl;
 	class CommandBufferImpl;
+	class ShaderImpl;
+	class GraphicsPipelineImpl;
+	class ComputePipelineImpl;
 	class DeviceImpl;
 
 	class Device;
@@ -23,7 +27,7 @@ namespace graphics
 	class Texture
 	{
 	public:
-		Texture() : pImpl(nullptr) {}
+		Texture() : pImpl(nullptr) {}		
 		Texture(Device& device, const desc::Texture& desc);
 
 		bool valid() { return (pImpl != nullptr); }
@@ -80,6 +84,18 @@ namespace graphics
 		std::shared_ptr<BufferViewImpl> pImpl;
 	};
 
+	class Sampler
+	{
+	public:
+		Sampler() : pImpl(nullptr) {}
+		Sampler(Device& device, const desc::Sampler& desc);
+
+		bool valid() { return (pImpl != nullptr); }
+		const desc::Sampler& descriptor();
+	private:
+		std::shared_ptr<SamplerImpl> pImpl;
+	};
+
 	class CommandBuffer
 	{
 	public:
@@ -102,6 +118,8 @@ namespace graphics
 				  int3 dstCorner, Rect<int, 3> srcRect,
 				  Subresource dstSubresource, Subresource srcSubresource);
 
+		void copyToBackBuffer(Texture src);
+
 		void dispatch();
 		void dispatchIndirect();
 
@@ -117,31 +135,61 @@ namespace graphics
 		std::shared_ptr<CommandBufferImpl> pImpl;
 	};
 
+	class GraphicsPipeline
+	{
+	public:
+		GraphicsPipeline() : pImpl(nullptr) {}
+		GraphicsPipeline(Device& device, const desc::GraphicsPipeline& desc);
+
+		bool valid() { return (pImpl != nullptr); }
+		const desc::GraphicsPipeline& descriptor();
+	private:
+		std::shared_ptr<GraphicsPipelineImpl> pImpl;
+	};
+
+	class ComputePipeline
+	{
+	public:
+		ComputePipeline() : pImpl(nullptr) {}
+		ComputePipeline(Device& device, const desc::ComputePipeline& desc);
+
+		bool valid() { return (pImpl != nullptr); }
+		const desc::ComputePipeline& descriptor();
+	private:
+		std::shared_ptr<ComputePipelineImpl> pImpl;
+	};
+
 	class Device
 	{
 	public:
 		Device(HWND hWnd, unsigned width, unsigned height);
 
-		bool valid() { return (pImpl != nullptr); }
+		bool				valid() { return (pImpl != nullptr); }
 
-		Texture createTexture(const desc::Texture& desc);
-		Buffer createBuffer(const desc::Buffer& desc);
+		Texture				createTexture(const desc::Texture& desc);
+		Buffer				createBuffer(const desc::Buffer& desc);
 
-		TextureView createTextureView(const desc::TextureView& desc, const Texture& texture);
-		BufferView createBufferView(const desc::BufferView& desc, const Buffer& buffer);
+		TextureView			createTextureView(const desc::TextureView& desc, const Texture& texture);
+		BufferView			createBufferView(const desc::BufferView& desc, const Buffer& buffer);
 
-		CommandBuffer createCommandBuffer();
-		void submit(CommandBuffer& gfx);
+		Sampler				createSampler(const desc::Sampler& desc);
 
-		Texture getBackBuffer();
+		GraphicsPipeline	createGraphicsPipeline(const desc::GraphicsPipeline& desc);
+		ComputePipeline		createComputePipeline(const desc::ComputePipeline& desc);
 
-		void present(int syncInterval);
+		CommandBuffer		createCommandBuffer();
+		void				submit(CommandBuffer& gfx);
+
+		void				present(int syncInterval);
 	private:
 		friend class Texture;
 		friend class TextureView;
 		friend class Buffer;
 		friend class BufferView;
+		friend class Sampler;
 		friend class CommandBuffer;
+		friend class GraphicsPipeline;
+		friend class ComputePipeline;
 
 		std::shared_ptr<DeviceImpl> pImpl;
 	};

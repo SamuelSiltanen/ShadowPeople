@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.hpp"
+
 namespace graphics
 {
 	struct Subresource
@@ -53,6 +55,46 @@ namespace graphics
 			DSV
 		};
 
+		enum class SamplerType
+		{
+			Point,
+			Bilinear,
+			Trilinear,
+			Anisotropic,
+			PointComparison,
+			BilinearComparison,
+			TrilinearComparison,
+			AnisotropicComparison,
+		};
+
+		enum class SamplerCoordinateMode
+		{
+			Wrap,
+			Mirror,
+			Clamp,
+			Border,
+			MirrorOnce
+		};
+
+		enum class ShaderType
+		{
+			Vertex,
+			Pixel,
+			Compute
+		};
+
+		enum class ComparisonMode
+		{
+			Never,
+			Always,
+			Equal,
+			NotEqual,
+			Less,
+			LessEqual,
+			Greater,
+			GreaterEqual
+		};
+
 		enum class FormatChannels
 		{
 			R,
@@ -90,6 +132,14 @@ namespace graphics
 			FormatBytesPerChannel	bytes		= FormatBytesPerChannel::B8;
 			FormatType				type		= FormatType::UNorm;
 
+			bool operator==(const Format& f) const
+			{
+				if (channels != f.channels) return false;
+				if (bytes != f.bytes) return false;
+				if (type != f.type) return false;
+				return true;
+			}
+
 			static Format unknown()
 			{
 				Format f;
@@ -122,7 +172,7 @@ namespace graphics
 				desc.width			= 256;
 				desc.height			= 256;
 				desc.depth			= 1;
-				desc.mipLevels		= 0;
+				desc.mipLevels		= 1;
 				desc.arraySize		= 1;
 				desc.format			= Format();
 				desc.multisampling	= Multisampling::None;
@@ -257,6 +307,61 @@ namespace graphics
 			BufferView& counter()			{ desc.counter = true; return *this; }
 		private:
 			Descriptor desc;
+		};
+
+		class Sampler
+		{
+		public:
+			struct Descriptor
+			{
+				SamplerType				type;
+				SamplerCoordinateMode	uMode;
+				SamplerCoordinateMode	vMode;
+				SamplerCoordinateMode	wMode;
+				float					mipBias;
+				float					mipMin;
+				float					mipMax;
+				int						anisotropy;
+				ComparisonMode			compFunc;
+				Color4					borderColor;
+			};
+
+			Sampler()
+			{
+				desc.type			= SamplerType::Bilinear;
+				desc.uMode			= SamplerCoordinateMode::Wrap;
+				desc.vMode			= SamplerCoordinateMode::Wrap;
+				desc.wMode			= SamplerCoordinateMode::Wrap;
+				desc.mipBias		= 0.f;
+				desc.mipMin			= 0.f;
+				desc.mipMax			= FLT_MAX;
+				desc.anisotropy		= 1;
+				desc.compFunc		= ComparisonMode::GreaterEqual;
+				desc.borderColor	= { 0.f, 0.f, 0.f, 0.f };
+			}
+
+			const Descriptor& descriptor() const { return desc; }
+
+			Sampler& type(SamplerType t)			{ desc.type = t; return *this; }
+			Sampler& uMode(SamplerCoordinateMode m) { desc.uMode = m; return *this; }
+			Sampler& vMode(SamplerCoordinateMode m) { desc.vMode = m; return *this; }
+			Sampler& wMode(SamplerCoordinateMode m) { desc.wMode = m; return *this; }
+			Sampler& mipBias(float b)				{ desc.mipBias = b; return *this; }
+			Sampler& mipMin(float m)				{ desc.mipMin = m; return *this; }
+			Sampler& mipMax(float m)				{ desc.mipMax = m; return *this; }
+			Sampler& anisotropy(int a)				{ desc.anisotropy = a; return *this; }
+			Sampler& compFunc(ComparisonMode c)		{ desc.compFunc = c; return *this; }
+			Sampler& borderColor(Color4 c)			{ desc.borderColor = c; return *this; }
+		private:
+			Descriptor desc;
+		};
+
+		class GraphicsPipeline
+		{
+		};
+
+		class ComputePipeline
+		{
 		};
 	}
 }

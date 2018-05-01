@@ -114,15 +114,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DX11Graphics.cpp" />
-    <ClCompile Include="DX11Utils.cpp" />
+    <ClCompile Include="dx11\BufferImpl.cpp" />
+    <ClCompile Include="dx11\BufferViewImpl.cpp" />
+    <ClCompile Include="dx11\CommandBufferImpl.cpp" />
+    <ClCompile Include="dx11\ComputePipelineImpl.cpp" />
+    <ClCompile Include="dx11\DeviceImpl.cpp" />
+    <ClCompile Include="dx11\DX11Utils.cpp" />
+    <ClCompile Include="dx11\GraphicsPipelineImpl.cpp" />
+    <ClCompile Include="dx11\SamplerImpl.cpp" />
+    <ClCompile Include="dx11\TextureImpl.cpp" />
+    <ClCompile Include="dx11\TextureViewImpl.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Descriptors.hpp" />
     <ClInclude Include="DX11Graphics.hpp" />
-    <ClInclude Include="DX11Utils.hpp" />
+    <ClInclude Include="dx11\BufferImpl.hpp" />
+    <ClInclude Include="dx11\BufferViewImpl.hpp" />
+    <ClInclude Include="dx11\CommandBufferImpl.hpp" />
+    <ClInclude Include="dx11\ComputePipelineImpl.hpp" />
+    <ClInclude Include="dx11\DeviceImpl.hpp" />
+    <ClInclude Include="dx11\DX11Utils.hpp" />
+    <ClInclude Include="dx11\GraphicsPipelineImpl.hpp" />
+    <ClInclude Include="dx11\SamplerImpl.hpp" />
+    <ClInclude Include="dx11\TextureImpl.hpp" />
+    <ClInclude Include="dx11\TextureViewImpl.hpp" />
     <ClInclude Include="Errors.hpp" />
     <ClInclude Include="Graphics.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />

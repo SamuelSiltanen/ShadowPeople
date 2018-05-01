@@ -13,29 +13,53 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\dx11">
+      <UniqueIdentifier>{4420630b-6e23-4084-934a-16e7d7edcf43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dx11">
+      <UniqueIdentifier>{a69e8947-17fe-44fd-b130-95c6b4c33f7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\DeviceImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\TextureImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\TextureViewImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\BufferImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\BufferViewImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\CommandBufferImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\DX11Utils.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\SamplerImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\GraphicsPipelineImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\ComputePipelineImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Descriptors.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Graphics.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Errors.hpp">
@@ -49,6 +73,39 @@
     </ClInclude>
     <ClInclude Include="Types.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DeviceImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\TextureImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\TextureViewImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\BufferImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\BufferViewImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\CommandBufferImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Graphics.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DX11Utils.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\SamplerImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\GraphicsPipelineImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\ComputePipelineImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

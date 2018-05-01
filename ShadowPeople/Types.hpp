@@ -134,3 +134,7 @@ private:
 	ArithmeticVector<T, N> m_minCorner;
 	ArithmeticVector<T, N> m_size;
 };
+
+// Colors: Probably need a special class in the future
+using Color3 = ArithmeticVector<float, 3>;
+using Color4 = ArithmeticVector<float, 4>;

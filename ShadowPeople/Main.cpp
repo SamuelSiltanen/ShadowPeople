@@ -24,19 +24,19 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	SP_EXPECT_NOT_NULL(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED);
 
 	unsigned clientAreaWidth	= clientRect.right - clientRect.left;
-	unsigned clientAreaHeight	= clientRect.bottom - clientRect.bottom;
+	unsigned clientAreaHeight	= clientRect.bottom - clientRect.top;
 
 	graphics::Device device(hWnd, clientAreaWidth, clientAreaHeight);
 
 	// Testing
 	graphics::Texture texture = device.createTexture(graphics::desc::Texture()
+		.width(clientAreaWidth)
+		.height(clientAreaHeight)
 		.usage(graphics::desc::Usage::GpuReadWrite));
 	
-	/*
 	graphics::TextureView textureUAV = device.createTextureView(
 		graphics::desc::TextureView(texture.descriptor())
 			.type(graphics::desc::ViewType::UAV), texture);
-			*/
 	
 
 	ShowWindow(hWnd, nCmdShow);
@@ -50,11 +50,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			DispatchMessage(&msg);
 		}
 
-		graphics::Texture backBuffer = device.getBackBuffer();
-
 		graphics::CommandBuffer gfx = device.createCommandBuffer();
-		//gfx.clear(textureUAV, 1.f, 0.5f, 0.f, 1.f);
-		//gfx.copy(backBuffer, texture, );
+		gfx.clear(textureUAV, 1.f, 0.5f, 0.f, 1.f);
+		gfx.copyToBackBuffer(texture);
+
+		device.submit(gfx);
 
 		device.present(1);
 	}

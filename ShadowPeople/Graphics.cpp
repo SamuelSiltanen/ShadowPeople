@@ -48,6 +48,17 @@ namespace graphics
 		return pImpl->descriptor();
 	}
 
+	Sampler::Sampler(Device& device, const desc::Sampler& desc)
+	{
+		pImpl = std::make_shared<SamplerImpl>(*device.pImpl, desc);
+	}
+
+	const desc::Sampler& Sampler::descriptor()
+	{
+		SP_ASSERT(pImpl != nullptr, "Sampler used, but not created with Device::createSampler().");
+		return pImpl->descriptor();
+	}
+
 	CommandBuffer::CommandBuffer(Device& device)
 	{
 		pImpl = std::make_shared<CommandBufferImpl>(*device.pImpl);
@@ -108,6 +119,12 @@ namespace graphics
 		pImpl->copy(*dst.pImpl, *src.pImpl, dstCorner, srcRect, dstSubresource, srcSubresource);
 	}
 
+	void CommandBuffer::copyToBackBuffer(Texture src)
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		pImpl->copyToBackBuffer(*src.pImpl);
+	}
+
 	void CommandBuffer::dispatch()
 	{
 
@@ -148,6 +165,28 @@ namespace graphics
 
 	}
 
+	GraphicsPipeline::GraphicsPipeline(Device& device, const desc::GraphicsPipeline& desc)
+	{
+		pImpl = std::make_shared<GraphicsPipelineImpl>(*device.pImpl, desc);
+	}
+
+	const desc::GraphicsPipeline& GraphicsPipeline::descriptor()
+	{
+		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
+		return pImpl->descriptor();
+	}
+
+	ComputePipeline::ComputePipeline(Device& device, const desc::ComputePipeline& desc)
+	{
+		pImpl = std::make_shared<ComputePipelineImpl>(*device.pImpl, desc);
+	}
+
+	const desc::ComputePipeline& ComputePipeline::descriptor()
+	{
+		SP_ASSERT(pImpl != nullptr, "ComputePipeline used, but not created with Device::createComputePipeline().");
+		return pImpl->descriptor();
+	}
+
 	Device::Device(HWND hWnd, unsigned width, unsigned height)
 	{
 		pImpl = std::make_shared<DeviceImpl>(hWnd, width, height);
@@ -173,6 +212,21 @@ namespace graphics
 		return BufferView(*this, desc, buffer);
 	}
 
+	Sampler Device::createSampler(const desc::Sampler& desc)
+	{
+		return Sampler(*this, desc);
+	}
+
+	GraphicsPipeline Device::createGraphicsPipeline(const desc::GraphicsPipeline& desc)
+	{
+		return GraphicsPipeline(*this, desc);
+	}
+
+	ComputePipeline Device::createComputePipeline(const desc::ComputePipeline& desc)
+	{
+		return ComputePipeline(*this, desc);
+	}
+
 	CommandBuffer Device::createCommandBuffer()
 	{
 		return CommandBuffer(*this);
@@ -182,12 +236,6 @@ namespace graphics
 	{
 		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
 		pImpl->submit(*gfx.pImpl);
-	}
-
-	Texture Device::getBackBuffer()
-	{
-		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
-		return Texture(pImpl->getBackBuffer());
 	}
 
 	void Device::present(int syncInterval)
