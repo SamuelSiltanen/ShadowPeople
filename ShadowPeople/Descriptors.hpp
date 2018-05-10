@@ -2,6 +2,8 @@
 
 #include "Types.hpp"
 
+#include <vector>
+
 namespace graphics
 {
 	struct Subresource
@@ -9,6 +11,12 @@ namespace graphics
 		int mipLevel;
 		int arraySlice;
 	};
+
+	class Buffer;
+	class ResourceView;
+	class Sampler;
+	class GraphicsPipeline;
+	class ComputePipeline;
 
 	namespace desc
 	{
@@ -356,12 +364,35 @@ namespace graphics
 			Descriptor desc;
 		};
 
+		class ShaderInterface
+		{
+		public:
+			virtual const char* filename() const = 0;
+		};
+
+		struct ShaderBinding
+		{
+			virtual const graphics::ComputePipeline* computePipeline() const = 0;
+			virtual const graphics::GraphicsPipeline* graphicsPipeline() const = 0;
+			virtual const std::vector<graphics::Buffer*>& cbs() const = 0;
+			virtual const std::vector<graphics::ResourceView*>& srvs() const = 0;
+			virtual const std::vector<graphics::ResourceView*>& uavs() const = 0;
+			virtual const std::vector<graphics::Sampler*>& samplers() const = 0;
+		};
+
 		class GraphicsPipeline
 		{
 		};
-
+		
 		class ComputePipeline
 		{
+		public:
+			ComputePipeline(const ShaderInterface& shaderInterface) :
+				m_shaderInterface(shaderInterface) {}
+
+			const ShaderInterface& shaderInterface() const { return m_shaderInterface;}
+		private:
+			const ShaderInterface& m_shaderInterface;
 		};
 	}
 }

@@ -2,7 +2,11 @@
 #include "DeviceImpl.hpp"
 #include "TextureImpl.hpp"
 #include "TextureViewImpl.hpp"
+#include "BufferImpl.hpp"
+#include "ComputePipelineImpl.hpp"
 #include "../Errors.hpp"
+
+#include <vector>
 
 namespace graphics
 {
@@ -153,5 +157,52 @@ namespace graphics
 		{
 			// TODO: Must do a rectangle copy
 		}
+	}
+
+	void CommandBufferImpl::dispatch(const ComputePipelineImpl& pipeline,
+									 uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ)
+	{
+		// Bind Shader
+		m_context.CSSetShader(pipeline.shader(), NULL, 0);
+
+		// TODO: Get the resources from the shader interface
+		std::vector<ID3D11Buffer*>				CBs;
+		std::vector<ID3D11ShaderResourceView*>	SRVs;
+		std::vector<ID3D11UnorderedAccessView*>	UAVs;
+		std::vector<uint32_t>					UAVICounts;
+		std::vector<ID3D11SamplerState*>		samplers;
+
+		auto& shaderInteface = pipeline.descriptor().shaderInterface();
+
+		// Bind Resources
+		m_context.CSSetConstantBuffers(0, static_cast<uint32_t>(CBs.size()), CBs.data());
+		m_context.CSSetShaderResources(0, static_cast<uint32_t>(SRVs.size()), SRVs.data());
+		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVs.size()), UAVs.data(), UAVICounts.data());
+		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
+
+		m_context.Dispatch(threadsX, threadsY, threadsZ);
+
+		// Unbind resources
+		memset(samplers.data(), 0, samplers.size() * sizeof(ID3D11SamplerState*));
+		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
+
+		memset(UAVs.data(), 0, UAVs.size() * sizeof(ID3D11UnorderedAccessView*));
+		memset(UAVICounts.data(), 0, UAVICounts.size() * sizeof(uint32_t));
+		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVs.size()), UAVs.data(), UAVICounts.data());
+
+		memset(SRVs.data(), 0, SRVs.size() * sizeof(ID3D11ShaderResourceView*));
+		m_context.CSSetShaderResources(0, static_cast<uint32_t>(SRVs.size()), SRVs.data());
+
+		memset(CBs.data(), 0, CBs.size() * sizeof(ID3D11Buffer*));
+		m_context.CSSetConstantBuffers(0, static_cast<uint32_t>(CBs.size()), CBs.data());
+
+		// Unbind shader
+		m_context.CSSetShader(NULL, NULL, 0);
+	}
+	
+	void CommandBufferImpl::dispatchIndirect(const ComputePipelineImpl& pipeline,
+											 const BufferImpl& argsBuffer, uint32_t argsOffset)
+	{
+
 	}
 }

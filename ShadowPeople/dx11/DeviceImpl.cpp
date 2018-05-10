@@ -76,4 +76,17 @@ namespace graphics
 		SP_ASSERT(m_swapChain, "Swap chain used, but not properly initialized.");
 		m_swapChain->Present(syncInterval, 0);
 	}
+
+	int2 DeviceImpl::swapChainSize()
+	{
+		SP_ASSERT(m_swapChain, "Swap chain used, but not properly initialized.");
+		DXGI_SWAP_CHAIN_DESC desc;
+		HRESULT hr = m_swapChain->GetDesc(&desc);
+
+		SP_EXPECT_NOT_NULL_RET(!hr, ERROR_CODE_GET_SWAP_CHAIN_DESC_FAILED, int2({ -1, -1 }));
+		
+		int w = static_cast<int>(desc.BufferDesc.Width);
+		int h = static_cast<int>(desc.BufferDesc.Height);
+		return { w, h };
+	}
 }

@@ -3,6 +3,7 @@
 
 #include "Graphics.hpp"
 #include "Errors.hpp"
+#include "SceneRenderer.hpp"
 
 #include <tchar.h>
 
@@ -28,16 +29,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	graphics::Device device(hWnd, clientAreaWidth, clientAreaHeight);
 
-	// Testing
-	graphics::Texture texture = device.createTexture(graphics::desc::Texture()
-		.width(clientAreaWidth)
-		.height(clientAreaHeight)
-		.usage(graphics::desc::Usage::GpuReadWrite));
-	
-	graphics::TextureView textureUAV = device.createTextureView(
-		graphics::desc::TextureView(texture.descriptor())
-			.type(graphics::desc::ViewType::UAV), texture);
-	
+	rendering::SceneRenderer sceneRenderer(device);
 
 	ShowWindow(hWnd, nCmdShow);
 
@@ -51,11 +43,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 
 		graphics::CommandBuffer gfx = device.createCommandBuffer();
-		gfx.clear(textureUAV, 1.f, 0.5f, 0.f, 1.f);
-		gfx.copyToBackBuffer(texture);
+
+		sceneRenderer.render(gfx);
 
 		device.submit(gfx);
-
 		device.present(1);
 	}
 

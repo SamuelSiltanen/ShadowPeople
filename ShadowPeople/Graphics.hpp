@@ -30,8 +30,8 @@ namespace graphics
 		Texture() : pImpl(nullptr) {}		
 		Texture(Device& device, const desc::Texture& desc);
 
-		bool valid() { return (pImpl != nullptr); }
-		const desc::Texture& descriptor();
+		bool valid() const { return (pImpl != nullptr); }
+		const desc::Texture& descriptor() const;
 	private:
 		friend class TextureView;
 		friend class CommandBuffer;
@@ -42,14 +42,20 @@ namespace graphics
 		std::shared_ptr<TextureImpl> pImpl;
 	};
 
-	class TextureView
+	class ResourceView
+	{
+		virtual bool valid() const = 0;
+	};
+
+	class TextureView : public ResourceView
 	{
 	public:
 		TextureView() : pImpl(nullptr) {}
 		TextureView(Device& device, const desc::TextureView& desc, const Texture& texture);
 
-		bool valid() { return (pImpl != nullptr); }
-		const desc::TextureView& descriptor();
+		bool valid() const override { return (pImpl != nullptr); }
+
+		const desc::TextureView& descriptor() const;
 	private:
 		friend class CommandBuffer;
 
@@ -62,22 +68,24 @@ namespace graphics
 		Buffer() : pImpl(nullptr) {}
 		Buffer(Device& buffer, const desc::Buffer& desc);
 
-		bool valid() { return (pImpl != nullptr); }
-		const desc::Buffer& descriptor();
+		bool valid() const { return (pImpl != nullptr); }
+		const desc::Buffer& descriptor() const;
 	private:
 		friend class BufferView;
+		friend class CommandBuffer;
 
 		std::shared_ptr<BufferImpl> pImpl;
 	};
 
-	class BufferView
+	class BufferView : public ResourceView
 	{
 	public:
 		BufferView() : pImpl(nullptr) {}
 		BufferView(Device& device, const desc::BufferView& desc, const Buffer& buffer);
 
-		bool valid() { return (pImpl != nullptr); }
-		const desc::BufferView& descriptor();
+		bool valid() const override { return (pImpl != nullptr); }
+
+		const desc::BufferView& descriptor() const;
 	private:
 		friend class CommandBuffer;
 
@@ -102,7 +110,7 @@ namespace graphics
 		CommandBuffer() : pImpl(nullptr) {}
 		CommandBuffer(Device& device);
 
-		bool valid() { return (pImpl != nullptr); }
+		bool valid() const { return (pImpl != nullptr); }
 
 		void clear(TextureView view, float r, float g, float b, float a);
 		void clear(TextureView view, uint32_t r, uint32_t g, uint32_t b, uint32_t a);
@@ -120,8 +128,10 @@ namespace graphics
 
 		void copyToBackBuffer(Texture src);
 
-		void dispatch();
-		void dispatchIndirect();
+		void dispatch(const desc::ShaderBinding& binding,
+					  uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ);
+		void dispatchIndirect(const desc::ShaderBinding& binding,
+							  const Buffer& argsBuffer, uint32_t argsOffset);
 
 		void draw();
 		void drawIndexed();
@@ -141,9 +151,17 @@ namespace graphics
 		GraphicsPipeline() : pImpl(nullptr) {}
 		GraphicsPipeline(Device& device, const desc::GraphicsPipeline& desc);
 
-		bool valid() { return (pImpl != nullptr); }
-		const desc::GraphicsPipeline& descriptor();
+		bool valid() const { return (pImpl != nullptr); }
+		const desc::GraphicsPipeline& descriptor() const;
+
+		template<typename T> T bind(CommandBuffer& gfx)
+		{
+			T binding(this);
+			return binding;
+		}
 	private:
+		friend class CommandBuffer;
+
 		std::shared_ptr<GraphicsPipelineImpl> pImpl;
 	};
 
@@ -155,7 +173,15 @@ namespace graphics
 
 		bool valid() { return (pImpl != nullptr); }
 		const desc::ComputePipeline& descriptor();
+
+		template<typename T> T bind(CommandBuffer& gfx)
+		{
+			T binding(this);
+			return binding;
+		}
 	private:
+		friend class CommandBuffer;
+
 		std::shared_ptr<ComputePipelineImpl> pImpl;
 	};
 
@@ -164,7 +190,7 @@ namespace graphics
 	public:
 		Device(HWND hWnd, unsigned width, unsigned height);
 
-		bool				valid() { return (pImpl != nullptr); }
+		bool				valid() const { return (pImpl != nullptr); }
 
 		Texture				createTexture(const desc::Texture& desc);
 		Buffer				createBuffer(const desc::Buffer& desc);
@@ -181,6 +207,8 @@ namespace graphics
 		void				submit(CommandBuffer& gfx);
 
 		void				present(int syncInterval);
+
+		int2				swapChainSize();
 	private:
 		friend class Texture;
 		friend class TextureView;

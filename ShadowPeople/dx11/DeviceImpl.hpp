@@ -20,6 +20,8 @@ namespace graphics
 
 		void submit(CommandBufferImpl& gfx);
 		void present(int syncInterval);
+
+		int2 swapChainSize();
 	private:
 		friend class TextureImpl;
 		friend class TextureViewImpl;
@@ -27,6 +29,8 @@ namespace graphics
 		friend class BufferViewImpl;
 		friend class SamplerImpl;
 		friend class CommandBufferImpl;
+		friend class ComputePipelineImpl;
+		friend class GraphicsPipelineImpl;
 
 		std::shared_ptr<TextureImpl> getBackBuffer();
 

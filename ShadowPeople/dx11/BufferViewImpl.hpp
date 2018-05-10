@@ -4,6 +4,7 @@
 
 #include "DX11Utils.hpp"
 
+
 namespace graphics
 {
 	class DeviceImpl;

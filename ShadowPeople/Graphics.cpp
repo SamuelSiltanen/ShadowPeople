@@ -9,7 +9,7 @@ namespace graphics
 		pImpl = std::make_shared<TextureImpl>(*device.pImpl, desc);
 	}
 
-	const desc::Texture& Texture::descriptor()
+	const desc::Texture& Texture::descriptor() const
 	{
 		SP_ASSERT(pImpl != nullptr, "Texture used, but not created with Device::createTexture().");
 		return pImpl->descriptor();
@@ -20,7 +20,7 @@ namespace graphics
 		pImpl = std::make_shared<TextureViewImpl>(*device.pImpl, desc, *texture.pImpl);
 	}
 
-	const desc::TextureView& TextureView::descriptor()
+	const desc::TextureView& TextureView::descriptor() const
 	{
 		SP_ASSERT(pImpl != nullptr, "TextureView used, but not created with Device::createTextureView().");
 		return pImpl->descriptor();
@@ -31,7 +31,7 @@ namespace graphics
 		pImpl = std::make_shared<BufferImpl>(*device.pImpl, desc);
 	}
 
-	const desc::Buffer& Buffer::descriptor()
+	const desc::Buffer& Buffer::descriptor() const
 	{
 		SP_ASSERT(pImpl != nullptr, "Buffer used, but not created with Device::createBuffer().");
 		return pImpl->descriptor();
@@ -42,7 +42,7 @@ namespace graphics
 		pImpl = std::make_shared<BufferViewImpl>(*device.pImpl, desc, *buffer.pImpl);
 	}
 
-	const desc::BufferView& BufferView::descriptor()
+	const desc::BufferView& BufferView::descriptor() const
 	{
 		SP_ASSERT(pImpl != nullptr, "BufferView used, but not created with Device::createBufferView().");
 		return pImpl->descriptor();
@@ -125,14 +125,20 @@ namespace graphics
 		pImpl->copyToBackBuffer(*src.pImpl);
 	}
 
-	void CommandBuffer::dispatch()
+	void CommandBuffer::dispatch(const desc::ShaderBinding& binding,
+								 uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ)
 	{
-
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.computePipeline() != nullptr, "ComputePipeline must be bound defore calling dispatch().");
+		pImpl->dispatch(*binding.computePipeline()->pImpl, threadsX, threadsY, threadsZ);
 	}
 
-	void CommandBuffer::dispatchIndirect()
+	void CommandBuffer::dispatchIndirect(const desc::ShaderBinding& binding,
+										 const Buffer& argsBuffer, uint32_t argsOffset)
 	{
-
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.computePipeline() != nullptr, "ComputePipeline must be bound defore calling dispatchIndirect().");
+		pImpl->dispatchIndirect(*binding.computePipeline()->pImpl, *argsBuffer.pImpl, argsOffset);
 	}
 
 	void CommandBuffer::draw()
@@ -170,7 +176,7 @@ namespace graphics
 		pImpl = std::make_shared<GraphicsPipelineImpl>(*device.pImpl, desc);
 	}
 
-	const desc::GraphicsPipeline& GraphicsPipeline::descriptor()
+	const desc::GraphicsPipeline& GraphicsPipeline::descriptor() const
 	{
 		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
 		return pImpl->descriptor();
@@ -242,5 +248,11 @@ namespace graphics
 	{
 		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
 		pImpl->present(syncInterval);
+	}
+
+	int2 Device::swapChainSize()
+	{
+		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
+		return pImpl->swapChainSize();
 	}
 }

@@ -116,6 +116,10 @@ using int2 = ArithmeticVector<int, 2>;
 using int3 = ArithmeticVector<int, 3>;
 using int4 = ArithmeticVector<int, 4>;
 
+using uint2 = ArithmeticVector<unsigned, 2>;
+using uint3 = ArithmeticVector<unsigned, 3>;
+using uint4 = ArithmeticVector<unsigned, 4>;
+
 using float2 = ArithmeticVector<float, 2>;
 using float3 = ArithmeticVector<float, 3>;
 using float4 = ArithmeticVector<float, 4>;

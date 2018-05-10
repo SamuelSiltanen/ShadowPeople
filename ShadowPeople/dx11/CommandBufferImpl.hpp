@@ -11,6 +11,8 @@ namespace graphics
 	class DeviceImpl;
 	class TextureImpl;
 	class TextureViewImpl;
+	class BufferImpl;
+	class ComputePipelineImpl;
 
 	class CommandBufferImpl
 	{
@@ -24,11 +26,16 @@ namespace graphics
 		void clear(TextureViewImpl& view, float depth);
 		void clear(TextureViewImpl& view, float depth, uint8_t stencil);
 		void clear(TextureViewImpl& view, uint8_t stencil);
+
 		void copy(TextureImpl& dst, const TextureImpl& src);
 		void copy(TextureImpl& dst, const TextureImpl& src,
 				  int3 dstCorner, Rect<int, 3> srcRect,
 				  Subresource dstSubresource, Subresource srcSubresource);
+
 		void copyToBackBuffer(const TextureImpl& src);
+
+		void dispatch(const ComputePipelineImpl& pipeline, uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ);
+		void dispatchIndirect(const ComputePipelineImpl& pipeline, const BufferImpl& argsBuffer, uint32_t argsOffset);
 	private:
 		bool isSimilarForCopy(const TextureImpl& dst, const TextureImpl& src);
 

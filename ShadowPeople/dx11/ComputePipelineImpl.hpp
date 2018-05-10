@@ -17,6 +17,7 @@ namespace graphics
 		NO_COPY_CLASS(ComputePipelineImpl);
 
 		const desc::ComputePipeline& descriptor() const { return m_descriptor; }
+		ID3D11ComputeShader* shader() const { return m_shader; }
 	private:
 		ID3D11ComputeShader*	m_shader;
 

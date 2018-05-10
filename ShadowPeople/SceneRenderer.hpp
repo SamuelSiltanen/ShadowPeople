@@ -9,8 +9,11 @@ namespace rendering
 	public:
 		SceneRenderer(graphics::Device device);
 
-		void render();
+		void render(graphics::CommandBuffer& gfx);
 	private:
+		graphics::ComputePipeline	m_computePipeline;
 
+		graphics::Texture			m_clearTexture;
+		graphics::TextureView		m_clearTextureUAV;
 	};
 }
