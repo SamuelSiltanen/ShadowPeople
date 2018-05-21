@@ -21,23 +21,35 @@ namespace graphics
 {
 	namespace detail
 	{
-		std::vector<Buffer*>		cbs;
-		std::vector<ResourceView*>	srvs;
-		std::vector<ResourceView*>	uavs;
-		std::vector<Sampler*>		samplers;
+		std::vector<const Buffer*>			cbs;
+		std::vector<const ResourceView*>	srvs;
+		std::vector<const ResourceView*>	uavs;
+		std::vector<const Sampler*>			samplers;
+
+		void resetBindings()
+		{
+			cbs.clear();
+			srvs.clear();
+			uavs.clear();
+			samplers.clear();
+		}
 	}
 
 	#define UAV_CLASS(X, Y) \
 		template<typename T> \
 		struct X \
 		{ \
-			graphics::Y uav; \
-			X() { detail::uavs.emplace_back(&uav); } \
+			uint32_t index; \
+			X() \
+			{ \
+				index = static_cast<uint32_t>(detail::uavs.size()); \
+				detail::uavs.emplace_back(nullptr); \
+			} \
 			X& operator=(const graphics::Y& view) \
 			{ \
 				SP_ASSERT(view.descriptor().descriptor().type == graphics::desc::ViewType::UAV, \
 						  "Only UAVs can be bound to UAV slot."); \
-				uav = view; \
+				detail::uavs[index] = &view; \
 				return *this; \
 			} \
 		};
@@ -68,12 +80,15 @@ namespace graphics
 				struct X : public graphics::desc::ShaderBinding {
 		
 	#define END_SHADER_INTERFACE(X)		\
-					const ComputePipeline* computePipeline() const override { reset(); return m_computePipeline; } \
-					const GraphicsPipeline* graphicsPipeline() const override { reset(); return m_graphicsPipeline; } \
-					const std::vector<graphics::Buffer*>& cbs() const { return detail::cbs; } \
-					const std::vector<graphics::ResourceView*>& srvs() const { return detail::srvs; } \
-					const std::vector<graphics::ResourceView*>& uavs() const { return detail::uavs; } \
-					const std::vector<graphics::Sampler*>& samplers() const { return detail::samplers; } \
+					ComputePipeline* computePipeline() override { return m_computePipeline; } \
+					GraphicsPipeline* graphicsPipeline() override { return m_graphicsPipeline; } \
+					const std::vector<const graphics::Buffer*>& cbs() const override { return detail::cbs; } \
+					const std::vector<const graphics::ResourceView*>& srvs() const override { return detail::srvs; } \
+					const std::vector<const graphics::ResourceView*>& uavs() const override { return detail::uavs; } \
+					const std::vector<const graphics::Sampler*>& samplers() const override { return detail::samplers; } \
+					uint32_t threadGroupSizeX() const { return ThreadGroupSizeX; } \
+					uint32_t threadGroupSizeY() const { return ThreadGroupSizeY; } \
+					uint32_t threadGroupSizeZ() const { return ThreadGroupSizeZ; } \
 				private: \
 					X(ComputePipeline *computePipeline) : \
 						m_computePipeline(computePipeline), \
@@ -81,13 +96,6 @@ namespace graphics
 					X(GraphicsPipeline *graphicsPipeline) : \
 						m_computePipeline(nullptr), \
 						m_graphicsPipeline(graphicsPipeline) {} \
-					void reset() const \
-					{ \
-						detail::cbs.clear(); \
-						detail::srvs.clear(); \
-						detail::uavs.clear(); \
-						detail::samplers.clear(); \
-					} \
 					friend class ComputePipeline; \
 					friend class GraphicsPipeline; \
 					ComputePipeline*	m_computePipeline; \
@@ -97,9 +105,9 @@ namespace graphics
 		}
 
 	#define THREAD_GROUP_SIZE(X, Y, Z)	\
-		const uint ThreadGroupsX = X;		\
-		const uint ThreadGroupsY = Y;		\
-		const uint ThreadGroupsZ = Z;
+		const uint ThreadGroupSizeX = X;		\
+		const uint ThreadGroupSizeY = Y;		\
+		const uint ThreadGroupSizeZ = Z;
 	
 	// Possible bindings:
 	// cbuffer TypeName

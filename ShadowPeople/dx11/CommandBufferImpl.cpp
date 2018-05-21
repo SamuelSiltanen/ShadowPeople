@@ -3,8 +3,10 @@
 #include "TextureImpl.hpp"
 #include "TextureViewImpl.hpp"
 #include "BufferImpl.hpp"
+#include "SamplerImpl.hpp"
 #include "ComputePipelineImpl.hpp"
 #include "../Errors.hpp"
+#include "../ShaderResources.hpp"
 
 #include <vector>
 
@@ -159,20 +161,37 @@ namespace graphics
 		}
 	}
 
-	void CommandBufferImpl::dispatch(const ComputePipelineImpl& pipeline,
-									 uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ)
+	void CommandBufferImpl::dispatch(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
+									 uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ)
 	{
 		// Bind Shader
 		m_context.CSSetShader(pipeline.shader(), NULL, 0);
 
-		// TODO: Get the resources from the shader interface
 		std::vector<ID3D11Buffer*>				CBs;
 		std::vector<ID3D11ShaderResourceView*>	SRVs;
 		std::vector<ID3D11UnorderedAccessView*>	UAVs;
 		std::vector<uint32_t>					UAVICounts;
 		std::vector<ID3D11SamplerState*>		samplers;
 
-		auto& shaderInteface = pipeline.descriptor().shaderInterface();
+		for (auto cb : resources.cbs)
+		{
+			CBs.emplace_back((ID3D11Buffer*)cb->m_buffer);
+		}
+
+		for (auto srv : resources.srvs)
+		{
+			SRVs.emplace_back((ID3D11ShaderResourceView*)srv->view());
+		}
+
+		for (auto uav : resources.uavs)
+		{
+			UAVs.emplace_back((ID3D11UnorderedAccessView*)uav->view());
+		}
+
+		for (auto sampler : resources.samplers)
+		{
+			samplers.emplace_back((ID3D11SamplerState*)sampler->m_sampler);
+		}
 
 		// Bind Resources
 		m_context.CSSetConstantBuffers(0, static_cast<uint32_t>(CBs.size()), CBs.data());
@@ -180,27 +199,27 @@ namespace graphics
 		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVs.size()), UAVs.data(), UAVICounts.data());
 		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
 
-		m_context.Dispatch(threadsX, threadsY, threadsZ);
+		m_context.Dispatch(threadGroupsX, threadGroupsY, threadGroupsZ);
 
-		// Unbind resources
-		memset(samplers.data(), 0, samplers.size() * sizeof(ID3D11SamplerState*));
-		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
+		// Unbind resources		
+		std::vector<ID3D11SamplerState*> samplerZeros(samplers.size(), 0);
+		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplerZeros.size()), samplerZeros.data());
 
-		memset(UAVs.data(), 0, UAVs.size() * sizeof(ID3D11UnorderedAccessView*));
-		memset(UAVICounts.data(), 0, UAVICounts.size() * sizeof(uint32_t));
-		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVs.size()), UAVs.data(), UAVICounts.data());
+		std::vector<ID3D11UnorderedAccessView*> UAVZeros(UAVs.size(), 0);
+		std::vector<uint32_t> UAVICountZeros(UAVICounts.size(), 0);
+		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVZeros.size()), UAVZeros.data(), UAVICountZeros.data());
 
-		memset(SRVs.data(), 0, SRVs.size() * sizeof(ID3D11ShaderResourceView*));
-		m_context.CSSetShaderResources(0, static_cast<uint32_t>(SRVs.size()), SRVs.data());
+		std::vector<ID3D11ShaderResourceView*> SRVZeros(SRVs.size(), 0);
+		m_context.CSSetShaderResources(0, static_cast<uint32_t>(SRVZeros.size()), SRVZeros.data());
 
-		memset(CBs.data(), 0, CBs.size() * sizeof(ID3D11Buffer*));
+		std::vector<ID3D11Buffer*> CBZeros(CBs.size(), 0);
 		m_context.CSSetConstantBuffers(0, static_cast<uint32_t>(CBs.size()), CBs.data());
 
 		// Unbind shader
 		m_context.CSSetShader(NULL, NULL, 0);
 	}
 	
-	void CommandBufferImpl::dispatchIndirect(const ComputePipelineImpl& pipeline,
+	void CommandBufferImpl::dispatchIndirect(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
 											 const BufferImpl& argsBuffer, uint32_t argsOffset)
 	{
 

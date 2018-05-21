@@ -8,13 +8,16 @@
 
 #include "Descriptors.hpp"
 #include "Types.hpp"
+#include "ShaderResources.hpp"
 
 namespace graphics
 {
+	// Forward declare implementation classes for pointer to implementation scheme
 	class TextureImpl;
 	class TextureViewImpl;
 	class BufferImpl;
 	class BufferViewImpl;
+	class ResourceViewImpl;
 	class SamplerImpl;
 	class CommandBufferImpl;
 	class ShaderImpl;
@@ -44,7 +47,12 @@ namespace graphics
 
 	class ResourceView
 	{
+	public:
 		virtual bool valid() const = 0;
+	protected:
+		friend class CommandBuffer;
+
+		virtual ResourceViewImpl* impl() const = 0;
 	};
 
 	class TextureView : public ResourceView
@@ -56,6 +64,10 @@ namespace graphics
 		bool valid() const override { return (pImpl != nullptr); }
 
 		const desc::TextureView& descriptor() const;
+
+	protected:
+		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
+
 	private:
 		friend class CommandBuffer;
 
@@ -86,6 +98,10 @@ namespace graphics
 		bool valid() const override { return (pImpl != nullptr); }
 
 		const desc::BufferView& descriptor() const;
+
+	protected:
+		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
+
 	private:
 		friend class CommandBuffer;
 
@@ -101,6 +117,8 @@ namespace graphics
 		bool valid() { return (pImpl != nullptr); }
 		const desc::Sampler& descriptor();
 	private:
+		friend class CommandBuffer;
+
 		std::shared_ptr<SamplerImpl> pImpl;
 	};
 
@@ -128,9 +146,9 @@ namespace graphics
 
 		void copyToBackBuffer(Texture src);
 
-		void dispatch(const desc::ShaderBinding& binding,
+		void dispatch(desc::ShaderBinding& binding,
 					  uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ);
-		void dispatchIndirect(const desc::ShaderBinding& binding,
+		void dispatchIndirect(desc::ShaderBinding& binding,
 							  const Buffer& argsBuffer, uint32_t argsOffset);
 
 		void draw();
@@ -163,6 +181,8 @@ namespace graphics
 		friend class CommandBuffer;
 
 		std::shared_ptr<GraphicsPipelineImpl> pImpl;
+
+		ShaderResources resources;
 	};
 
 	class ComputePipeline
@@ -176,13 +196,16 @@ namespace graphics
 
 		template<typename T> T bind(CommandBuffer& gfx)
 		{
+			detail::resetBindings();
 			T binding(this);
-			return binding;
+			return std::move(binding);
 		}
 	private:
 		friend class CommandBuffer;
 
 		std::shared_ptr<ComputePipelineImpl> pImpl;
+		
+		ShaderResources resources;
 	};
 
 	class Device

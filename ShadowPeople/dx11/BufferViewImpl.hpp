@@ -3,7 +3,7 @@
 #include <d3d11.h>
 
 #include "DX11Utils.hpp"
-
+#include "ResourceViewImpl.hpp"
 
 namespace graphics
 {
@@ -11,7 +11,7 @@ namespace graphics
 
 	class BufferImpl;
 
-	class BufferViewImpl
+	class BufferViewImpl : public ResourceViewImpl
 	{
 	public:
 		BufferViewImpl(DeviceImpl& device, const desc::BufferView& desc, const BufferImpl& buffer);
@@ -20,6 +20,8 @@ namespace graphics
 		NO_COPY_CLASS(BufferViewImpl)
 
 		const desc::BufferView& descriptor() { return m_descriptor; }
+
+		const ID3D11View* view() const override { return m_view; }
 	private:
 		void createSRV(DeviceImpl& device, const desc::BufferView& desc, const BufferImpl& buffer);
 		void createUAV(DeviceImpl& device, const desc::BufferView& desc, const BufferImpl& buffer);

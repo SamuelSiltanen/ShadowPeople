@@ -17,6 +17,8 @@ namespace graphics
 
 		const desc::Sampler& descriptor() const { return m_descriptor; }
 	private:
+		friend class CommandBufferImpl;
+
 		ID3D11SamplerState*	m_sampler;
 		desc::Sampler		m_descriptor;
 	};

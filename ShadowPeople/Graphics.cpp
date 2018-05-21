@@ -1,6 +1,7 @@
 #include "Graphics.hpp"
 #include "DX11Graphics.hpp"
 #include "Errors.hpp"
+#include "Math.hpp"
 
 namespace graphics
 {
@@ -125,20 +126,81 @@ namespace graphics
 		pImpl->copyToBackBuffer(*src.pImpl);
 	}
 
-	void CommandBuffer::dispatch(const desc::ShaderBinding& binding,
+	void CommandBuffer::dispatch(desc::ShaderBinding& binding,
 								 uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ)
 	{
 		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
 		SP_ASSERT(binding.computePipeline() != nullptr, "ComputePipeline must be bound defore calling dispatch().");
-		pImpl->dispatch(*binding.computePipeline()->pImpl, threadsX, threadsY, threadsZ);
+
+		// TODO: Map discard the constant buffer
+
+		auto& resources = binding.computePipeline()->resources;
+		
+		for (auto cb : binding.cbs())
+		{
+			resources.cbs.emplace_back(cb->pImpl.get());
+		}
+		
+		for (auto srv: binding.srvs())
+		{
+			resources.srvs.emplace_back(srv->impl());
+		}
+		
+		for (auto uav: binding.uavs())
+		{
+			resources.uavs.emplace_back(uav->impl());
+		}
+
+		for (auto sampler : binding.samplers())
+		{
+			resources.samplers.emplace_back(sampler->pImpl.get());
+		}
+
+		uint32_t threadGroupsX = math::divRoundUp(threadsX, binding.threadGroupSizeX());
+		uint32_t threadGroupsY = math::divRoundUp(threadsX, binding.threadGroupSizeY());
+		uint32_t threadGroupsZ = math::divRoundUp(threadsX, binding.threadGroupSizeZ());
+
+		pImpl->dispatch(*binding.computePipeline()->pImpl, resources, threadGroupsX, threadGroupsY, threadGroupsZ);
+
+		// Note: Clear resources, because they contain shared pointers to resources, and we don't need them anymore
+		resources.cbs.clear();
+		resources.srvs.clear();
+		resources.uavs.clear();
+		resources.samplers.clear();
 	}
 
-	void CommandBuffer::dispatchIndirect(const desc::ShaderBinding& binding,
+	void CommandBuffer::dispatchIndirect(desc::ShaderBinding& binding,
 										 const Buffer& argsBuffer, uint32_t argsOffset)
 	{
 		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
 		SP_ASSERT(binding.computePipeline() != nullptr, "ComputePipeline must be bound defore calling dispatchIndirect().");
-		pImpl->dispatchIndirect(*binding.computePipeline()->pImpl, *argsBuffer.pImpl, argsOffset);
+
+		auto resources = binding.computePipeline()->resources;
+
+		for (auto cb : binding.cbs())
+		{
+			resources.cbs.emplace_back(cb->pImpl.get());
+		}
+
+		std::vector<ResourceViewImpl> srvs;
+		for (auto srv: binding.srvs())
+		{
+			resources.srvs.emplace_back(srv->impl());
+		}
+
+		std::vector<ResourceViewImpl> uavs;
+		for (auto uav: binding.uavs())
+		{
+			resources.uavs.emplace_back(uav->impl());
+		}
+
+		std::vector<SamplerImpl> samplers;
+		for (auto sampler : binding.samplers())
+		{
+			resources.samplers.emplace_back(sampler->pImpl.get());
+		}
+
+		pImpl->dispatchIndirect(*binding.computePipeline()->pImpl, resources, *argsBuffer.pImpl, argsOffset);
 	}
 
 	void CommandBuffer::draw()

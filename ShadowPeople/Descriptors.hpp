@@ -372,12 +372,15 @@ namespace graphics
 
 		struct ShaderBinding
 		{
-			virtual const graphics::ComputePipeline* computePipeline() const = 0;
-			virtual const graphics::GraphicsPipeline* graphicsPipeline() const = 0;
-			virtual const std::vector<graphics::Buffer*>& cbs() const = 0;
-			virtual const std::vector<graphics::ResourceView*>& srvs() const = 0;
-			virtual const std::vector<graphics::ResourceView*>& uavs() const = 0;
-			virtual const std::vector<graphics::Sampler*>& samplers() const = 0;
+			virtual graphics::ComputePipeline* computePipeline() = 0;
+			virtual graphics::GraphicsPipeline* graphicsPipeline() = 0;
+			virtual const std::vector<const graphics::Buffer*>& cbs() const = 0;
+			virtual const std::vector<const graphics::ResourceView*>& srvs() const = 0;
+			virtual const std::vector<const graphics::ResourceView*>& uavs() const = 0;
+			virtual const std::vector<const graphics::Sampler*>& samplers() const = 0;
+			virtual uint32_t threadGroupSizeX() const = 0;
+			virtual uint32_t threadGroupSizeY() const = 0;
+			virtual uint32_t threadGroupSizeZ() const = 0;
 		};
 
 		class GraphicsPipeline

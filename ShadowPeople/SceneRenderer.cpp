@@ -27,8 +27,6 @@ namespace rendering
 		gfx.clear(m_clearTextureUAV, 1.f, 0.5f, 0.f, 1.f);
 
 		auto binding = m_computePipeline.bind<shaders::TestCS>(gfx);
-		binding.constants.size	= { 256, 256 };
-		binding.backBuffer		= m_clearTextureUAV;
 
 		uint32_t numCBs = static_cast<uint32_t>(binding.cbs().size());
 		uint32_t numSRVs = static_cast<uint32_t>(binding.srvs().size());
@@ -39,6 +37,11 @@ namespace rendering
 		printf("Bound %d UAVs\n", numUAVs);
 		printf("Bound %d samplers\n", numSamplers);
 
+
+		binding.constants.size	= { 256, 256 };
+		binding.backBuffer		= m_clearTextureUAV;
+
+		
 		gfx.dispatch(binding, 256, 256, 1);
 
 		gfx.copyToBackBuffer(m_clearTexture);	

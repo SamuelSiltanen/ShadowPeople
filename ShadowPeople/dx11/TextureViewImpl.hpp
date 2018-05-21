@@ -3,13 +3,14 @@
 #include <d3d11.h>
 
 #include "DX11Utils.hpp"
+#include "ResourceViewImpl.hpp"
 
 namespace graphics
 {
 	class DeviceImpl;
 	class TextureImpl;
 
-	class TextureViewImpl
+	class TextureViewImpl : public ResourceViewImpl
 	{
 	public:
 		TextureViewImpl(DeviceImpl& device, const desc::TextureView& desc, const TextureImpl& texture);
@@ -18,6 +19,8 @@ namespace graphics
 		NO_COPY_CLASS(TextureViewImpl)
 
 		const desc::TextureView& descriptor() { return m_descriptor; }
+
+		const ID3D11View* view() const override { return m_view; }
 	private:
 		friend class CommandBufferImpl;
 

@@ -14,6 +14,8 @@ namespace graphics
 	class BufferImpl;
 	class ComputePipelineImpl;
 
+	struct ShaderResources;
+
 	class CommandBufferImpl
 	{
 	public:
@@ -34,8 +36,10 @@ namespace graphics
 
 		void copyToBackBuffer(const TextureImpl& src);
 
-		void dispatch(const ComputePipelineImpl& pipeline, uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ);
-		void dispatchIndirect(const ComputePipelineImpl& pipeline, const BufferImpl& argsBuffer, uint32_t argsOffset);
+		void dispatch(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
+					  uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ);
+		void dispatchIndirect(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
+							  const BufferImpl& argsBuffer, uint32_t argsOffset);
 	private:
 		bool isSimilarForCopy(const TextureImpl& dst, const TextureImpl& src);
 

@@ -140,13 +140,16 @@
     <ClInclude Include="dx11\DeviceImpl.hpp" />
     <ClInclude Include="dx11\DX11Utils.hpp" />
     <ClInclude Include="dx11\GraphicsPipelineImpl.hpp" />
+    <ClInclude Include="dx11\ResourceViewImpl.hpp" />
     <ClInclude Include="dx11\SamplerImpl.hpp" />
     <ClInclude Include="dx11\TextureImpl.hpp" />
     <ClInclude Include="dx11\TextureViewImpl.hpp" />
     <ClInclude Include="Errors.hpp" />
     <ClInclude Include="Graphics.hpp" />
+    <ClInclude Include="Math.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="ShaderManager.hpp" />
+    <ClInclude Include="ShaderResources.hpp" />
     <ClInclude Include="shaders\ShaderInterface.h" />
     <ClInclude Include="shaders\Test.if.h" />
     <ClInclude Include="Types.hpp" />
