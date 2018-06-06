@@ -149,7 +149,7 @@
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="ShaderManager.hpp" />
-    <ClInclude Include="ShaderResources.hpp" />
+    <ClInclude Include="ShaderResourcesImpl.hpp" />
     <ClInclude Include="shaders\ShaderInterface.h" />
     <ClInclude Include="shaders\Test.if.h" />
     <ClInclude Include="Types.hpp" />

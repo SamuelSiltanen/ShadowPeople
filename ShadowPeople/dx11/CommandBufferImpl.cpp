@@ -5,8 +5,8 @@
 #include "BufferImpl.hpp"
 #include "SamplerImpl.hpp"
 #include "ComputePipelineImpl.hpp"
+#include "ShaderResourcesImpl.hpp"
 #include "../Errors.hpp"
-#include "../ShaderResources.hpp"
 
 #include <vector>
 
@@ -161,8 +161,7 @@ namespace graphics
 		}
 	}
 
-	void CommandBufferImpl::dispatch(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
-									 uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ)
+	void CommandBufferImpl::setupResources(ComputePipelineImpl& pipeline)
 	{
 		// Bind Shader
 		m_context.CSSetShader(pipeline.shader(), NULL, 0);
@@ -172,6 +171,8 @@ namespace graphics
 		std::vector<ID3D11UnorderedAccessView*>	UAVs;
 		std::vector<uint32_t>					UAVICounts;
 		std::vector<ID3D11SamplerState*>		samplers;
+
+		auto resources = pipeline.resources();
 
 		for (auto cb : resources.cbs)
 		{
@@ -198,30 +199,43 @@ namespace graphics
 		m_context.CSSetShaderResources(0, static_cast<uint32_t>(SRVs.size()), SRVs.data());
 		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVs.size()), UAVs.data(), UAVICounts.data());
 		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
+	}
 
-		m_context.Dispatch(threadGroupsX, threadGroupsY, threadGroupsZ);
+	void CommandBufferImpl::clearResources(ComputePipelineImpl& pipeline)
+	{
+		auto resources = pipeline.resources();
 
 		// Unbind resources		
-		std::vector<ID3D11SamplerState*> samplerZeros(samplers.size(), 0);
+		std::vector<ID3D11SamplerState*> samplerZeros(resources.samplers.size(), 0);
 		m_context.CSSetSamplers(0, static_cast<uint32_t>(samplerZeros.size()), samplerZeros.data());
 
-		std::vector<ID3D11UnorderedAccessView*> UAVZeros(UAVs.size(), 0);
-		std::vector<uint32_t> UAVICountZeros(UAVICounts.size(), 0);
+		std::vector<ID3D11UnorderedAccessView*> UAVZeros(resources.uavs.size(), 0);
+		std::vector<uint32_t> UAVICountZeros(resources.uavs.size(), 0);
 		m_context.CSSetUnorderedAccessViews(0, static_cast<uint32_t>(UAVZeros.size()), UAVZeros.data(), UAVICountZeros.data());
 
-		std::vector<ID3D11ShaderResourceView*> SRVZeros(SRVs.size(), 0);
+		std::vector<ID3D11ShaderResourceView*> SRVZeros(resources.srvs.size(), 0);
 		m_context.CSSetShaderResources(0, static_cast<uint32_t>(SRVZeros.size()), SRVZeros.data());
 
-		std::vector<ID3D11Buffer*> CBZeros(CBs.size(), 0);
-		m_context.CSSetConstantBuffers(0, static_cast<uint32_t>(CBs.size()), CBs.data());
+		std::vector<ID3D11Buffer*> CBZeros(resources.cbs.size(), 0);
+		m_context.CSSetConstantBuffers(0, static_cast<uint32_t>(CBZeros.size()), CBZeros.data());
 
 		// Unbind shader
 		m_context.CSSetShader(NULL, NULL, 0);
 	}
+
+	void CommandBufferImpl::dispatch(ComputePipelineImpl& pipeline,
+									 uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ)
+	{
+		setupResources(pipeline);
+		m_context.Dispatch(threadGroupsX, threadGroupsY, threadGroupsZ);
+		clearResources(pipeline);
+	}
 	
-	void CommandBufferImpl::dispatchIndirect(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
+	void CommandBufferImpl::dispatchIndirect(ComputePipelineImpl& pipeline,
 											 const BufferImpl& argsBuffer, uint32_t argsOffset)
 	{
-
+		setupResources(pipeline);
+		m_context.DispatchIndirect(argsBuffer.m_buffer, argsOffset);
+		clearResources(pipeline);
 	}
 }

@@ -5,6 +5,7 @@
 
 #include "DX11Utils.hpp"
 #include "../Types.hpp"
+#include "../Errors.hpp"
 
 namespace graphics
 {
@@ -13,8 +14,6 @@ namespace graphics
 	class TextureViewImpl;
 	class BufferImpl;
 	class ComputePipelineImpl;
-
-	struct ShaderResources;
 
 	class CommandBufferImpl
 	{
@@ -35,13 +34,25 @@ namespace graphics
 				  Subresource dstSubresource, Subresource srcSubresource);
 
 		void copyToBackBuffer(const TextureImpl& src);
+		template<typename T>
+		void copyToConstantBuffer(BufferImpl& dst, Range<const T> src)
+		{
+			D3D11_MAPPED_SUBRESOURCE mapping;
+			HRESULT hr = m_context.Map(dst.m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapping);
+			SP_ASSERT_HR(hr, ERROR_CODE_MAP_DISCARD_FAILED);
+			memcpy(mapping.pData, src.begin(), src.byteSize());
+			m_context.Unmap(dst.m_buffer, 0);
+		}
 
-		void dispatch(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
+		void dispatch(ComputePipelineImpl& pipeline,
 					  uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ);
-		void dispatchIndirect(const ComputePipelineImpl& pipeline, const ShaderResources& resources,
+		void dispatchIndirect(ComputePipelineImpl& pipeline,
 							  const BufferImpl& argsBuffer, uint32_t argsOffset);
 	private:
 		bool isSimilarForCopy(const TextureImpl& dst, const TextureImpl& src);
+
+		void setupResources(ComputePipelineImpl& pipeline);
+		void clearResources(ComputePipelineImpl& pipeline);
 
 		ID3D11DeviceContext&	m_context;
 

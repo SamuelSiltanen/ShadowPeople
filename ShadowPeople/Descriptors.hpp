@@ -3,6 +3,7 @@
 #include "Types.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace graphics
 {
@@ -148,6 +149,20 @@ namespace graphics
 				return true;
 			}
 
+			uint32_t byteWidth() const
+			{
+				uint32_t channelFactor = 
+					(channels == FormatChannels::RG) ? 2 :
+					(channels == FormatChannels::RGB) ? 3 :
+					(channels == FormatChannels::RGBA) ? 4 :
+					1;
+				uint32_t byteFactor = 
+					(bytes == FormatBytesPerChannel::B8) ? 1 :
+					(bytes == FormatBytesPerChannel::B16) ? 2 :
+					4;
+				return channelFactor * byteFactor;
+			}
+
 			static Format unknown()
 			{
 				Format f;
@@ -155,7 +170,7 @@ namespace graphics
 				f.bytes		= FormatBytesPerChannel::B32;
 				f.type		= FormatType::Unknown;
 				return f;
-			}
+			}			
 		};
 
 		class Texture
@@ -261,7 +276,7 @@ namespace graphics
 				desc.format			= Format::unknown();
 				desc.elements		= 65536;
 				desc.usage			= Usage::GpuReadWrite;
-				desc.stride			= 4;
+				desc.stride			= Format::unknown().byteWidth();
 				desc.indirectArgs	= false;
 				desc.raw			= false;
 				desc.structured		= false;
@@ -364,17 +379,12 @@ namespace graphics
 			Descriptor desc;
 		};
 
-		class ShaderInterface
-		{
-		public:
-			virtual const char* filename() const = 0;
-		};
-
 		struct ShaderBinding
 		{
+			virtual const char* filename() const = 0;
 			virtual graphics::ComputePipeline* computePipeline() = 0;
 			virtual graphics::GraphicsPipeline* graphicsPipeline() = 0;
-			virtual const std::vector<const graphics::Buffer*>& cbs() const = 0;
+			virtual const std::vector<Range<const uint8_t>> cbs() const = 0;
 			virtual const std::vector<const graphics::ResourceView*>& srvs() const = 0;
 			virtual const std::vector<const graphics::ResourceView*>& uavs() const = 0;
 			virtual const std::vector<const graphics::Sampler*>& samplers() const = 0;
@@ -385,17 +395,47 @@ namespace graphics
 
 		class GraphicsPipeline
 		{
+			struct Descriptor
+			{
+				std::shared_ptr<ShaderBinding> vs;
+				std::shared_ptr<ShaderBinding> ps;
+			};
+
+			GraphicsPipeline()
+			{
+				desc.vs = nullptr;
+				desc.ps = nullptr;
+			}
+
+			const Descriptor& descriptor() const { return desc; }
+
+			template<typename T>
+			GraphicsPipeline& vs() { desc.vs = std::make_shared<T>(); return *this; }
+			template<typename T>
+			GraphicsPipeline& ps() { desc.ps = std::make_shared<T>(); return *this; }
+		private:
+			Descriptor desc;
 		};
 		
 		class ComputePipeline
 		{
 		public:
-			ComputePipeline(const ShaderInterface& shaderInterface) :
-				m_shaderInterface(shaderInterface) {}
+			struct Descriptor
+			{
+				std::shared_ptr<ShaderBinding> cs;
+			};
 
-			const ShaderInterface& shaderInterface() const { return m_shaderInterface;}
+			ComputePipeline()
+			{
+				desc.cs = nullptr;
+			}
+
+			const Descriptor& descriptor() const { return desc; }
+
+			template<typename T>
+			ComputePipeline& cs() { desc.cs = std::make_shared<T>(); return *this; }
 		private:
-			const ShaderInterface& m_shaderInterface;
+			Descriptor desc;
 		};
 	}
 }

@@ -1,5 +1,6 @@
 #include "ComputePipelineImpl.hpp"
 #include "DeviceImpl.hpp"
+#include "BufferImpl.hpp"
 #include "../Errors.hpp"
 
 #include <d3d11.h>
@@ -19,7 +20,7 @@ namespace graphics
 		m_descriptor(desc),
 		m_shader(nullptr)
 	{
-		std::string ifName(desc.shaderInterface().filename());
+		std::string ifName(desc.descriptor().cs->filename());
 		size_t pos = ifName.find_last_of(".if.h");
 
 		SP_ASSERT(pos != std::wstring::npos, "Shader interface filename does not end with .if.h");
@@ -52,6 +53,18 @@ namespace graphics
 				shaderBlob->GetBufferSize(),
 				NULL, &m_shader);
 			SP_ASSERT_HR(hr, ERROR_CODE_COMPUTE_SHADER_NOT_CREATED);
+		}
+
+		// Create constant buffers
+		for (auto cb : desc.descriptor().cs->cbs())
+		{
+			uint32_t byteSize = static_cast<uint32_t>(cb.byteSize());
+			SP_ASSERT(byteSize % 16 == 0, "Size of a constant buffer must be multipler of 16 bytes.");
+			uint32_t numElems = byteSize / 16;
+			auto desc = desc::Buffer().type(desc::BufferType::Constant)
+				.elements(numElems).usage(desc::Usage::CpuToGpuFrequent);
+			std::shared_ptr<BufferImpl> constantBuf = std::make_shared<BufferImpl>(device, desc);
+			m_resources.cbs.emplace_back(constantBuf);
 		}
 	}
 

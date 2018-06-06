@@ -128,11 +128,11 @@
     <ClInclude Include="dx11\ResourceViewImpl.hpp">
       <Filter>Header Files\dx11</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderResources.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Math.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderResourcesImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

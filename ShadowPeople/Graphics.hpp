@@ -8,7 +8,6 @@
 
 #include "Descriptors.hpp"
 #include "Types.hpp"
-#include "ShaderResources.hpp"
 
 namespace graphics
 {
@@ -160,6 +159,9 @@ namespace graphics
 	private:
 		friend class Device;
 
+		void setupResourceBindings(desc::ShaderBinding& binding);
+		void clearResourceBindings(desc::ShaderBinding& binding);
+
 		std::shared_ptr<CommandBufferImpl> pImpl;
 	};
 
@@ -181,8 +183,6 @@ namespace graphics
 		friend class CommandBuffer;
 
 		std::shared_ptr<GraphicsPipelineImpl> pImpl;
-
-		ShaderResources resources;
 	};
 
 	class ComputePipeline
@@ -194,18 +194,16 @@ namespace graphics
 		bool valid() { return (pImpl != nullptr); }
 		const desc::ComputePipeline& descriptor();
 
-		template<typename T> T bind(CommandBuffer& gfx)
+		template<typename T> 
+		std::unique_ptr<T> bind(CommandBuffer& gfx)
 		{
-			detail::resetBindings();
-			T binding(this);
-			return std::move(binding);
+			shaders::detail::resetBindings();
+			return std::make_unique<T>(this);
 		}
 	private:
 		friend class CommandBuffer;
 
 		std::shared_ptr<ComputePipelineImpl> pImpl;
-		
-		ShaderResources resources;
 	};
 
 	class Device

@@ -142,3 +142,20 @@ private:
 // Colors: Probably need a special class in the future
 using Color3 = ArithmeticVector<float, 3>;
 using Color4 = ArithmeticVector<float, 4>;
+
+template<typename T>
+class Range
+{
+public:
+	Range(T *begin, size_t byteSize) :
+		m_begin(begin),
+		m_byteSize(byteSize)
+	{}
+
+	T*		begin()		{ return m_begin; }
+	size_t  byteSize()	{ return m_byteSize; }
+	// TODO: Fill other member as required
+private:
+	T*		m_begin;
+	size_t	m_byteSize;
+};

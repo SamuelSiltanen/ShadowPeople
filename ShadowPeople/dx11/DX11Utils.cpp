@@ -11,7 +11,7 @@ namespace graphics
 		case desc::Usage::CpuToGpuFrequent:
 			usage		= D3D11_USAGE_DYNAMIC;
 			cpuAccess	= D3D11_CPU_ACCESS_WRITE;
-			bind		= D3D11_BIND_SHADER_RESOURCE;
+			bind		= 0;
 			break;
 		case desc::Usage::GpuToCpuReadback:
 			usage		= D3D11_USAGE_STAGING;

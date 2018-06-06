@@ -24,6 +24,7 @@
 #define ERROR_CODE_GET_BACK_BUFFER_FAILED		__COUNTER__
 #define ERROR_CODE_GET_SWAP_CHAIN_DESC_FAILED	__COUNTER__
 #define ERROR_CODE_COMPUTE_SHADER_NOT_CREATED	__COUNTER__
+#define ERROR_CODE_MAP_DISCARD_FAILED			__COUNTER__
 
 static const LPSTR SP_error_messages[] = 
 {
@@ -33,7 +34,8 @@ static const LPSTR SP_error_messages[] =
 	_T("Window class registration failed!"),
 	_T("Failed to get the back buffer!"),
 	_T("Failed to get swap chain descriptor!"),
-	_T("Failed to create compute shader!")
+	_T("Failed to create compute shader!"),
+	_T("Map discard failed!")
 };
 
 #define SP_EXPECT_NOT_NULL_RET(var, code, ret) \

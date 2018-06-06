@@ -19,7 +19,7 @@ namespace rendering
 			desc::TextureView(m_clearTexture.descriptor())
 				.type(desc::ViewType::UAV), m_clearTexture);
 
-		m_computePipeline = device.createComputePipeline(desc::ComputePipeline(shaders::iTestCS));
+		m_computePipeline = device.createComputePipeline(desc::ComputePipeline().cs<shaders::TestCS>());
 	}
 
 	void SceneRenderer::render(CommandBuffer& gfx)
@@ -28,21 +28,22 @@ namespace rendering
 
 		auto binding = m_computePipeline.bind<shaders::TestCS>(gfx);
 
-		uint32_t numCBs = static_cast<uint32_t>(binding.cbs().size());
-		uint32_t numSRVs = static_cast<uint32_t>(binding.srvs().size());
-		uint32_t numUAVs = static_cast<uint32_t>(binding.uavs().size());
-		uint32_t numSamplers = static_cast<uint32_t>(binding.samplers().size());
+		uint32_t numCBs	= static_cast<uint32_t>(binding->cbs().size());
+		uint32_t numSRVs = static_cast<uint32_t>(binding->srvs().size());
+		uint32_t numUAVs = static_cast<uint32_t>(binding->uavs().size());
+		uint32_t numSamplers = static_cast<uint32_t>(binding->samplers().size());
 		printf("Bound %d CBs\n", numCBs);
 		printf("Bound %d SRVs\n", numSRVs);
 		printf("Bound %d UAVs\n", numUAVs);
 		printf("Bound %d samplers\n", numSamplers);
 
+		binding->constants.size	= { 128, 256 };
+		binding->backBuffer		= m_clearTextureUAV;
 
-		binding.constants.size	= { 256, 256 };
-		binding.backBuffer		= m_clearTextureUAV;
-
+		auto range = binding->cbs()[0];
+		printf("Constant buffer 0: %x %d\n", range.begin(), range.byteSize());
 		
-		gfx.dispatch(binding, 256, 256, 1);
+		gfx.dispatch(*binding, 256, 256, 1);
 
 		gfx.copyToBackBuffer(m_clearTexture);	
 	}

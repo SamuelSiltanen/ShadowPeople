@@ -30,11 +30,6 @@ namespace graphics
 			break;
 		}
 
-		if (desc.descriptor().usage != desc::Usage::GpuToCpuReadback)
-		{
-			dxdesc.BindFlags |= D3D11_BIND_SHADER_RESOURCE;
-		}
-
 		dxdesc.MiscFlags = 0;
 		if (desc.descriptor().indirectArgs)
 		{
