@@ -25,6 +25,7 @@ namespace graphics
 	class DeviceImpl;
 
 	class Device;
+	class ShaderManager;
 
 	class Texture
 	{
@@ -165,11 +166,23 @@ namespace graphics
 		std::shared_ptr<CommandBufferImpl> pImpl;
 	};
 
+	class Shader
+	{
+	public:
+		Shader(const std::string& bindingName, desc::ShaderType type);
+	private:
+		friend class ShaderManager;
+
+		std::shared_ptr<ShaderImpl> pImpl;
+	};
+
 	class GraphicsPipeline
 	{
 	public:
 		GraphicsPipeline() : pImpl(nullptr) {}
-		GraphicsPipeline(Device& device, const desc::GraphicsPipeline& desc);
+		GraphicsPipeline(Device&						device, 
+						 ShaderManager&					shaderManager,
+						 const desc::GraphicsPipeline&	desc);
 
 		bool valid() const { return (pImpl != nullptr); }
 		const desc::GraphicsPipeline& descriptor() const;
@@ -189,7 +202,9 @@ namespace graphics
 	{
 	public:
 		ComputePipeline() : pImpl(nullptr) {}
-		ComputePipeline(Device& device, const desc::ComputePipeline& desc);
+		ComputePipeline(Device&							device,
+						ShaderManager&					shaderManager,
+						const desc::ComputePipeline&	desc);
 
 		bool valid() { return (pImpl != nullptr); }
 		const desc::ComputePipeline& descriptor();
@@ -239,7 +254,9 @@ namespace graphics
 		friend class CommandBuffer;
 		friend class GraphicsPipeline;
 		friend class ComputePipeline;
+		friend class ShaderManager;
 
-		std::shared_ptr<DeviceImpl> pImpl;
+		std::shared_ptr<DeviceImpl>		pImpl;
+		std::shared_ptr<ShaderManager>	m_shaderManager;
 	};
 }

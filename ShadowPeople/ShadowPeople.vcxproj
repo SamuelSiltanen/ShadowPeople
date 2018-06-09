@@ -123,6 +123,8 @@
     <ClCompile Include="dx11\DX11Utils.cpp" />
     <ClCompile Include="dx11\GraphicsPipelineImpl.cpp" />
     <ClCompile Include="dx11\SamplerImpl.cpp" />
+    <ClCompile Include="dx11\ShaderImpl.cpp" />
+    <ClCompile Include="dx11\ShaderManagerImpl.cpp" />
     <ClCompile Include="dx11\TextureImpl.cpp" />
     <ClCompile Include="dx11\TextureViewImpl.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -142,6 +144,8 @@
     <ClInclude Include="dx11\GraphicsPipelineImpl.hpp" />
     <ClInclude Include="dx11\ResourceViewImpl.hpp" />
     <ClInclude Include="dx11\SamplerImpl.hpp" />
+    <ClInclude Include="dx11\ShaderImpl.hpp" />
+    <ClInclude Include="dx11\ShaderManagerImpl.hpp" />
     <ClInclude Include="dx11\TextureImpl.hpp" />
     <ClInclude Include="dx11\TextureViewImpl.hpp" />
     <ClInclude Include="Errors.hpp" />

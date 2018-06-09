@@ -31,6 +31,7 @@ namespace graphics
 		friend class CommandBufferImpl;
 		friend class ComputePipelineImpl;
 		friend class GraphicsPipelineImpl;
+		friend class ShaderManagerImpl;
 
 		std::shared_ptr<TextureImpl> getBackBuffer();
 

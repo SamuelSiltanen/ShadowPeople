@@ -164,7 +164,7 @@ namespace graphics
 	void CommandBufferImpl::setupResources(ComputePipelineImpl& pipeline)
 	{
 		// Bind Shader
-		m_context.CSSetShader(pipeline.shader(), NULL, 0);
+		m_context.CSSetShader((ID3D11ComputeShader*)pipeline.shader().m_shader, NULL, 0);
 
 		std::vector<ID3D11Buffer*>				CBs;
 		std::vector<ID3D11ShaderResourceView*>	SRVs;

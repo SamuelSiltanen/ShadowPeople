@@ -1,5 +1,6 @@
 #include "Graphics.hpp"
 #include "DX11Graphics.hpp"
+#include "ShaderManager.hpp"
 #include "Errors.hpp"
 #include "Math.hpp"
 
@@ -230,9 +231,11 @@ namespace graphics
 
 	}
 
-	GraphicsPipeline::GraphicsPipeline(Device& device, const desc::GraphicsPipeline& desc)
+	GraphicsPipeline::GraphicsPipeline(Device&							device,
+									   ShaderManager&					shaderManager,
+									   const desc::GraphicsPipeline&	desc)
 	{
-		pImpl = std::make_shared<GraphicsPipelineImpl>(*device.pImpl, desc);
+		pImpl = std::make_shared<GraphicsPipelineImpl>(*device.pImpl, *shaderManager.pImpl, desc);
 	}
 
 	const desc::GraphicsPipeline& GraphicsPipeline::descriptor() const
@@ -241,9 +244,11 @@ namespace graphics
 		return pImpl->descriptor();
 	}
 
-	ComputePipeline::ComputePipeline(Device& device, const desc::ComputePipeline& desc)
+	ComputePipeline::ComputePipeline(Device&						device, 
+									 ShaderManager&					shaderManager,
+									 const desc::ComputePipeline&	desc)
 	{
-		pImpl = std::make_shared<ComputePipelineImpl>(*device.pImpl, desc);
+		pImpl = std::make_shared<ComputePipelineImpl>(*device.pImpl, *shaderManager.pImpl, desc);
 	}
 
 	const desc::ComputePipeline& ComputePipeline::descriptor()
@@ -254,7 +259,8 @@ namespace graphics
 
 	Device::Device(HWND hWnd, unsigned width, unsigned height)
 	{
-		pImpl = std::make_shared<DeviceImpl>(hWnd, width, height);
+		pImpl			= std::make_shared<DeviceImpl>(hWnd, width, height);
+		m_shaderManager	= std::make_shared<ShaderManager>(*this);
 	}
 
 	Texture Device::createTexture(const desc::Texture& desc)
@@ -282,14 +288,19 @@ namespace graphics
 		return Sampler(*this, desc);
 	}
 
+	Shader::Shader(const std::string& bindingName, desc::ShaderType type)
+	{
+		pImpl = std::make_shared<ShaderImpl>(bindingName, type);
+	}
+
 	GraphicsPipeline Device::createGraphicsPipeline(const desc::GraphicsPipeline& desc)
 	{
-		return GraphicsPipeline(*this, desc);
+		return GraphicsPipeline(*this, *m_shaderManager, desc);
 	}
 
 	ComputePipeline Device::createComputePipeline(const desc::ComputePipeline& desc)
 	{
-		return ComputePipeline(*this, desc);
+		return ComputePipeline(*this, *m_shaderManager, desc);
 	}
 
 	CommandBuffer Device::createCommandBuffer()

@@ -4,30 +4,30 @@
 
 #include "DX11Utils.hpp"
 #include "ShaderResourcesImpl.hpp"
+#include "ShaderImpl.hpp"
 
 namespace graphics
 {
 	class DeviceImpl;
 	class BufferImpl;
+	class ShaderManagerImpl;
 
 	class ComputePipelineImpl
 	{
 	public:
-		ComputePipelineImpl(DeviceImpl& device, const desc::ComputePipeline& desc);
-		~ComputePipelineImpl();
+		ComputePipelineImpl(DeviceImpl&						device,
+							ShaderManagerImpl&				shaderManager,
+							const desc::ComputePipeline&	desc);
 
 		NO_COPY_CLASS(ComputePipelineImpl);
 
 		const desc::ComputePipeline& descriptor() const { return m_descriptor; }
-		ID3D11ComputeShader* shader() const { return m_shader; }
-		ShaderResourcesImpl& resources() { return m_resources; }
+		const ShaderImpl& shader() const				{ return m_shader; }
+		ShaderResourcesImpl& resources()				{ return m_resources; }
 	private:
-		std::string getComputeShaderName(const desc::ComputePipeline& desc);
-		ID3DBlob* compileShader(const std::string& shaderName);
-		void createComputeShader(DeviceImpl& device, ID3DBlob* shaderBlob);
 		void createConstantBuffers(DeviceImpl& device, const desc::ComputePipeline& desc);
 
-		ID3D11ComputeShader*	m_shader;
+		ShaderImpl				m_shader;
 		ShaderResourcesImpl		m_resources;
 		desc::ComputePipeline	m_descriptor;
 	};

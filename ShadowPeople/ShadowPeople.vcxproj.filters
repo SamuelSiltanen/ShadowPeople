@@ -66,6 +66,12 @@
     <ClCompile Include="ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dx11\ShaderManagerImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\ShaderImpl.cpp">
+      <Filter>Source Files\dx11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Descriptors.hpp">
@@ -136,6 +142,12 @@
     </ClInclude>
     <ClInclude Include="shaders\Test2.if.h">
       <Filter>Source Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\ShaderManagerImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\ShaderImpl.hpp">
+      <Filter>Header Files\dx11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
