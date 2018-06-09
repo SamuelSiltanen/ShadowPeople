@@ -1,0 +1,8 @@
+#include "ShaderInterface.h"
+
+BEGIN_SHADER_INTERFACE(Test2GS)
+
+
+THREAD_GROUP_SIZE(16, 16, 1)
+
+END_SHADER_INTERFACE(Test2GS)

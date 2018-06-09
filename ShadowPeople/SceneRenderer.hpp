@@ -12,6 +12,7 @@ namespace rendering
 		void render(graphics::CommandBuffer& gfx);
 	private:
 		graphics::ComputePipeline	m_computePipeline;
+		graphics::GraphicsPipeline	m_graphicsPipeline;
 
 		graphics::Texture			m_clearTexture;
 		graphics::TextureView		m_clearTextureUAV;

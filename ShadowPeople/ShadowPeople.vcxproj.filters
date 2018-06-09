@@ -134,6 +134,9 @@
     <ClInclude Include="ShaderResourcesImpl.hpp">
       <Filter>Header Files\dx11</Filter>
     </ClInclude>
+    <ClInclude Include="shaders\Test2.if.h">
+      <Filter>Source Files\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\Test.cs.hlsl">

@@ -8,6 +8,8 @@ namespace graphics
 		m_descriptor(desc)
 	{
 		// TODO
+		m_vertexShader = nullptr;
+		m_pixelShader = nullptr;
 	}
 
 	GraphicsPipelineImpl::~GraphicsPipelineImpl()

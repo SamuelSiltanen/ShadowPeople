@@ -395,24 +395,21 @@ namespace graphics
 
 		class GraphicsPipeline
 		{
+		public:
 			struct Descriptor
 			{
-				std::shared_ptr<ShaderBinding> vs;
-				std::shared_ptr<ShaderBinding> ps;
+				std::shared_ptr<ShaderBinding> binding;
 			};
 
 			GraphicsPipeline()
 			{
-				desc.vs = nullptr;
-				desc.ps = nullptr;
+				desc.binding = nullptr;
 			}
 
 			const Descriptor& descriptor() const { return desc; }
 
 			template<typename T>
-			GraphicsPipeline& vs() { desc.vs = std::make_shared<T>(); return *this; }
-			template<typename T>
-			GraphicsPipeline& ps() { desc.ps = std::make_shared<T>(); return *this; }
+			GraphicsPipeline& binding() { desc.binding = std::make_shared<T>(); return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -422,18 +419,18 @@ namespace graphics
 		public:
 			struct Descriptor
 			{
-				std::shared_ptr<ShaderBinding> cs;
+				std::shared_ptr<ShaderBinding> binding;
 			};
 
 			ComputePipeline()
 			{
-				desc.cs = nullptr;
+				desc.binding = nullptr;
 			}
 
 			const Descriptor& descriptor() const { return desc; }
 
 			template<typename T>
-			ComputePipeline& cs() { desc.cs = std::make_shared<T>(); return *this; }
+			ComputePipeline& binding() { desc.binding = std::make_shared<T>(); return *this; }
 		private:
 			Descriptor desc;
 		};

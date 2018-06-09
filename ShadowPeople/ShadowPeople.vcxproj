@@ -152,6 +152,7 @@
     <ClInclude Include="ShaderResourcesImpl.hpp" />
     <ClInclude Include="shaders\ShaderInterface.h" />
     <ClInclude Include="shaders\Test.if.h" />
+    <ClInclude Include="shaders\Test2.if.h" />
     <ClInclude Include="Types.hpp" />
   </ItemGroup>
   <ItemGroup>
