@@ -201,34 +201,85 @@ namespace graphics
 		clearResourceBindings(binding);
 	}
 
-	void CommandBuffer::draw()
+	void CommandBuffer::draw(desc::ShaderBinding& binding, uint32_t vertexCount, uint32_t startVertexOffset)
 	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
+		setupResourceBindings(binding);
+
+		pImpl->draw(*binding.graphicsPipeline()->pImpl, vertexCount, startVertexOffset);
+
+		clearResourceBindings(binding);
 	}
 
-	void CommandBuffer::drawIndexed()
+	void CommandBuffer::drawIndexed(desc::ShaderBinding& binding, uint32_t indexCount,
+									uint32_t startIndexOffset, uint32_t vertexOffset)
 	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
+		setupResourceBindings(binding);
+
+		pImpl->drawIndexed(*binding.graphicsPipeline()->pImpl, indexCount, startIndexOffset, vertexOffset);
+
+		clearResourceBindings(binding);
 	}
 
-	void CommandBuffer::drawInstanced()
+	void CommandBuffer::drawInstanced(desc::ShaderBinding& binding, uint32_t vertexCountPerInstance,
+									  uint32_t instanceCount, uint32_t startVextexOffset,
+									  uint32_t startInstanceOffset)
 	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
+		setupResourceBindings(binding);
+
+		pImpl->drawInstanced(*binding.graphicsPipeline()->pImpl, vertexCountPerInstance, instanceCount,
+							 startVextexOffset, startInstanceOffset);
+
+		clearResourceBindings(binding);
 	}
 
-	void CommandBuffer::drawIndexedInstanced()
+	void CommandBuffer::drawIndexedInstanced(desc::ShaderBinding& binding, uint32_t vertexCountPerInstance,
+											 uint32_t instanceCount, uint32_t startVextexOffset,
+											 uint32_t vertexOffset, uint32_t startInstanceOffset)
 	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
+		setupResourceBindings(binding);
+
+		pImpl->drawIndexedInstanced(*binding.graphicsPipeline()->pImpl, vertexCountPerInstance, instanceCount,
+									startVextexOffset, vertexOffset, startInstanceOffset);
+
+		clearResourceBindings(binding);
 	}
 
-	void CommandBuffer::drawInstancedIndirect()
+	void CommandBuffer::drawInstancedIndirect(desc::ShaderBinding& binding, const Buffer& argsBuffer,
+											  uint32_t argsOffset)
 	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
+		setupResourceBindings(binding);
+
+		pImpl->drawInstancedIndirect(*binding.graphicsPipeline()->pImpl, *argsBuffer.pImpl, argsOffset);
+
+		clearResourceBindings(binding);
 	}
 
-	void CommandBuffer::drawIndexedInstancedIndirect()
+	void CommandBuffer::drawIndexedInstancedIndirect(desc::ShaderBinding& binding, const Buffer& argsBuffer,
+													 uint32_t argsOffset)
 	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
+		setupResourceBindings(binding);
+
+		pImpl->drawIndexedInstancedIndirect(*binding.graphicsPipeline()->pImpl, *argsBuffer.pImpl, argsOffset);
+
+		clearResourceBindings(binding);
 	}
 
 	GraphicsPipeline::GraphicsPipeline(Device&							device,

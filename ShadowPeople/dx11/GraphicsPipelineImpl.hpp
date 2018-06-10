@@ -21,6 +21,9 @@ namespace graphics
 		NO_COPY_CLASS(GraphicsPipelineImpl)
 
 		const desc::GraphicsPipeline& descriptor() const { return m_descriptor; }
+		const ShaderImpl& vertexShader() const			 { return m_vertexShader; }
+		const ShaderImpl& pixelShader() const			 { return m_pixelShader; }
+		ShaderResourcesImpl& resources()				 { return m_resources; }
 	private:
 		ShaderImpl				m_vertexShader;
 		ShaderImpl				m_pixelShader;

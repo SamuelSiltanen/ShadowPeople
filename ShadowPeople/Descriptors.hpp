@@ -173,6 +173,165 @@ namespace graphics
 			}			
 		};
 
+		enum class StencilOp
+		{
+			Keep,
+			Zero,
+			Replace,
+			IncrSat,
+			DecrSat,
+			Invert,
+			Incr,
+			Decr
+		};
+
+		struct StencilOpDesc
+		{
+			StencilOp		failOp		= StencilOp::Keep;
+			StencilOp		depthFailOp	= StencilOp::Keep;
+			StencilOp		passOp		= StencilOp::Replace;
+			ComparisonMode	func		= ComparisonMode::Equal;
+		};
+
+		enum class FaceWinding
+		{
+			Front,
+			Back
+		};
+
+		struct DepthStencilState
+		{
+		public:
+			struct Descriptor
+			{
+				bool			depthTestEnable;
+				bool			depthWriteEnable;
+				ComparisonMode	depthFunc;
+				bool			stencilEnable;
+				uint8_t			stencilReadMask;
+				uint8_t			stencilWriteMask;
+				StencilOpDesc	stencilFrontFace;
+				StencilOpDesc	stencilBackFace;
+				uint32_t		stencilRef;
+			};
+
+			DepthStencilState()
+			{
+				desc.depthTestEnable	= true;
+				desc.depthWriteEnable	= true;
+				desc.depthFunc			= ComparisonMode::Greater;
+				desc.stencilEnable		= false;
+				desc.stencilReadMask	= 0xff;
+				desc.stencilWriteMask	= 0xff;
+				desc.stencilRef			= 0;
+			}
+
+			const Descriptor& descriptor() const	{ return desc; }
+
+			DepthStencilState& depthTestingEnable(bool e) { desc.depthTestEnable = e; return *this; }
+			DepthStencilState& depthWriteEnable(bool e) { desc.depthWriteEnable = e; return *this; }
+			DepthStencilState& depthFunc(ComparisonMode m) { desc.depthFunc = m; return *this; }
+			DepthStencilState& stencilEnable(bool e) { desc.stencilEnable = e; return *this; }
+			DepthStencilState& stencilReadMask(uint8_t m) { desc.stencilReadMask = m; return *this; }
+			DepthStencilState& stencilWriteMask(uint8_t m) { desc.stencilWriteMask = m; return *this; }
+			DepthStencilState& stencilFailOp(StencilOp o, FaceWinding f)
+			{
+				if (f == FaceWinding::Front) desc.stencilFrontFace.failOp = o;
+				else desc.stencilBackFace.failOp = o;
+				return *this; 
+			}
+			DepthStencilState& stencilDepthFailOp(StencilOp o, FaceWinding f)
+			{
+				if (f == FaceWinding::Front) desc.stencilFrontFace.depthFailOp = o;
+				else desc.stencilBackFace.depthFailOp = o;
+				return *this;
+			}
+			DepthStencilState& stencilPassOp(StencilOp o, FaceWinding f)
+			{
+				if (f == FaceWinding::Front) desc.stencilFrontFace.passOp = o;
+				else desc.stencilBackFace.passOp = o;
+				return *this;
+			}
+			DepthStencilState& stencilFunc(ComparisonMode m, FaceWinding f)
+			{
+				if (f == FaceWinding::Front) desc.stencilFrontFace.func = m;
+				else desc.stencilBackFace.func = m;
+				return *this;
+			}
+			DepthStencilState& stencilRef(uint32_t r) { desc.stencilRef = r; return *this; }
+		private:
+			Descriptor desc;
+		};
+
+		enum class BlendMode
+		{
+			Zero,
+			One,
+			SrcColor,
+			InvSrcColor,
+			SrcAlpha,
+			InvSrcAlpha,
+			DstAlpha,
+			InvDestAlpha,
+			DstColor,
+			InvDstColor,
+			SrcAlphaSat,
+			BlendFactor,
+			InvBlendFactor
+		};
+
+		enum class BlendOp
+		{
+			Add,
+			Subtract,
+			RevSubtract,
+			Min,
+			Max
+		};
+
+		constexpr uint32_t MaxNumRenderTargets = 8;
+
+		class BlendState
+		{
+		public:
+			struct RenderTargetBlend
+			{
+				bool		enabled				= false;
+				BlendMode	source				= BlendMode::One;
+				BlendMode	destination			= BlendMode::Zero;
+				BlendOp		blendOp				= BlendOp::Add;
+				BlendMode	sourceAlpha			= BlendMode::One;
+				BlendMode	destinationAlpha	= BlendMode::Zero;
+				BlendOp		blendOpAlpha		= BlendOp::Add;
+				uint8_t		writeMask			= 0xff;
+			};
+
+			struct Descriptor
+			{
+				RenderTargetBlend	renderTargetBlend[MaxNumRenderTargets];
+				Color4				blendFactor;
+			};
+
+			BlendState()
+			{
+				desc.blendFactor = { 1.f, 1.f, 1.f, 1.f };
+			}
+
+			const Descriptor& descriptor() const	{ return desc; }
+
+			BlendState& enabled(bool e, uint32_t n = 0) { desc.renderTargetBlend[n].enabled = e; return *this; }
+			BlendState& source(BlendMode m, uint32_t n = 0) { desc.renderTargetBlend[n].source = m; return *this; }
+			BlendState& destination(BlendMode m, uint32_t n = 0) { desc.renderTargetBlend[n].destination = m; return *this; }
+			BlendState& blendOp(BlendOp o, uint32_t n = 0) { desc.renderTargetBlend[n].blendOp = o; return *this; }
+			BlendState& sourceAlpha(BlendMode m, uint32_t n = 0) { desc.renderTargetBlend[n].sourceAlpha = m; return *this; }
+			BlendState& destinationAlpha(BlendMode m, uint32_t n = 0) { desc.renderTargetBlend[n].destinationAlpha = m; return *this; }
+			BlendState& blendOpAlpha(BlendOp o, uint32_t n = 0) { desc.renderTargetBlend[n].blendOpAlpha = o; return *this; }
+			BlendState& writeMask(uint8_t m, uint32_t n = 0) { desc.renderTargetBlend[n].writeMask = m; return *this; }
+			BlendState& blendFactor(Color4 f) { desc.blendFactor = f; return *this; }
+		private:
+			Descriptor desc;
+		};
+
 		class Texture
 		{
 		public:
@@ -398,7 +557,9 @@ namespace graphics
 		public:
 			struct Descriptor
 			{
-				std::shared_ptr<ShaderBinding> binding;
+				std::shared_ptr<ShaderBinding>	binding;
+				DepthStencilState				depthStencilState;
+				BlendState						blendState;
 			};
 
 			GraphicsPipeline()

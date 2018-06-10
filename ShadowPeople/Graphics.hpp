@@ -151,12 +151,16 @@ namespace graphics
 		void dispatchIndirect(desc::ShaderBinding& binding,
 							  const Buffer& argsBuffer, uint32_t argsOffset);
 
-		void draw();
-		void drawIndexed();
-		void drawInstanced();
-		void drawIndexedInstanced();
-		void drawInstancedIndirect();
-		void drawIndexedInstancedIndirect();
+		void draw(desc::ShaderBinding& binding, uint32_t vertexCount, uint32_t startVertexOffset);
+		void drawIndexed(desc::ShaderBinding& binding, uint32_t indexCount, uint32_t startIndexOffset,
+						 uint32_t vertexOffset);
+		void drawInstanced(desc::ShaderBinding& binding, uint32_t vertexCountPerInstance, uint32_t instanceCount,
+						   uint32_t startVextexOffset, uint32_t startInstanceOffset);
+		void drawIndexedInstanced(desc::ShaderBinding& binding, uint32_t vertexCountPerInstance,
+								  uint32_t instanceCount, uint32_t startVextexOffset, uint32_t vertexOffset,
+								  uint32_t startInstanceOffset);
+		void drawInstancedIndirect(desc::ShaderBinding& binding, const Buffer& argsBuffer, uint32_t argsOffset);
+		void drawIndexedInstancedIndirect(desc::ShaderBinding& binding, const Buffer& argsBuffer, uint32_t argsOffset);
 	private:
 		friend class Device;
 

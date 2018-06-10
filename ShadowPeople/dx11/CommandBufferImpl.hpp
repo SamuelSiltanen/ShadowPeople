@@ -13,6 +13,7 @@ namespace graphics
 	class TextureImpl;
 	class TextureViewImpl;
 	class BufferImpl;
+	class GraphicsPipelineImpl;
 	class ComputePipelineImpl;
 
 	class CommandBufferImpl
@@ -48,11 +49,26 @@ namespace graphics
 					  uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ);
 		void dispatchIndirect(ComputePipelineImpl& pipeline,
 							  const BufferImpl& argsBuffer, uint32_t argsOffset);
+
+		void draw(GraphicsPipelineImpl& pipeline, uint32_t vertexCount, uint32_t startVertexOffset);
+		void drawIndexed(GraphicsPipelineImpl& pipeline, uint32_t indexCount, uint32_t startIndexOffset,
+						 uint32_t vertexOffset);
+		void drawInstanced(GraphicsPipelineImpl& pipeline, uint32_t vertexCountPerInstance, uint32_t instanceCount,
+						   uint32_t startVextexOffset, uint32_t startInstanceOffset);
+		void drawIndexedInstanced(GraphicsPipelineImpl& pipeline, uint32_t vertexCountPerInstance,
+								  uint32_t instanceCount, uint32_t startVextexOffset, uint32_t vertexOffset,
+								  uint32_t startInstanceOffset);
+		void drawInstancedIndirect(GraphicsPipelineImpl& pipeline, const BufferImpl& argsBuffer,
+								   uint32_t argsOffset);
+		void drawIndexedInstancedIndirect(GraphicsPipelineImpl& pipeline, const BufferImpl& argsBuffer,
+										  uint32_t argsOffset);
 	private:
 		bool isSimilarForCopy(const TextureImpl& dst, const TextureImpl& src);
 
 		void setupResources(ComputePipelineImpl& pipeline);
+		void setupResources(GraphicsPipelineImpl& pipeline);
 		void clearResources(ComputePipelineImpl& pipeline);
+		void clearResources(GraphicsPipelineImpl& pipeline);
 
 		ID3D11DeviceContext&	m_context;
 
