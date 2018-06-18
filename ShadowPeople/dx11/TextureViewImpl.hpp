@@ -19,7 +19,7 @@ namespace graphics
 		NO_COPY_CLASS(TextureViewImpl)
 
 		const desc::TextureView& descriptor() { return m_descriptor; }
-
+		const TextureImpl& texture() const { return m_texture; }
 		const ID3D11View* view() const override { return m_view; }
 	private:
 		friend class CommandBufferImpl;
@@ -31,5 +31,6 @@ namespace graphics
 
 		ID3D11View*			m_view;
 		desc::TextureView	m_descriptor;
+		const TextureImpl&	m_texture;
 	};
 }

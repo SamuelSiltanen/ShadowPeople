@@ -305,4 +305,80 @@ namespace graphics
 			return D3D11_COMPARISON_ALWAYS;
 		}
 	}
+
+	D3D11_STENCIL_OP stencilOp(const desc::StencilOp op)
+	{
+		switch(op)
+		{
+		case desc::StencilOp::Zero:
+			return D3D11_STENCIL_OP_ZERO;
+		case desc::StencilOp::Replace:
+			return D3D11_STENCIL_OP_REPLACE;
+		case desc::StencilOp::IncrSat:
+			return D3D11_STENCIL_OP_INCR_SAT;
+		case desc::StencilOp::DecrSat:
+			return D3D11_STENCIL_OP_DECR_SAT;
+		case desc::StencilOp::Invert:
+			return D3D11_STENCIL_OP_INVERT;
+		case desc::StencilOp::Incr:
+			return D3D11_STENCIL_OP_INCR;
+		case desc::StencilOp::Decr:
+			return D3D11_STENCIL_OP_DECR;
+		case desc::StencilOp::Keep:
+		default:
+			return D3D11_STENCIL_OP_KEEP;
+		}
+	}
+
+	D3D11_BLEND blendMode(const desc::BlendMode mode)
+	{
+		switch (mode)
+		{
+		case desc::BlendMode::One:
+			return D3D11_BLEND_ONE;
+		case desc::BlendMode::SrcColor:
+			return D3D11_BLEND_SRC_COLOR;
+		case desc::BlendMode::InvSrcColor:
+			return D3D11_BLEND_INV_SRC_COLOR;
+		case desc::BlendMode::SrcAlpha:
+			return D3D11_BLEND_SRC_ALPHA;
+		case desc::BlendMode::InvSrcAlpha:
+			return D3D11_BLEND_INV_SRC_ALPHA;
+		case desc::BlendMode::DstAlpha:
+			return D3D11_BLEND_DEST_ALPHA;
+		case desc::BlendMode::InvDestAlpha:
+			return D3D11_BLEND_INV_DEST_ALPHA;
+		case desc::BlendMode::DstColor:
+			return D3D11_BLEND_DEST_COLOR;
+		case desc::BlendMode::InvDstColor:
+			return D3D11_BLEND_INV_DEST_COLOR;
+		case desc::BlendMode::SrcAlphaSat:
+			return D3D11_BLEND_SRC_ALPHA_SAT;
+		case desc::BlendMode::BlendFactor:
+			return D3D11_BLEND_BLEND_FACTOR;
+		case desc::BlendMode::InvBlendFactor:
+			return D3D11_BLEND_INV_BLEND_FACTOR;
+		case desc::BlendMode::Zero:
+		default:
+			return D3D11_BLEND_ZERO;
+		}
+	}
+
+	D3D11_BLEND_OP blendOp(const desc::BlendOp op)
+	{
+		switch (op)
+		{
+		case desc::BlendOp::Subtract:
+			return D3D11_BLEND_OP_SUBTRACT;
+		case desc::BlendOp::RevSubtract:
+			return D3D11_BLEND_OP_REV_SUBTRACT;
+		case desc::BlendOp::Min:
+			return D3D11_BLEND_OP_MIN;
+		case desc::BlendOp::Max:
+			return D3D11_BLEND_OP_MAX;
+		case desc::BlendOp::Add:
+		default:
+			return D3D11_BLEND_OP_ADD;
+		}
+	}
 }

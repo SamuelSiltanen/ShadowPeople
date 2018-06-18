@@ -17,16 +17,19 @@
 #define SP_ASSERT(cond, msg)
 #endif
 
-#define ERROR_CODE_NO_ERROR						__COUNTER__
-#define ERROR_CODE_WINDOW_CREATION_FAILED		__COUNTER__
-#define ERROR_CODE_GET_CLIENT_RECT_FAILED		__COUNTER__
-#define ERROR_CODE_WIN_CLASS_REG_FAILED			__COUNTER__
-#define ERROR_CODE_GET_BACK_BUFFER_FAILED		__COUNTER__
-#define ERROR_CODE_GET_SWAP_CHAIN_DESC_FAILED	__COUNTER__
-#define ERROR_CODE_COMPUTE_SHADER_NOT_CREATED	__COUNTER__
-#define ERROR_CODE_VERTEX_SHADER_NOT_CREATED	__COUNTER__
-#define ERROR_CODE_PIXEL_SHADER_NOT_CREATED		__COUNTER__
-#define ERROR_CODE_MAP_DISCARD_FAILED			__COUNTER__
+#define ERROR_CODE_NO_ERROR							__COUNTER__
+#define ERROR_CODE_WINDOW_CREATION_FAILED			__COUNTER__
+#define ERROR_CODE_GET_CLIENT_RECT_FAILED			__COUNTER__
+#define ERROR_CODE_WIN_CLASS_REG_FAILED				__COUNTER__
+#define ERROR_CODE_GET_BACK_BUFFER_FAILED			__COUNTER__
+#define ERROR_CODE_GET_SWAP_CHAIN_DESC_FAILED		__COUNTER__
+#define ERROR_CODE_COMPUTE_SHADER_NOT_CREATED		__COUNTER__
+#define ERROR_CODE_VERTEX_SHADER_NOT_CREATED		__COUNTER__
+#define ERROR_CODE_PIXEL_SHADER_NOT_CREATED			__COUNTER__
+#define ERROR_CODE_DEPTH_STENCIL_STATE_NOT_CREATED	__COUNTER__
+#define ERROR_CODE_BLEND_STATE_NOT_CREATED			__COUNTER__
+#define ERROR_CODE_RASTERIZER_STATE_NOT_CREATED		__COUNTER__
+#define ERROR_CODE_MAP_DISCARD_FAILED				__COUNTER__
 
 static const LPSTR SP_error_messages[] = 
 {
@@ -39,6 +42,9 @@ static const LPSTR SP_error_messages[] =
 	_T("Failed to create compute shader!"),
 	_T("Failed to create vertex shader!"),
 	_T("Failed to create pixel shader!"),
+	_T("Failed to create depth stencil state!"),
+	_T("Failed to create blend state!"),
+	_T("Failed to create rasterizer state!"),
 	_T("Map discard failed!")
 };
 

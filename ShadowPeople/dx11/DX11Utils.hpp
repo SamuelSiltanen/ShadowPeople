@@ -25,4 +25,8 @@ namespace graphics
 	D3D11_TEXTURE_ADDRESS_MODE textureAddressMode(const desc::SamplerCoordinateMode mode);
 
 	D3D11_COMPARISON_FUNC comparisonFunc(const desc::ComparisonMode mode);
+	D3D11_STENCIL_OP stencilOp(const desc::StencilOp op);
+
+	D3D11_BLEND blendMode(const desc::BlendMode mode);
+	D3D11_BLEND_OP blendOp(const desc::BlendOp op);
 }

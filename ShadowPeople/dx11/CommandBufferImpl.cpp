@@ -212,6 +212,8 @@ namespace graphics
 		std::vector<ID3D11ShaderResourceView*>	SRVs;
 		std::vector<ID3D11UnorderedAccessView*>	UAVs;
 		std::vector<uint32_t>					UAVICounts;
+		std::vector<ID3D11RenderTargetView*>	RTVs;
+		ID3D11DepthStencilView*					DSV;
 		std::vector<ID3D11SamplerState*>		samplers;
 
 		auto resources = pipeline.resources();
@@ -225,11 +227,13 @@ namespace graphics
 		{
 			SRVs.emplace_back((ID3D11ShaderResourceView*)srv->view());
 		}
-
-		for (auto uav : resources.uavs)
+		/*
+		for (auto rtv : resources.rtvs)
 		{
-			UAVs.emplace_back((ID3D11UnorderedAccessView*)uav->view());
+			RTVs.emplace_back((ID3D11RenderTargetView*)rtv->view());
 		}
+		*/
+		DSV = (ID3D11DepthStencilView*)resources.dsv;
 
 		for (auto sampler : resources.samplers)
 		{
@@ -243,8 +247,22 @@ namespace graphics
 		m_context.PSSetShaderResources(0, static_cast<uint32_t>(SRVs.size()), SRVs.data());
 		m_context.VSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
 		m_context.PSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
-
-		// TODO: UAVs, DSVs, RTVs
+		/*
+		if (resources.uavs.size() == 0)
+		{
+			m_context.OMSetRenderTargets(static_cast<uint32_t>(RTVs.size()), RTVs.data(), DSV);
+		}
+		else
+		{
+			for (auto uav : resources.uavs)
+			{
+				UAVs.emplace_back((ID3D11UnorderedAccessView*)uav->view());
+			}
+			m_context.OMGetRenderTargetsAndUnorderedAccessViews(
+				static_cast<uint32_t>(RTVs.size()), RTVs.data(), &DSV, 
+				static_cast<uint32_t>(RTVs.size()), static_cast<uint32_t>(UAVs.size()), UAVs.data());
+		}
+		*/
 	}
 
 	void CommandBufferImpl::clearResources(ComputePipelineImpl& pipeline)
@@ -278,9 +296,17 @@ namespace graphics
 		m_context.VSSetSamplers(0, static_cast<uint32_t>(samplerZeros.size()), samplerZeros.data());
 		m_context.PSSetSamplers(0, static_cast<uint32_t>(samplerZeros.size()), samplerZeros.data());
 
-		std::vector<ID3D11UnorderedAccessView*> UAVZeros(resources.uavs.size(), 0);
-		std::vector<uint32_t> UAVICountZeros(resources.uavs.size(), 0);
-		// TODO UAVs
+		if (resources.uavs.size() == 0)
+		{
+			m_context.OMSetRenderTargets(0, nullptr, nullptr);
+		}
+		else
+		{
+			std::vector<ID3D11UnorderedAccessView*> UAVZeros(resources.uavs.size(), 0);
+			m_context.OMGetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr,
+				static_cast<uint32_t>(resources.rtvs.size()), static_cast<uint32_t>(UAVZeros.size()),
+				UAVZeros.data()); 
+		}
 
 		std::vector<ID3D11ShaderResourceView*> SRVZeros(resources.srvs.size(), 0);
 		m_context.VSSetShaderResources(0, static_cast<uint32_t>(SRVZeros.size()), SRVZeros.data());
@@ -293,6 +319,54 @@ namespace graphics
 		// Unbind shaders
 		m_context.VSSetShader(NULL, NULL, 0);
 		m_context.PSSetShader(NULL, NULL, 0);
+	}
+
+	void CommandBufferImpl::setDepthStencilState(GraphicsPipelineImpl& pipeline)
+	{
+		auto desc = pipeline.descriptor().descriptor().depthStencilState;
+		m_context.OMSetDepthStencilState(pipeline.depthStencilState(), desc.descriptor().stencilRef);
+	}
+
+	void CommandBufferImpl::setBlendState(GraphicsPipelineImpl& pipeline)
+	{
+		auto desc = pipeline.descriptor().descriptor().blendState;
+		m_context.OMSetBlendState(pipeline.blendState(), &desc.descriptor().blendFactor[0], 0xffffffff);
+	}
+
+	void CommandBufferImpl::setPrimitiveTopology(GraphicsPipelineImpl& pipeline)
+	{
+		D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+
+		auto desc = pipeline.descriptor().descriptor().primitiveTopology;
+		switch(desc)
+		{
+		case desc::PrimitiveTopology::PointList:
+			topology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+			break;
+		case desc::PrimitiveTopology::LineList:
+			topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+			break;
+		case desc::PrimitiveTopology::LineStrip:
+			topology = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+			break;
+		case desc::PrimitiveTopology::TriangleList:
+			topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			break;
+		case desc::PrimitiveTopology::TriangleStrip:
+			topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+			break;
+		case desc::PrimitiveTopology::Undefined:
+		default:
+			SP_ASSERT(false, "Primitive topology undefined - cannot draw");
+			break;
+		}
+
+		m_context.IASetPrimitiveTopology(topology);
+	}
+
+	void CommandBufferImpl::setRasterizerState(GraphicsPipelineImpl& pipeline)
+	{
+		m_context.RSSetState(pipeline.rasterizerState());		
 	}
 
 	void CommandBufferImpl::dispatch(ComputePipelineImpl& pipeline,
@@ -314,6 +388,10 @@ namespace graphics
 	void CommandBufferImpl::draw(GraphicsPipelineImpl& pipeline, uint32_t vertexCount, uint32_t startVertexOffset)
 	{
 		setupResources(pipeline);
+		setDepthStencilState(pipeline);
+		setBlendState(pipeline);
+		setPrimitiveTopology(pipeline);
+		setRasterizerState(pipeline);
 		m_context.Draw(vertexCount, startVertexOffset);
 		clearResources(pipeline);
 	}
@@ -322,6 +400,10 @@ namespace graphics
 										uint32_t startIndexOffset, uint32_t vertexOffset)
 	{
 		setupResources(pipeline);
+		setDepthStencilState(pipeline);
+		setBlendState(pipeline);
+		setPrimitiveTopology(pipeline);
+		setRasterizerState(pipeline);
 		m_context.DrawIndexed(indexCount, startIndexOffset, vertexOffset);
 		clearResources(pipeline);
 	}
@@ -331,6 +413,10 @@ namespace graphics
 										  uint32_t startInstanceOffset)
 	{
 		setupResources(pipeline);
+		setDepthStencilState(pipeline);
+		setBlendState(pipeline);
+		setPrimitiveTopology(pipeline);
+		setRasterizerState(pipeline);
 		m_context.DrawInstanced(vertexCountPerInstance, instanceCount, startVextexOffset, startInstanceOffset);
 		clearResources(pipeline);
 	}
@@ -340,6 +426,10 @@ namespace graphics
 												 uint32_t vertexOffset, uint32_t startInstanceOffset)
 	{
 		setupResources(pipeline);
+		setDepthStencilState(pipeline);
+		setBlendState(pipeline);
+		setPrimitiveTopology(pipeline);
+		setRasterizerState(pipeline);
 		m_context.DrawIndexedInstanced(vertexCountPerInstance, instanceCount, startVextexOffset,
 									   vertexOffset, startInstanceOffset);
 		clearResources(pipeline);
@@ -349,6 +439,10 @@ namespace graphics
 												  uint32_t argsOffset)
 	{
 		setupResources(pipeline);
+		setDepthStencilState(pipeline);
+		setBlendState(pipeline);
+		setPrimitiveTopology(pipeline);
+		setRasterizerState(pipeline);
 		m_context.DrawInstancedIndirect(argsBuffer.m_buffer, argsOffset);
 		clearResources(pipeline);
 	}
@@ -357,6 +451,10 @@ namespace graphics
 														 const BufferImpl& argsBuffer, uint32_t argsOffset)
 	{
 		setupResources(pipeline);
+		setDepthStencilState(pipeline);
+		setBlendState(pipeline);
+		setPrimitiveTopology(pipeline);
+		setRasterizerState(pipeline);
 		m_context.DrawIndexedInstancedIndirect(argsBuffer.m_buffer, argsOffset);
 		clearResources(pipeline);
 	}

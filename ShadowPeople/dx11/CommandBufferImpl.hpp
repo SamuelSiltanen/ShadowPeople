@@ -70,6 +70,11 @@ namespace graphics
 		void clearResources(ComputePipelineImpl& pipeline);
 		void clearResources(GraphicsPipelineImpl& pipeline);
 
+		void setDepthStencilState(GraphicsPipelineImpl& pipeline);
+		void setBlendState(GraphicsPipelineImpl& pipeline);
+		void setPrimitiveTopology(GraphicsPipelineImpl& pipeline);
+		void setRasterizerState(GraphicsPipelineImpl& pipeline);
+
 		ID3D11DeviceContext&	m_context;
 
 		// TODO: Perhaps not the whole device - we don't want to allow resource creation here

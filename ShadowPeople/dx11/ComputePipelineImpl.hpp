@@ -25,7 +25,7 @@ namespace graphics
 		const ShaderImpl& shader() const				{ return m_shader; }
 		ShaderResourcesImpl& resources()				{ return m_resources; }
 	private:
-		void createConstantBuffers(DeviceImpl& device, const desc::ComputePipeline& desc);
+		
 
 		ShaderImpl				m_shader;
 		ShaderResourcesImpl		m_resources;

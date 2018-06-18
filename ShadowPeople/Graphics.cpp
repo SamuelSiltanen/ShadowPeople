@@ -127,9 +127,19 @@ namespace graphics
 		pImpl->copyToBackBuffer(*src.pImpl);
 	}
 
+	ShaderResourcesImpl& CommandBuffer::getResources(desc::ShaderBinding& binding)
+	{
+		if (binding.computePipeline())
+			return binding.computePipeline()->pImpl->resources();
+		else if (binding.graphicsPipeline())
+			return binding.graphicsPipeline()->pImpl->resources();
+		SP_ASSERT(false, "Shader bound to neither compute or graphics pipeline");
+		return ShaderResourcesImpl();
+	}
+
 	void CommandBuffer::setupResourceBindings(desc::ShaderBinding& binding)
 	{
-		auto& resources = binding.computePipeline()->pImpl->resources();
+		auto& resources = getResources(binding);
 		
 		// Special handling for constant buffers:
 		// - copy the contents of the constant buffer from CPU to GPU
@@ -161,7 +171,7 @@ namespace graphics
 
 	void CommandBuffer::clearResourceBindings(desc::ShaderBinding& binding)
 	{
-		auto& resources = binding.computePipeline()->pImpl->resources();
+		auto& resources = getResources(binding);
 
 		// Note: Clear resources, because they contain shared pointers to resources,
 		// and we don't need them anymore.
@@ -293,6 +303,24 @@ namespace graphics
 	{
 		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
 		return pImpl->descriptor();
+	}
+
+	void GraphicsPipeline::setRenderTargets()
+	{
+		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
+		pImpl->setRenderTargets();
+	}
+
+	void GraphicsPipeline::setRenderTargets(TextureView rtv)
+	{
+		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
+		pImpl->setRenderTargets(*rtv.pImpl);
+	}
+
+	void GraphicsPipeline::setRenderTargets(TextureView dsv, TextureView rtv)
+	{
+		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
+		pImpl->setRenderTargets(*dsv.pImpl, *rtv.pImpl);
 	}
 
 	ComputePipeline::ComputePipeline(Device&						device, 

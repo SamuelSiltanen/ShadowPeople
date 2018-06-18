@@ -8,7 +8,8 @@ namespace graphics
 	TextureViewImpl::TextureViewImpl(DeviceImpl& device,
 									 const desc::TextureView& desc,
 									 const TextureImpl& texture) :
-		m_descriptor(desc)
+		m_descriptor(desc),
+		m_texture(texture)
 	{
 		switch (desc.descriptor().type)
 		{

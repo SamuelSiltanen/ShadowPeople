@@ -3,11 +3,13 @@
 #include <d3d11.h>
 
 #include "DX11Utils.hpp"
-#include "DeviceImpl.hpp"
-#include "ShaderImpl.hpp"
 
 namespace graphics
 {
+	class DeviceImpl;
+	class ShaderImpl;
+	struct ShaderResourcesImpl;
+
 	class ShaderManagerImpl
 	{
 	public:
@@ -19,6 +21,7 @@ namespace graphics
 		void createComputeShader(ShaderImpl& shader);
 		void createVertexShader(ShaderImpl& shader);
 		void createPixelShader(ShaderImpl& shader);
+		void createConstantBuffers(ShaderResourcesImpl& resources, const desc::ShaderBinding& binding);
 	private:
 		std::string getShaderName(const std::string& bindingName, desc::ShaderType type);
 		std::string getShaderTarget(desc::ShaderType type);

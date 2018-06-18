@@ -1,6 +1,8 @@
 #include "ShaderManagerImpl.hpp"
 #include "DeviceImpl.hpp"
 #include "ShaderImpl.hpp"
+#include "ShaderResourcesImpl.hpp"
+#include "BufferImpl.hpp"
 #include "../Errors.hpp"
 
 #include <d3d11.h>
@@ -87,6 +89,20 @@ namespace graphics
 														  shaderBlob->GetBufferSize(),
 														  NULL, (ID3D11PixelShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_PIXEL_SHADER_NOT_CREATED);
+	}
+
+	void ShaderManagerImpl::createConstantBuffers(ShaderResourcesImpl& resources, const desc::ShaderBinding& binding)
+	{
+		for (auto cb : binding.cbs())
+		{
+			uint32_t byteSize = static_cast<uint32_t>(cb.byteSize());
+			SP_ASSERT(byteSize % 16 == 0, "Size of a constant buffer must be multipler of 16 bytes.");
+			uint32_t numElems = byteSize / 16;
+			auto desc = desc::Buffer().type(desc::BufferType::Constant)
+				.elements(numElems).usage(desc::Usage::CpuToGpuFrequent);
+			std::shared_ptr<BufferImpl> constantBuf = std::make_shared<BufferImpl>(m_device, desc);
+			resources.cbs.emplace_back(constantBuf);
+		}
 	}
 
 	std::string ShaderManagerImpl::getShaderName(const std::string& bindingName, desc::ShaderType type)

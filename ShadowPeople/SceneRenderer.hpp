@@ -16,5 +16,8 @@ namespace rendering
 
 		graphics::Texture			m_clearTexture;
 		graphics::TextureView		m_clearTextureUAV;
+
+		graphics::Texture			m_renderTarget;
+		graphics::TextureView		m_renderTargetRTV;
 	};
 }

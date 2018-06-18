@@ -5,7 +5,6 @@
 #include "../Errors.hpp"
 
 #include <d3d11.h>
-#include <d3dcompiler.h>	// TODO: Move the compilation into ShaderManager
 
 namespace graphics
 {
@@ -20,20 +19,12 @@ namespace graphics
 			shaderManager.createComputeShader(m_shader);
 		}
 		
-		createConstantBuffers(device, desc);
+		shaderManager.createConstantBuffers(m_resources, *desc.descriptor().binding);
+
+		m_resources.dsv = nullptr;
+
+		
 	}
 
-	void ComputePipelineImpl::createConstantBuffers(DeviceImpl& device, const desc::ComputePipeline& desc)
-	{
-		for (auto cb : desc.descriptor().binding->cbs())
-		{
-			uint32_t byteSize = static_cast<uint32_t>(cb.byteSize());
-			SP_ASSERT(byteSize % 16 == 0, "Size of a constant buffer must be multipler of 16 bytes.");
-			uint32_t numElems = byteSize / 16;
-			auto desc = desc::Buffer().type(desc::BufferType::Constant)
-				.elements(numElems).usage(desc::Usage::CpuToGpuFrequent);
-			std::shared_ptr<BufferImpl> constantBuf = std::make_shared<BufferImpl>(device, desc);
-			m_resources.cbs.emplace_back(constantBuf);
-		}
-	}
+	
 }

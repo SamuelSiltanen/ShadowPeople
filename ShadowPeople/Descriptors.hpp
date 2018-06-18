@@ -199,6 +199,16 @@ namespace graphics
 			Back
 		};
 
+		enum class PrimitiveTopology
+		{
+			Undefined,
+			PointList,
+			LineList,
+			LineStrip,
+			TriangleList,
+			TriangleStrip
+		};
+
 		struct DepthStencilState
 		{
 		public:
@@ -303,7 +313,7 @@ namespace graphics
 				BlendMode	sourceAlpha			= BlendMode::One;
 				BlendMode	destinationAlpha	= BlendMode::Zero;
 				BlendOp		blendOpAlpha		= BlendOp::Add;
-				uint8_t		writeMask			= 0xff;
+				uint8_t		writeMask			= 0x0f;
 			};
 
 			struct Descriptor
@@ -328,6 +338,51 @@ namespace graphics
 			BlendState& blendOpAlpha(BlendOp o, uint32_t n = 0) { desc.renderTargetBlend[n].blendOpAlpha = o; return *this; }
 			BlendState& writeMask(uint8_t m, uint32_t n = 0) { desc.renderTargetBlend[n].writeMask = m; return *this; }
 			BlendState& blendFactor(Color4 f) { desc.blendFactor = f; return *this; }
+		private:
+			Descriptor desc;
+		};
+
+		enum class FillMode
+		{
+			Solid,
+			WireFrame
+		};
+
+		enum class CullMode
+		{
+			None,
+			Front,
+			Back
+		};
+
+		class RasterizerState
+		{
+		public:
+			struct Descriptor
+			{
+				FillMode	fillMode;
+				CullMode	cullMode;
+				int			depthBias;
+				float		depthBiasClamp;
+				float		depthBiasSlopeScale;
+			};
+
+			RasterizerState()
+			{
+				desc.fillMode = FillMode::Solid;
+				desc.cullMode = CullMode::Back;
+				desc.depthBias = 0;
+				desc.depthBiasClamp = 0;
+				desc.depthBiasSlopeScale = 0;
+			}
+
+			const Descriptor& descriptor() const { return desc; }
+
+			RasterizerState& fillMode(FillMode m) { desc.fillMode = m; return *this; }
+			RasterizerState& cullMode(CullMode m) { desc.cullMode = m; return *this; }
+			RasterizerState& depthBias(int b) { desc.depthBias = b; return *this; }
+			RasterizerState& depthBiasClamp(float c) { desc.depthBiasClamp = c; return *this; }
+			RasterizerState& depthBiasSlopeScale(float s) { desc.depthBiasSlopeScale = s; return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -560,17 +615,32 @@ namespace graphics
 				std::shared_ptr<ShaderBinding>	binding;
 				DepthStencilState				depthStencilState;
 				BlendState						blendState;
+				RasterizerState					rasterizerState;
+				PrimitiveTopology				primitiveTopology;
+				uint32_t						numRenderTargets;
 			};
 
 			GraphicsPipeline()
 			{
 				desc.binding = nullptr;
+				desc.numRenderTargets = 1;
 			}
 
 			const Descriptor& descriptor() const { return desc; }
 
 			template<typename T>
-			GraphicsPipeline& binding() { desc.binding = std::make_shared<T>(); return *this; }
+			GraphicsPipeline& binding()
+			{
+				shaders::detail::resetBindings();
+				desc.binding = std::make_shared<T>();
+				return *this;
+			}
+
+			GraphicsPipeline& depthStencilState(const DepthStencilState& s) { desc.depthStencilState = s; return *this; }
+			GraphicsPipeline& blendState(const BlendState& s) { desc.blendState = s; return *this; }
+			GraphicsPipeline& rasterizerState(const RasterizerState& s) { desc.rasterizerState = s; return *this; }
+			GraphicsPipeline& setPrimitiveTopology(const PrimitiveTopology t) { desc.primitiveTopology = t; return *this; }
+			GraphicsPipeline& numRenderTargets(uint32_t n) { desc.numRenderTargets = n; return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -591,7 +661,12 @@ namespace graphics
 			const Descriptor& descriptor() const { return desc; }
 
 			template<typename T>
-			ComputePipeline& binding() { desc.binding = std::make_shared<T>(); return *this; }
+			ComputePipeline& binding()
+			{
+				shaders::detail::resetBindings();
+				desc.binding = std::make_shared<T>();
+				return *this;
+			}
 		private:
 			Descriptor desc;
 		};

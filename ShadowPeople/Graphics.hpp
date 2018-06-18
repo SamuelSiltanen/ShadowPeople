@@ -20,6 +20,7 @@ namespace graphics
 	class SamplerImpl;
 	class CommandBufferImpl;
 	class ShaderImpl;
+	struct ShaderResourcesImpl;
 	class GraphicsPipelineImpl;
 	class ComputePipelineImpl;
 	class DeviceImpl;
@@ -70,6 +71,7 @@ namespace graphics
 
 	private:
 		friend class CommandBuffer;
+		friend class GraphicsPipeline;
 
 		std::shared_ptr<TextureViewImpl> pImpl;
 	};
@@ -103,7 +105,7 @@ namespace graphics
 		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
 
 	private:
-		friend class CommandBuffer;
+		friend class CommandBuffer;		
 
 		std::shared_ptr<BufferViewImpl> pImpl;
 	};
@@ -164,6 +166,7 @@ namespace graphics
 	private:
 		friend class Device;
 
+		ShaderResourcesImpl& getResources(desc::ShaderBinding& binding);
 		void setupResourceBindings(desc::ShaderBinding& binding);
 		void clearResourceBindings(desc::ShaderBinding& binding);
 
@@ -191,11 +194,16 @@ namespace graphics
 		bool valid() const { return (pImpl != nullptr); }
 		const desc::GraphicsPipeline& descriptor() const;
 
-		template<typename T> T bind(CommandBuffer& gfx)
+		template<typename T>
+		std::unique_ptr<T> bind(CommandBuffer& gfx)
 		{
-			T binding(this);
-			return binding;
+			shaders::detail::resetBindings();
+			return std::make_unique<T>(this);
 		}
+
+		void setRenderTargets();
+		void setRenderTargets(TextureView rtv);
+		void setRenderTargets(TextureView dsv, TextureView rtv);
 	private:
 		friend class CommandBuffer;
 
