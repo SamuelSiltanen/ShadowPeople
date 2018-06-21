@@ -40,7 +40,15 @@ namespace graphics
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC dxdesc;
 
-		dxdesc.Format			= dxgiFormat(desc.descriptor().format);
+		desc::Format format		= desc.descriptor().format;
+		if (format.channels == desc::FormatChannels::Depth)
+		{
+			// Because the depth buffer can be used as a shader resource,
+			// we replace the depth format with an equivalent regular format
+			format.channels = desc::FormatChannels::R;
+		}
+
+		dxdesc.Format			= dxgiFormat(format);
 		switch (desc.descriptor().dimension)
 		{
 		case desc::Dimension::Texture1D:

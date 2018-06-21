@@ -27,12 +27,15 @@ namespace graphics
 		std::string shaderName	= getShaderName(shader.m_bindingName, shader.m_type);
 		std::string target		= getShaderTarget(shader.m_type);
 
+		uint32_t flags1 = D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
+		uint32_t flags2 = 0;
+
 		shader.m_compiledSource = nullptr;
 		ID3DBlob* errorBlob		= nullptr;
 
 		HRESULT hr = D3DCompileFromFile(s2ws(shaderName).c_str(), NULL,
-										D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", target.c_str(), 0, 0,
-										&shader.m_compiledSource, &errorBlob);
+										D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", target.c_str(),
+										flags1, flags2, &shader.m_compiledSource, &errorBlob);
 
 		if (FAILED(hr))
 		{

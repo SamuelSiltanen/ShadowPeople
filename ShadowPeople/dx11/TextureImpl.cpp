@@ -81,8 +81,17 @@ namespace graphics
 		dxdesc.Height		= desc.descriptor().height;
 		dxdesc.MipLevels	= desc.descriptor().mipLevels;
 		dxdesc.ArraySize	= desc.descriptor().arraySize;
-		dxdesc.Format		= dxgiFormat(desc.descriptor().format);
 
+		desc::Format format = desc.descriptor().format;
+		if (format.channels == desc::FormatChannels::Depth)
+		{
+			// Because the depth buffer can be used as a shader resource,
+			// we create it as a typeless format
+			format.channels = desc::FormatChannels::R;
+			format.type		= desc::FormatType::Typeless;
+		}
+
+		dxdesc.Format		= dxgiFormat(format);
 		dxdesc.SampleDesc	= dxgiSampleDesc(desc.descriptor().multisampling);
 
 		setUsageFlags(desc.descriptor().usage,

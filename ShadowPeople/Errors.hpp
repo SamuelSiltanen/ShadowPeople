@@ -61,3 +61,6 @@ static const LPSTR SP_error_messages[] =
 	{ \
 		MessageBox(NULL, SP_error_messages[code], _T("Error"), NULL); \
 	}
+
+#define SP_DEBUG_OUTPUT(str) \
+	OutputDebugString(str);

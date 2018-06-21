@@ -336,9 +336,9 @@ namespace graphics
 		return pImpl->descriptor();
 	}
 
-	Device::Device(HWND hWnd, unsigned width, unsigned height)
+	Device::Device(HWND hWnd, int2 screenSize)
 	{
-		pImpl			= std::make_shared<DeviceImpl>(hWnd, width, height);
+		pImpl			= std::make_shared<DeviceImpl>(hWnd, screenSize);
 		m_shaderManager	= std::make_shared<ShaderManager>(*this);
 	}
 

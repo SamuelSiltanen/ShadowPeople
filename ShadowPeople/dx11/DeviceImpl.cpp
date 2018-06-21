@@ -4,7 +4,7 @@
 
 namespace graphics
 {
-	DeviceImpl::DeviceImpl(HWND hWnd, unsigned width, unsigned height)
+	DeviceImpl::DeviceImpl(HWND hWnd, int2 screenSize)
 	{
 		IDXGIAdapter* pAdapter				= NULL;
 		D3D_DRIVER_TYPE driverType			= D3D_DRIVER_TYPE_HARDWARE;
@@ -15,8 +15,8 @@ namespace graphics
 		D3D_FEATURE_LEVEL* pGivenFeatLvl	= NULL;
 
 		DXGI_MODE_DESC backBufferMode;
-		backBufferMode.Width				= width;
-		backBufferMode.Height				= height;
+		backBufferMode.Width				= screenSize[0];
+		backBufferMode.Height				= screenSize[1];
 		backBufferMode.RefreshRate			= { 1, 60 };
 		backBufferMode.Format				= DXGI_FORMAT_R8G8B8A8_UNORM;
 		backBufferMode.ScanlineOrdering		= DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;

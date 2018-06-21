@@ -69,12 +69,12 @@ namespace graphics
 	void GraphicsPipelineImpl::setViewport(uint32_t width, uint32_t height)
 	{
 		D3D11_VIEWPORT viewport;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
-		viewport.Width = width;
-		viewport.Height = height;
-		viewport.MinDepth = 0.f;
-		viewport.MaxDepth = 1.f;
+		viewport.TopLeftX	= 0;
+		viewport.TopLeftY	= 0;
+		viewport.Width		= static_cast<float>(width);
+		viewport.Height		= static_cast<float>(height);
+		viewport.MinDepth	= 0.f;
+		viewport.MaxDepth	= 1.f;
 		m_device.m_context->RSSetViewports(1, &viewport);
 	}
 

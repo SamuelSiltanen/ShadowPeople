@@ -1,4 +1,5 @@
 #include "SceneRenderer.hpp"
+#include "Camera.hpp"
 #include "shaders/Test.if.h"
 #include "shaders/Test2.if.h"
 
@@ -29,19 +30,36 @@ namespace rendering
 			desc::TextureView(m_renderTarget.descriptor())
 				.type(desc::ViewType::RTV), m_renderTarget);
 
+		desc::Format depthFormat;
+		depthFormat.channels	= desc::FormatChannels::Depth;
+		depthFormat.bytes		= desc::FormatBytesPerChannel::B32;
+		depthFormat.type		= desc::FormatType::Float;
+
+		m_depthBuffer = device.createTexture(desc::Texture()
+			.width(s[0])
+			.height(s[1])
+			.format(depthFormat)
+			.usage(desc::Usage::DepthBuffer));
+
+		m_depthBufferDSV = device.createTextureView(
+			desc::TextureView(m_depthBuffer.descriptor())
+				.type(desc::ViewType::DSV), m_depthBuffer);
+
 		m_computePipeline = device.createComputePipeline(desc::ComputePipeline()
 			.binding<shaders::TestCS>());
 
 		m_graphicsPipeline = device.createGraphicsPipeline(desc::GraphicsPipeline()
 			.binding<shaders::Test2GS>()
-			.setPrimitiveTopology(desc::PrimitiveTopology::TriangleStrip)
+			.setPrimitiveTopology(desc::PrimitiveTopology::TriangleList)
 			.numRenderTargets(1)
 			.rasterizerState(desc::RasterizerState().cullMode(desc::CullMode::None))
-			.depthStencilState(desc::DepthStencilState().depthTestingEnable(false)));
+			.depthStencilState(desc::DepthStencilState()
+				.depthTestingEnable(true)
+				.depthFunc(desc::ComparisonMode::Less)));
 	}
 
-	void SceneRenderer::render(CommandBuffer& gfx)
-	{		
+	void SceneRenderer::render(CommandBuffer& gfx, const Camera& camera)
+	{
 		gfx.clear(m_clearTextureUAV, 1.f, 0.5f, 0.f, 1.f);
 
 		{
@@ -54,13 +72,17 @@ namespace rendering
 		}
 		gfx.copyToBackBuffer(m_clearTexture);
 
-		m_graphicsPipeline.setRenderTargets(m_renderTargetRTV);
+		gfx.clear(m_renderTargetRTV, 0.f, 0.f, 0.f, 0.f);
+		gfx.clear(m_depthBufferDSV, 1.f);
+
+		m_graphicsPipeline.setRenderTargets(m_depthBufferDSV, m_renderTargetRTV);
 		{
 			auto binding = m_graphicsPipeline.bind<shaders::Test2GS>(gfx);
 
-			
+			binding->constants.view = camera.viewMatrix();
+			binding->constants.proj = camera.projectionMatrix();			
 
-			gfx.draw(*binding, 4, 0);
+			gfx.draw(*binding, 12 * 3, 0);
 		}
 		m_graphicsPipeline.setRenderTargets();
 

@@ -10,7 +10,8 @@
 
 #include <vector>
 
-using uint = unsigned;
+using uint		= unsigned;
+using float4x4	= Matrix4x4;
 
 namespace graphics
 {
@@ -52,13 +53,14 @@ namespace graphics
 			static_assert(sizeof(Body##x) % 16 == 0, "Size of a constant buffer must be multipler of 16 bytes."); \
 			struct CB##x : public Body##x \
 			{ \
-				uint32_t index; \
 				CB##x() \
 				{ \
 					Range<const uint8_t> data(reinterpret_cast<const uint8_t*>(this), sizeof(Body##x)); \
 					index = static_cast<uint32_t>(detail::cbs.size()); \
 					detail::cbs.emplace_back(data); \
 				} \
+			private: \
+				uint32_t index; \
 			}; \
 			CB##x x
 

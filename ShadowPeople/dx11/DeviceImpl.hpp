@@ -13,7 +13,7 @@ namespace graphics
 	class DeviceImpl
 	{
 	public:
-		DeviceImpl(HWND hWnd, unsigned width, unsigned height);
+		DeviceImpl(HWND hWnd, int2 screenSize);
 		~DeviceImpl();
 
 		NO_COPY_CLASS(DeviceImpl)

@@ -236,7 +236,7 @@ namespace graphics
 	class Device
 	{
 	public:
-		Device(HWND hWnd, unsigned width, unsigned height);
+		Device(HWND hWnd, int2 screenSize);
 
 		bool				valid() const { return (pImpl != nullptr); }
 

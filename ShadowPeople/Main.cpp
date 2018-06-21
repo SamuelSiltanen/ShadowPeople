@@ -4,6 +4,8 @@
 #include "Graphics.hpp"
 #include "Errors.hpp"
 #include "SceneRenderer.hpp"
+#include "GameLogic.hpp"
+#include "InputManager.hpp"
 
 #include <tchar.h>
 
@@ -11,9 +13,13 @@ static TCHAR szWindowClass[]	= _T("shadowpeople");
 static TCHAR szTitle[]			= _T("Shadow People");
 
 static BOOL exitApplication		= FALSE;
+static BOOL mouseOutOfWindow	= FALSE;
+
+static std::unique_ptr<input::InputManager> inputManager = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HWND createWindow(HINSTANCE hInstance);
+void trackMouseLeave(HWND hWnd);
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -24,27 +30,34 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	BOOL isOK = GetClientRect(hWnd, &clientRect);
 	SP_EXPECT_NOT_NULL(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED);
 
-	unsigned clientAreaWidth	= clientRect.right - clientRect.left;
-	unsigned clientAreaHeight	= clientRect.bottom - clientRect.top;
+	int2 clientArea {clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
 
-	graphics::Device device(hWnd, clientAreaWidth, clientAreaHeight);
+	graphics::Device device(hWnd, clientArea);
+
+	inputManager = std::make_unique<input::InputManager>();
 
 	rendering::SceneRenderer sceneRenderer(device);
+	
+	std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(clientArea);
+	inputManager->registerListener(gameLogic);
 
 	ShowWindow(hWnd, nCmdShow);
+	trackMouseLeave(hWnd);
 
 	MSG msg	= {};
 	while (!exitApplication)
 	{
-		if (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
+		while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
+		inputManager->tick();
+
 		graphics::CommandBuffer gfx = device.createCommandBuffer();
 
-		sceneRenderer.render(gfx);
+		sceneRenderer.render(gfx, gameLogic->camera());
 
 		device.submit(gfx);
 		device.present(1);
@@ -61,26 +74,52 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		exitApplication = TRUE;
 		return 0;
+	
 	case WM_KEYDOWN:
-		// TODO: Handle key down
+		inputManager->keyDown(static_cast<uint8_t>(wParam));
 		break;
 	case WM_KEYUP:
-		// TODO: Handle key up
+		inputManager->keyUp(static_cast<uint8_t>(wParam));
 		break;
 	case WM_MOUSEMOVE:
-		// TODO: Handle mouse movement
+	{
+		uint16_t x = static_cast<uint16_t>(lParam & 0xffff);
+		uint16_t y = static_cast<uint16_t>(lParam >> 16);
+		uint16_t flags = 0;
+		if (wParam & MK_LBUTTON) flags |= input::FlagLeftButton;
+		if (wParam & MK_RBUTTON) flags |= input::FlagRightButton;
+		if (wParam & MK_MBUTTON) flags |= input::FlagMiddleButton;
+		if (wParam & MK_SHIFT)   flags |= input::FlagShift;
+		if (wParam & MK_CONTROL) flags |= input::FlagControl;
+		inputManager->mouseMove(x, y, flags);
+		if (mouseOutOfWindow)
+		{
+			trackMouseLeave(hWnd);
+			mouseOutOfWindow = FALSE;
+		}
 		break;
+	}
 	case WM_LBUTTONDOWN:
-		// TODO: Handle left mouse button down
+		inputManager->mouseButtonDown(input::MouseButton::Left);
 		break;
 	case WM_LBUTTONUP:
-		// TODO: Handle left mouse button up
+		inputManager->mouseButtonUp(input::MouseButton::Left);
+		break;
+	case WM_MBUTTONDOWN:
+		inputManager->mouseButtonDown(input::MouseButton::Middle);
+		break;
+	case WM_MBUTTONUP:
+		inputManager->mouseButtonUp(input::MouseButton::Middle);
 		break;
 	case WM_RBUTTONDOWN:
-		// TODO: Handle right mouse button down
+		inputManager->mouseButtonDown(input::MouseButton::Right);
 		break;
 	case WM_RBUTTONUP:
-		// TODO: Handle right mouse button up
+		inputManager->mouseButtonUp(input::MouseButton::Right);
+		break;
+	case WM_MOUSELEAVE:
+		inputManager->outOfFocus();
+		mouseOutOfWindow = TRUE;
 		break;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -109,4 +148,14 @@ HWND createWindow(HINSTANCE hInstance)
 	return CreateWindowEx(0, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 						  CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 						  NULL, NULL, hInstance, NULL);
+}
+
+void trackMouseLeave(HWND hWnd)
+{
+	TRACKMOUSEEVENT mouseTracking;
+	mouseTracking.cbSize		= sizeof(TRACKMOUSEEVENT);
+	mouseTracking.dwFlags		= TME_LEAVE;
+	mouseTracking.hwndTrack		= hWnd;
+	mouseTracking.dwHoverTime	= HOVER_DEFAULT;
+	TrackMouseEvent(&mouseTracking);
 }
