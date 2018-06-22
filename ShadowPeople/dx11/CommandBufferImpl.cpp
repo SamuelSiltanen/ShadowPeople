@@ -208,6 +208,7 @@ namespace graphics
 		}
 		uint32_t offset = 0;
 		m_context.IASetVertexBuffers(0, 1, &buffer.m_buffer, &stride, &offset);
+		m_context.IASetInputLayout(pipeline.inputLayout());
 	}
 
 	void CommandBufferImpl::setIndexBuffer(BufferImpl& buffer)

@@ -54,12 +54,6 @@ namespace rendering
 			.binding<shaders::Test2GS>()
 			.setPrimitiveTopology(desc::PrimitiveTopology::TriangleList)
 			.numRenderTargets(1)
-			.inputLayoutElement(desc::InputElement("POSITION", 0,
-				{ desc::FormatChannels::RG, desc::FormatBytesPerChannel::B32, desc::FormatType::Float }, 0))
-			.inputLayoutElement(desc::InputElement("TEXCOORD", 0,
-				{ desc::FormatChannels::RG, desc::FormatBytesPerChannel::B32, desc::FormatType::Float }, 0))
-			.inputLayoutElement(desc::InputElement("COLOR", 0,
-				{ desc::FormatChannels::RGBA, desc::FormatBytesPerChannel::B8, desc::FormatType::UNorm }, 0))
 			.rasterizerState(desc::RasterizerState().cullMode(desc::CullMode::None))
 			.depthStencilState(desc::DepthStencilState()
 				.depthTestingEnable(true)

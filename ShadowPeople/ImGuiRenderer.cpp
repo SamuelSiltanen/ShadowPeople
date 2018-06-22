@@ -23,6 +23,12 @@ namespace rendering
 		m_imGuiRenderingPipeline = device.createGraphicsPipeline(desc::GraphicsPipeline()
 			.binding<shaders::ImGuiRendererGS>()
 			.numRenderTargets(1)
+			.inputLayoutElement(desc::InputElement("POSITION", 0,
+				{ desc::FormatChannels::RG, desc::FormatBytesPerChannel::B32, desc::FormatType::Float }, 0))
+			.inputLayoutElement(desc::InputElement("TEXCOORD", 0,
+				{ desc::FormatChannels::RG, desc::FormatBytesPerChannel::B32, desc::FormatType::Float }, 0))
+			.inputLayoutElement(desc::InputElement("COLOR", 0,
+				{ desc::FormatChannels::RGBA, desc::FormatBytesPerChannel::B8, desc::FormatType::UNorm }, 0))
 			.setPrimitiveTopology(desc::PrimitiveTopology::TriangleList)
 			.blendState(desc::BlendState().enabled(true)
 				.source(desc::BlendMode::SrcAlpha)

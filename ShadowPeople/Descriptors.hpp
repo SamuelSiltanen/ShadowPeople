@@ -646,7 +646,7 @@ namespace graphics
 				semanticIndex(semanticIndex),
 				format(format),
 				inputSlot(inputSlot),
-				isInstanceData(isInstanceData), 
+				isInstanceData(isInstaceData), 
 				instanceDataStepRate(instanceDataStepRate)
 			{}
 		};
