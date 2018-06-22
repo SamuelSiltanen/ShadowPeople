@@ -20,11 +20,5 @@ namespace graphics
 		}
 		
 		shaderManager.createConstantBuffers(m_resources, *desc.descriptor().binding);
-
-		m_resources.dsv = nullptr;
-
-		
 	}
-
-	
 }

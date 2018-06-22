@@ -365,15 +365,17 @@ namespace graphics
 				int			depthBias;
 				float		depthBiasClamp;
 				float		depthBiasSlopeScale;
+				bool		enableScissors;
 			};
 
 			RasterizerState()
 			{
-				desc.fillMode = FillMode::Solid;
-				desc.cullMode = CullMode::Back;
-				desc.depthBias = 0;
-				desc.depthBiasClamp = 0;
-				desc.depthBiasSlopeScale = 0;
+				desc.fillMode				= FillMode::Solid;
+				desc.cullMode				= CullMode::Back;
+				desc.depthBias				= 0;
+				desc.depthBiasClamp			= 0;
+				desc.depthBiasSlopeScale	= 0;
+				desc.enableScissors			= false;
 			}
 
 			const Descriptor& descriptor() const { return desc; }
@@ -383,8 +385,22 @@ namespace graphics
 			RasterizerState& depthBias(int b) { desc.depthBias = b; return *this; }
 			RasterizerState& depthBiasClamp(float c) { desc.depthBiasClamp = c; return *this; }
 			RasterizerState& depthBiasSlopeScale(float s) { desc.depthBiasSlopeScale = s; return *this; }
+			RasterizerState& enableScissors(bool b) { desc.enableScissors = b; return *this; }
 		private:
 			Descriptor desc;
+		};
+
+		struct InitialData
+		{
+			const void* dataPtr;
+			uint32_t	pitch;
+			uint32_t    pitchDepth;
+
+			InitialData(const void *dataPtr = nullptr, uint32_t pitch = 0, uint32_t pitchDepth = 0) :
+				dataPtr(dataPtr),
+				pitch(pitch),
+				pitchDepth(pitchDepth)
+			{}
 		};
 
 		class Texture
@@ -401,6 +417,7 @@ namespace graphics
 				Format			format;
 				Multisampling	multisampling;
 				Usage			usage;
+				InitialData		initialData;
 			};
 
 			Texture()
@@ -427,6 +444,7 @@ namespace graphics
 			Texture& format(Format f)				{ desc.format = f; return *this; }
 			Texture& multisampling(Multisampling m) { desc.multisampling = m; return *this; }
 			Texture& usage(Usage u)					{ desc.usage = u; return *this; }
+			Texture& initialData(InitialData i)		{ desc.initialData = i; return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -482,6 +500,7 @@ namespace graphics
 				bool		indirectArgs;
 				bool		raw;
 				bool		structured;
+				InitialData initialData;
 			};
 
 			Buffer()
@@ -503,10 +522,11 @@ namespace graphics
 			Buffer& usage(Usage u)			{ desc.usage = u; return *this; }
 			Buffer& format(Format f)		{ desc.format = f; desc.stride = 0; return *this; }
 			template<typename T>
-			Buffer& format(int s)			{ desc.format = Format::unknown(); desc.stride = sizeof(T); return *this; }
+			Buffer& format()				{ desc.format = Format::unknown(); desc.stride = sizeof(T); return *this; }
 			Buffer& indirectArgs(bool i)	{ desc.indirectArgs = i; return *this; }
 			Buffer& raw(bool r)				{ desc.raw = r; return *this; }
 			Buffer& structured(bool s)		{ desc.structured = s; return *this; }
+			Buffer& initialData(InitialData i) { desc.initialData = i; return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -607,6 +627,30 @@ namespace graphics
 			virtual uint32_t threadGroupSizeZ() const = 0;
 		};
 
+		struct InputElement
+		{
+			std::string semanticName			= "POSITION";
+			uint32_t	semanticIndex			= 0;
+			Format		format					= { desc::FormatChannels::RGBA, desc::FormatBytesPerChannel::B32, desc::FormatType::Float };
+			uint32_t	inputSlot				= 0;
+			bool		isInstanceData			= false;
+			uint32_t	instanceDataStepRate	= 0;
+
+			InputElement(const std::string& semanticName,
+						 uint32_t semanticIndex,
+						 Format format,
+						 uint32_t inputSlot,
+						 bool isInstaceData				= false,
+						 uint32_t instanceDataStepRate	= 0) :
+				semanticName(semanticName),
+				semanticIndex(semanticIndex),
+				format(format),
+				inputSlot(inputSlot),
+				isInstanceData(isInstanceData), 
+				instanceDataStepRate(instanceDataStepRate)
+			{}
+		};
+
 		class GraphicsPipeline
 		{
 		public:
@@ -617,6 +661,7 @@ namespace graphics
 				BlendState						blendState;
 				RasterizerState					rasterizerState;
 				PrimitiveTopology				primitiveTopology;
+				std::vector<InputElement>		inputLayout;
 				uint32_t						numRenderTargets;
 			};
 
@@ -641,6 +686,7 @@ namespace graphics
 			GraphicsPipeline& rasterizerState(const RasterizerState& s) { desc.rasterizerState = s; return *this; }
 			GraphicsPipeline& setPrimitiveTopology(const PrimitiveTopology t) { desc.primitiveTopology = t; return *this; }
 			GraphicsPipeline& numRenderTargets(uint32_t n) { desc.numRenderTargets = n; return *this; }
+			GraphicsPipeline& inputLayoutElement(const InputElement& e) { desc.inputLayout.emplace_back(e); return *this; }
 		private:
 			Descriptor desc;
 		};

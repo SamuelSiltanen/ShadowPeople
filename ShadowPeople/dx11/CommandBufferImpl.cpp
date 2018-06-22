@@ -3,6 +3,7 @@
 #include "TextureImpl.hpp"
 #include "TextureViewImpl.hpp"
 #include "BufferImpl.hpp"
+#include "MappingImpl.hpp"
 #include "SamplerImpl.hpp"
 #include "GraphicsPipelineImpl.hpp"
 #include "ComputePipelineImpl.hpp"
@@ -16,7 +17,9 @@ namespace graphics
 	CommandBufferImpl::CommandBufferImpl(DeviceImpl& device) :
 		m_context(*device.m_context),
 		m_device(device)
-	{}
+	{
+		m_currentRenderTargets.rtvs.resize(1); // Note: Reserve slot for one render target
+	}
 
 	void CommandBufferImpl::clear(TextureViewImpl& view, float r, float g, float b, float a)
 	{
@@ -162,6 +165,64 @@ namespace graphics
 		}
 	}
 
+	void CommandBufferImpl::setRenderTargets()
+	{
+		for (auto& rtv : m_currentRenderTargets.rtvs)
+		{
+			rtv = nullptr;
+		}
+		m_currentRenderTargets.dsv = nullptr;
+	}
+
+	void CommandBufferImpl::setRenderTargets(TextureViewImpl& rtv)
+	{
+		SP_ASSERT(rtv.descriptor().descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");		
+		m_currentRenderTargets.rtvs[0]			= &rtv; // Note: This assumes only one render target
+		m_currentRenderTargets.dsv				= nullptr;
+		m_currentRenderTargets.renderTargetSize =
+		{
+			rtv.texture().descriptor().descriptor().width,
+			rtv.texture().descriptor().descriptor().height
+		};
+	}
+	
+	void CommandBufferImpl::setRenderTargets(TextureViewImpl& dsv, TextureViewImpl& rtv)
+	{
+		SP_ASSERT(dsv.descriptor().descriptor().type == desc::ViewType::DSV, "Only DSV can be bound as depth stencil");
+		SP_ASSERT(rtv.descriptor().descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");
+		m_currentRenderTargets.rtvs[0]			= &rtv; // Note: This assumes only one render target
+		m_currentRenderTargets.dsv				= &dsv;
+		m_currentRenderTargets.renderTargetSize =
+		{
+			rtv.texture().descriptor().descriptor().width,
+			rtv.texture().descriptor().descriptor().height
+		};
+	}
+
+	void CommandBufferImpl::setVertexBuffer(BufferImpl& buffer, GraphicsPipelineImpl& pipeline)
+	{
+		uint32_t stride = 0;
+		for (auto& element : pipeline.descriptor().descriptor().inputLayout)
+		{
+			stride += element.format.byteWidth();
+		}
+		uint32_t offset = 0;
+		m_context.IASetVertexBuffers(0, 1, &buffer.m_buffer, &stride, &offset);
+	}
+
+	void CommandBufferImpl::setIndexBuffer(BufferImpl& buffer)
+	{
+		uint32_t stride = buffer.descriptor().descriptor().stride;
+		SP_ASSERT((stride == 4) || (stride == 2), "Only 32- and 16-bit index buffers are supported");
+		DXGI_FORMAT format = (stride == 4) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
+		m_context.IASetIndexBuffer(buffer.m_buffer, format, 0);
+	}
+
+	std::shared_ptr<MappingImpl> CommandBufferImpl::map(BufferImpl& buf)
+	{
+		return std::make_shared<MappingImpl>(m_device, buf);
+	}
+
 	void CommandBufferImpl::setupResources(ComputePipelineImpl& pipeline)
 	{
 		// Bind shader
@@ -227,13 +288,13 @@ namespace graphics
 		{
 			SRVs.emplace_back((ID3D11ShaderResourceView*)srv->view());
 		}
-		/*
-		for (auto rtv : resources.rtvs)
+		
+		for (auto rtv : m_currentRenderTargets.rtvs)
 		{
 			RTVs.emplace_back((ID3D11RenderTargetView*)rtv->view());
 		}
-		*/
-		DSV = (ID3D11DepthStencilView*)resources.dsv;
+		
+		DSV = (ID3D11DepthStencilView*)m_currentRenderTargets.dsv->view();
 
 		for (auto sampler : resources.samplers)
 		{
@@ -247,7 +308,7 @@ namespace graphics
 		m_context.PSSetShaderResources(0, static_cast<uint32_t>(SRVs.size()), SRVs.data());
 		m_context.VSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
 		m_context.PSSetSamplers(0, static_cast<uint32_t>(samplers.size()), samplers.data());
-		/*
+		
 		if (resources.uavs.size() == 0)
 		{
 			m_context.OMSetRenderTargets(static_cast<uint32_t>(RTVs.size()), RTVs.data(), DSV);
@@ -262,7 +323,20 @@ namespace graphics
 				static_cast<uint32_t>(RTVs.size()), RTVs.data(), &DSV, 
 				static_cast<uint32_t>(RTVs.size()), static_cast<uint32_t>(UAVs.size()), UAVs.data());
 		}
-		*/
+		
+		setViewport();
+	}
+
+	void CommandBufferImpl::setViewport()
+	{
+		D3D11_VIEWPORT viewport;
+		viewport.TopLeftX	= 0;
+		viewport.TopLeftY	= 0;
+		viewport.Width		= static_cast<float>(m_currentRenderTargets.renderTargetSize[0]);
+		viewport.Height		= static_cast<float>(m_currentRenderTargets.renderTargetSize[1]);
+		viewport.MinDepth	= 0.f;
+		viewport.MaxDepth	= 1.f;
+		m_device.m_context->RSSetViewports(1, &viewport);
 	}
 
 	void CommandBufferImpl::clearResources(ComputePipelineImpl& pipeline)
@@ -304,7 +378,7 @@ namespace graphics
 		{
 			std::vector<ID3D11UnorderedAccessView*> UAVZeros(resources.uavs.size(), 0);
 			m_context.OMGetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr,
-				static_cast<uint32_t>(resources.rtvs.size()), static_cast<uint32_t>(UAVZeros.size()),
+				static_cast<uint32_t>(m_currentRenderTargets.rtvs.size()), static_cast<uint32_t>(UAVZeros.size()),
 				UAVZeros.data()); 
 		}
 

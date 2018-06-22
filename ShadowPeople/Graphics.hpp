@@ -17,6 +17,7 @@ namespace graphics
 	class BufferImpl;
 	class BufferViewImpl;
 	class ResourceViewImpl;
+	class MappingImpl;
 	class SamplerImpl;
 	class CommandBufferImpl;
 	class ShaderImpl;
@@ -110,6 +111,16 @@ namespace graphics
 		std::shared_ptr<BufferViewImpl> pImpl;
 	};
 
+	class Mapping
+	{
+	public:
+		Mapping(std::shared_ptr<MappingImpl> impl);
+
+		void* data();
+	private:
+		std::shared_ptr<MappingImpl> pImpl;
+	};
+
 	class Sampler
 	{
 	public:
@@ -147,6 +158,16 @@ namespace graphics
 				  Subresource dstSubresource, Subresource srcSubresource);
 
 		void copyToBackBuffer(Texture src);
+
+		void setRenderTargets();
+		void setRenderTargets(TextureView rtv);
+		void setRenderTargets(TextureView dsv, TextureView rtv);
+
+		void setVertexBuffer(Buffer buffer, GraphicsPipeline pipeline);
+		void setIndexBuffer(Buffer buffer);		
+
+		// This is mainly for filling index and vertex buffers
+		Mapping map(Buffer buf);
 
 		void dispatch(desc::ShaderBinding& binding,
 					  uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ);
@@ -201,9 +222,7 @@ namespace graphics
 			return std::make_unique<T>(this);
 		}
 
-		void setRenderTargets();
-		void setRenderTargets(TextureView rtv);
-		void setRenderTargets(TextureView dsv, TextureView rtv);
+		void setScissorRect(Rect<int, 2> rect);
 	private:
 		friend class CommandBuffer;
 

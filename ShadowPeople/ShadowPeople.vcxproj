@@ -129,10 +129,15 @@
     <ClCompile Include="dx11\SamplerImpl.cpp" />
     <ClCompile Include="dx11\ShaderImpl.cpp" />
     <ClCompile Include="dx11\ShaderManagerImpl.cpp" />
+    <ClCompile Include="dx11\MappingImpl.cpp" />
     <ClCompile Include="dx11\TextureImpl.cpp" />
     <ClCompile Include="dx11\TextureViewImpl.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="ImGuiRenderer.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
@@ -152,6 +157,8 @@
     <ClInclude Include="dx11\DeviceImpl.hpp" />
     <ClInclude Include="dx11\DX11Utils.hpp" />
     <ClInclude Include="dx11\GraphicsPipelineImpl.hpp" />
+    <ClInclude Include="dx11\InputLayoutImpl.hpp" />
+    <ClInclude Include="dx11\MappingImpl.hpp" />
     <ClInclude Include="dx11\ResourceViewImpl.hpp" />
     <ClInclude Include="dx11\SamplerImpl.hpp" />
     <ClInclude Include="dx11\ShaderImpl.hpp" />
@@ -161,17 +168,31 @@
     <ClInclude Include="Errors.hpp" />
     <ClInclude Include="GameLogic.hpp" />
     <ClInclude Include="Graphics.hpp" />
+    <ClInclude Include="ImGuiRenderer.hpp" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\stb_rect_pack.h" />
+    <ClInclude Include="imgui\stb_textedit.h" />
+    <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="ShaderManager.hpp" />
     <ClInclude Include="ShaderResourcesImpl.hpp" />
+    <ClInclude Include="shaders\ImGuiRenderer.if.h" />
     <ClInclude Include="shaders\ShaderInterface.h" />
     <ClInclude Include="shaders\Test.if.h" />
     <ClInclude Include="shaders\Test2.if.h" />
     <ClInclude Include="Types.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="shaders\ImGuiRenderer.ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="shaders\Test.cs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -189,6 +210,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="shaders\Test2.vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shaders\ImGuiRenderer.vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

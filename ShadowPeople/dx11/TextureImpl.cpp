@@ -64,8 +64,17 @@ namespace graphics
 
 		dxdesc.MiscFlags	= 0;
 
-		HRESULT hr = device.m_device->CreateTexture1D(&dxdesc, NULL,
-						reinterpret_cast<ID3D11Texture1D**>(&m_texture));
+		D3D11_SUBRESOURCE_DATA dxInit;
+		auto& init = desc.descriptor().initialData;
+		if (init.dataPtr)
+		{
+			dxInit.pSysMem			= init.dataPtr;
+			dxInit.SysMemPitch		= init.pitch;
+			dxInit.SysMemSlicePitch	= init.pitchDepth;
+		}
+
+		HRESULT hr = device.m_device->CreateTexture1D(&dxdesc, init.dataPtr ? &dxInit : NULL,
+													  reinterpret_cast<ID3D11Texture1D**>(&m_texture));
 		if (hr != S_OK)
 		{
 			MessageBox(NULL, _T("CreateTexture1D() failed!"), _T("Error"), NULL);
@@ -104,8 +113,17 @@ namespace graphics
 			dxdesc.ArraySize *= 6;
 		}
 
-		HRESULT hr = device.m_device->CreateTexture2D(&dxdesc, NULL,
-						reinterpret_cast<ID3D11Texture2D**>(&m_texture));
+		D3D11_SUBRESOURCE_DATA dxInit;
+		auto& init = desc.descriptor().initialData;
+		if (init.dataPtr)
+		{
+			dxInit.pSysMem			= init.dataPtr;
+			dxInit.SysMemPitch		= init.pitch;
+			dxInit.SysMemSlicePitch	= init.pitchDepth;
+		}
+
+		HRESULT hr = device.m_device->CreateTexture2D(&dxdesc, init.dataPtr ? &dxInit : NULL,
+													  reinterpret_cast<ID3D11Texture2D**>(&m_texture));
 		if (hr != S_OK)
 		{
 			MessageBox(NULL, _T("CreateTexture2D() failed!"), _T("Error"), NULL);
@@ -127,9 +145,18 @@ namespace graphics
 					  dxdesc.Usage, dxdesc.CPUAccessFlags, dxdesc.BindFlags);
 
 		dxdesc.MiscFlags	= 0;
+
+		D3D11_SUBRESOURCE_DATA dxInit;
+		auto& init = desc.descriptor().initialData;
+		if (init.dataPtr)
+		{
+			dxInit.pSysMem			= init.dataPtr;
+			dxInit.SysMemPitch		= init.pitch;
+			dxInit.SysMemSlicePitch	= init.pitchDepth;
+		}
 		
-		HRESULT hr = device.m_device->CreateTexture3D(&dxdesc, NULL,
-						reinterpret_cast<ID3D11Texture3D**>(&m_texture));
+		HRESULT hr = device.m_device->CreateTexture3D(&dxdesc, init.dataPtr ? &dxInit : NULL,
+													  reinterpret_cast<ID3D11Texture3D**>(&m_texture));
 		if (hr != S_OK)
 		{
 			MessageBox(NULL, _T("CreateTexture3D() failed!"), _T("Error"), NULL);

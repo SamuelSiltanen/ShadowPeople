@@ -19,18 +19,12 @@ namespace graphics
 	{
 		namespace detail
 		{
-			std::vector<Range<const uint8_t>>			cbs;
-			std::vector<const graphics::ResourceView*>	srvs;
-			std::vector<const graphics::ResourceView*>	uavs;
-			std::vector<const graphics::Sampler*>		samplers;
+			extern std::vector<Range<const uint8_t>>			cbs;
+			extern std::vector<const graphics::ResourceView*>	srvs;
+			extern std::vector<const graphics::ResourceView*>	uavs;
+			extern std::vector<const graphics::Sampler*>		samplers;
 
-			void resetBindings()
-			{
-				cbs.clear();
-				srvs.clear();
-				uavs.clear();
-				samplers.clear();
-			}
+			void resetBindings();
 		}
 
 		// Possible bindings:

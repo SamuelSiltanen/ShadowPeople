@@ -13,8 +13,10 @@ namespace graphics
 	class TextureImpl;
 	class TextureViewImpl;
 	class BufferImpl;
+	class MappingImpl;
 	class GraphicsPipelineImpl;
 	class ComputePipelineImpl;
+	class ResourceViewImpl;
 
 	class CommandBufferImpl
 	{
@@ -45,6 +47,15 @@ namespace graphics
 			m_context.Unmap(dst.m_buffer, 0);
 		}
 
+		void setRenderTargets();
+		void setRenderTargets(TextureViewImpl& rtv);
+		void setRenderTargets(TextureViewImpl& dsv, TextureViewImpl& rtv);
+
+		void setVertexBuffer(BufferImpl& buffer, GraphicsPipelineImpl& pipeline);
+		void setIndexBuffer(BufferImpl& buffer);
+
+		std::shared_ptr<MappingImpl> map(BufferImpl& buf);
+
 		void dispatch(ComputePipelineImpl& pipeline,
 					  uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ);
 		void dispatchIndirect(ComputePipelineImpl& pipeline,
@@ -70,10 +81,21 @@ namespace graphics
 		void clearResources(ComputePipelineImpl& pipeline);
 		void clearResources(GraphicsPipelineImpl& pipeline);
 
+		void setViewport();
+
 		void setDepthStencilState(GraphicsPipelineImpl& pipeline);
 		void setBlendState(GraphicsPipelineImpl& pipeline);
 		void setPrimitiveTopology(GraphicsPipelineImpl& pipeline);
 		void setRasterizerState(GraphicsPipelineImpl& pipeline);
+
+		struct RenderTargets
+		{
+			std::vector<const ResourceViewImpl*>	rtvs;
+			const ResourceViewImpl*					dsv;
+			int2									renderTargetSize;
+		};
+
+		RenderTargets			m_currentRenderTargets;
 
 		ID3D11DeviceContext&	m_context;
 

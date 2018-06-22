@@ -21,33 +21,33 @@ namespace graphics
 
 		NO_COPY_CLASS(GraphicsPipelineImpl)
 
-		void setRenderTargets();
-		void setRenderTargets(TextureViewImpl& rtv);
-		void setRenderTargets(TextureViewImpl& dsv, TextureViewImpl& rtv);
+		void setScissorRect(Rect<int, 2> rect);
 
 		const desc::GraphicsPipeline& descriptor() const { return m_descriptor; }
-		const ShaderImpl& vertexShader() const			 { return m_vertexShader; }
-		const ShaderImpl& pixelShader() const			 { return m_pixelShader; }
-		ShaderResourcesImpl& resources()				 { return m_resources; }
+		const ShaderImpl&			vertexShader() const { return m_vertexShader; }
+		const ShaderImpl&			pixelShader() const	 { return m_pixelShader; }
+		ShaderResourcesImpl&		resources()			 { return m_resources; }
 
-		ID3D11DepthStencilState* depthStencilState() { return m_depthStencilState; }
-		ID3D11BlendState* blendState() { return m_blendState; }
-		ID3D11RasterizerState* rasterizerState() { return m_rasterizerState; }
+		ID3D11DepthStencilState*	depthStencilState() { return m_depthStencilState; }
+		ID3D11BlendState*			blendState()		{ return m_blendState; }
+		ID3D11RasterizerState*		rasterizerState()	{ return m_rasterizerState; }
+		ID3D11InputLayout*			inputLayout()		{ return m_inputLayout; }
 	private:
 		void createDepthStencilState(const desc::DepthStencilState& desc);
 		void createBlendState(const desc::BlendState& desc);
 		void createRasterizerState(const desc::RasterizerState& desc);
-		void setViewport(uint32_t width, uint32_t height);
+		void createInputLayout(const std::vector<desc::InputElement>& desc);
 
-		ShaderImpl				m_vertexShader;
-		ShaderImpl				m_pixelShader;
-		ShaderResourcesImpl		m_resources;
-		desc::GraphicsPipeline	m_descriptor;
+		ShaderImpl					m_vertexShader;
+		ShaderImpl					m_pixelShader;
+		ShaderResourcesImpl			m_resources;
+		desc::GraphicsPipeline		m_descriptor;
 
-		ID3D11DepthStencilState* m_depthStencilState;
-		ID3D11BlendState*		m_blendState;
-		ID3D11RasterizerState*	m_rasterizerState;
+		ID3D11DepthStencilState*	m_depthStencilState;
+		ID3D11BlendState*			m_blendState;
+		ID3D11RasterizerState*		m_rasterizerState;
+		ID3D11InputLayout*			m_inputLayout;
 
-		DeviceImpl&				m_device;
+		DeviceImpl&					m_device;
 	};
 }

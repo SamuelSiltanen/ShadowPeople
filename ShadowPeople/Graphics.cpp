@@ -50,6 +50,10 @@ namespace graphics
 		return pImpl->descriptor();
 	}
 
+	Mapping::Mapping(std::shared_ptr<MappingImpl> impl) : pImpl(impl) {}
+
+	void* Mapping::data() { return pImpl->data(); }
+
 	Sampler::Sampler(Device& device, const desc::Sampler& desc)
 	{
 		pImpl = std::make_shared<SamplerImpl>(*device.pImpl, desc);
@@ -125,6 +129,46 @@ namespace graphics
 	{
 		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
 		pImpl->copyToBackBuffer(*src.pImpl);
+	}
+
+	void CommandBuffer::setRenderTargets()
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		pImpl->setRenderTargets();
+	}
+
+	void CommandBuffer::setRenderTargets(TextureView rtv)
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		pImpl->setRenderTargets(*rtv.pImpl);
+	}
+
+	void CommandBuffer::setRenderTargets(TextureView dsv, TextureView rtv)
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		pImpl->setRenderTargets(*dsv.pImpl, *rtv.pImpl);
+	}
+
+	void CommandBuffer::setVertexBuffer(Buffer buffer, GraphicsPipeline pipeline)
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(buffer.descriptor().descriptor().type == desc::BufferType::Vertex,
+				 "Buffer bound as vertex buffer must be created as a vertex buffer");
+		pImpl->setVertexBuffer(*buffer.pImpl, *pipeline.pImpl);
+	}
+	
+	void CommandBuffer::setIndexBuffer(Buffer buffer)
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_ASSERT(buffer.descriptor().descriptor().type == desc::BufferType::Index,
+				 "Buffer bound as index buffer must be created as a index buffer");
+		pImpl->setIndexBuffer(*buffer.pImpl);
+	}
+
+	Mapping CommandBuffer::map(Buffer buf)
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		return Mapping(pImpl->map(*buf.pImpl));
 	}
 
 	ShaderResourcesImpl& CommandBuffer::getResources(desc::ShaderBinding& binding)
@@ -301,26 +345,14 @@ namespace graphics
 
 	const desc::GraphicsPipeline& GraphicsPipeline::descriptor() const
 	{
-		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
+		SP_ASSERT(pImpl != nullptr, "GraphicsPipeline used, but not created with Device::createGraphicsPipeline().");
 		return pImpl->descriptor();
 	}
 
-	void GraphicsPipeline::setRenderTargets()
+	void GraphicsPipeline::setScissorRect(Rect<int, 2> rect)
 	{
-		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
-		pImpl->setRenderTargets();
-	}
-
-	void GraphicsPipeline::setRenderTargets(TextureView rtv)
-	{
-		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
-		pImpl->setRenderTargets(*rtv.pImpl);
-	}
-
-	void GraphicsPipeline::setRenderTargets(TextureView dsv, TextureView rtv)
-	{
-		SP_ASSERT(pImpl != nullptr, "GraphicsPipelineused, but not created with Device::createGraphicsPipeline().");
-		pImpl->setRenderTargets(*dsv.pImpl, *rtv.pImpl);
+		SP_ASSERT(pImpl != nullptr, "GraphicsPipeline used, but not created with Device::createGraphicsPipeline().");
+		pImpl->setScissorRect(rect);
 	}
 
 	ComputePipeline::ComputePipeline(Device&						device, 
@@ -403,5 +435,25 @@ namespace graphics
 	{
 		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
 		return pImpl->swapChainSize();
+	}
+
+	// These are needed for the shader bindings
+	namespace shaders
+	{
+		namespace detail
+		{
+			std::vector<Range<const uint8_t>>			cbs;
+			std::vector<const graphics::ResourceView*>	srvs;
+			std::vector<const graphics::ResourceView*>	uavs;
+			std::vector<const graphics::Sampler*>		samplers;
+
+			void resetBindings()
+			{
+				cbs.clear();
+				srvs.clear();
+				uavs.clear();
+				samplers.clear();
+			}
+		}
 	}
 }

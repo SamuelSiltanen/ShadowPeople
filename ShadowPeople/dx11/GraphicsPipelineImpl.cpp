@@ -16,6 +16,7 @@ namespace graphics
 		m_depthStencilState(nullptr),
 		m_blendState(nullptr),
 		m_rasterizerState(nullptr),
+		m_inputLayout(nullptr),
 		m_device(device)
 	{
 		if (shaderManager.compile(m_vertexShader))
@@ -29,53 +30,23 @@ namespace graphics
 
 		shaderManager.createConstantBuffers(m_resources, *desc.descriptor().binding);
 
-		m_resources.rtvs.resize(desc.descriptor().numRenderTargets);
-		for (uint32_t i = 0; i < desc.descriptor().numRenderTargets; i++)
-		{
-			m_resources.rtvs[i] = nullptr;
-		}
-		m_resources.dsv = nullptr;
-
 		createDepthStencilState(desc.descriptor().depthStencilState);
 		createBlendState(desc.descriptor().blendState);
 		createRasterizerState(desc.descriptor().rasterizerState);
+		if (desc.descriptor().inputLayout.size() > 0)
+		{
+			createInputLayout(desc.descriptor().inputLayout);
+		}
 	}
 
-	void GraphicsPipelineImpl::setRenderTargets()
+	void GraphicsPipelineImpl::setScissorRect(Rect<int, 2> rect)
 	{
-		m_device.m_context->OMSetRenderTargets(0, nullptr, nullptr);
-	}
-
-	void GraphicsPipelineImpl::setRenderTargets(TextureViewImpl& rtv)
-	{
-		// TODO: This should only store the RTVs in resources, not call the DX setter
-
-		SP_ASSERT(rtv.descriptor().descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");
-		const ID3D11View* RTVs = rtv.view();
-		m_device.m_context->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&RTVs, nullptr);
-		setViewport(rtv.texture().descriptor().descriptor().width, rtv.texture().descriptor().descriptor().height);
-	}
-	
-	void GraphicsPipelineImpl::setRenderTargets(TextureViewImpl& dsv, TextureViewImpl& rtv)
-	{
-		SP_ASSERT(dsv.descriptor().descriptor().type == desc::ViewType::DSV, "Only DSV can be bound as depth stencil");
-		SP_ASSERT(rtv.descriptor().descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");
-		const ID3D11View* DSVs = dsv.view();
-		const ID3D11View* RTVs = rtv.view();
-		m_device.m_context->OMSetRenderTargets(1, (ID3D11RenderTargetView**)&RTVs, (ID3D11DepthStencilView*)DSVs);
-		setViewport(rtv.texture().descriptor().descriptor().width, rtv.texture().descriptor().descriptor().height);
-	}
-
-	void GraphicsPipelineImpl::setViewport(uint32_t width, uint32_t height)
-	{
-		D3D11_VIEWPORT viewport;
-		viewport.TopLeftX	= 0;
-		viewport.TopLeftY	= 0;
-		viewport.Width		= static_cast<float>(width);
-		viewport.Height		= static_cast<float>(height);
-		viewport.MinDepth	= 0.f;
-		viewport.MaxDepth	= 1.f;
-		m_device.m_context->RSSetViewports(1, &viewport);
+		D3D11_RECT dxrect;
+		dxrect.left		= rect.minCorner()[0];
+		dxrect.top		= rect.minCorner()[1];
+		dxrect.right	= rect.minCorner()[0] + rect.size()[0];
+		dxrect.bottom	= rect.minCorner()[1] + rect.size()[1];
+		m_device.m_context->RSSetScissorRects(1, &dxrect);
 	}
 
 	void GraphicsPipelineImpl::createDepthStencilState(const desc::DepthStencilState& desc)
@@ -84,20 +55,21 @@ namespace graphics
 
 		D3D11_DEPTH_STENCIL_DESC dxdesc;
 
-		dxdesc.DepthEnable = d.depthTestEnable;
-		dxdesc.DepthWriteMask = d.depthWriteEnable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
-		dxdesc.DepthFunc = comparisonFunc(d.depthFunc);
-		dxdesc.StencilEnable = d.stencilEnable;
-		dxdesc.StencilReadMask = d.stencilReadMask;
-		dxdesc.StencilWriteMask = d.stencilWriteMask;
-		dxdesc.FrontFace.StencilFailOp = stencilOp(d.stencilFrontFace.failOp);
+		dxdesc.DepthEnable					= d.depthTestEnable;
+		dxdesc.DepthWriteMask				= d.depthWriteEnable ? D3D11_DEPTH_WRITE_MASK_ALL :
+												D3D11_DEPTH_WRITE_MASK_ZERO;
+		dxdesc.DepthFunc					= comparisonFunc(d.depthFunc);
+		dxdesc.StencilEnable				= d.stencilEnable;
+		dxdesc.StencilReadMask				= d.stencilReadMask;
+		dxdesc.StencilWriteMask				= d.stencilWriteMask;
+		dxdesc.FrontFace.StencilFailOp		= stencilOp(d.stencilFrontFace.failOp);
 		dxdesc.FrontFace.StencilDepthFailOp = stencilOp(d.stencilFrontFace.depthFailOp);
-		dxdesc.FrontFace.StencilPassOp = stencilOp(d.stencilFrontFace.passOp);
-		dxdesc.FrontFace.StencilFunc = comparisonFunc(d.stencilFrontFace.func);
-		dxdesc.BackFace.StencilFailOp = stencilOp(d.stencilBackFace.failOp);
-		dxdesc.BackFace.StencilDepthFailOp = stencilOp(d.stencilBackFace.depthFailOp);
-		dxdesc.BackFace.StencilPassOp = stencilOp(d.stencilBackFace.passOp);
-		dxdesc.BackFace.StencilFunc = comparisonFunc(d.stencilBackFace.func);
+		dxdesc.FrontFace.StencilPassOp		= stencilOp(d.stencilFrontFace.passOp);
+		dxdesc.FrontFace.StencilFunc		= comparisonFunc(d.stencilFrontFace.func);
+		dxdesc.BackFace.StencilFailOp		= stencilOp(d.stencilBackFace.failOp);
+		dxdesc.BackFace.StencilDepthFailOp	= stencilOp(d.stencilBackFace.depthFailOp);
+		dxdesc.BackFace.StencilPassOp		= stencilOp(d.stencilBackFace.passOp);
+		dxdesc.BackFace.StencilFunc			= comparisonFunc(d.stencilBackFace.func);
 
 		HRESULT hr = m_device.m_device->CreateDepthStencilState(&dxdesc, &m_depthStencilState);
 		SP_ASSERT_HR(hr, ERROR_CODE_DEPTH_STENCIL_STATE_NOT_CREATED);
@@ -113,14 +85,14 @@ namespace graphics
 		dxdesc.IndependentBlendEnable = true;
 		for (uint32_t i = 0; i < 8; i++)
 		{
-			dxdesc.RenderTarget[i].BlendEnable = d.renderTargetBlend[i].enabled;
-			dxdesc.RenderTarget[i].SrcBlend = blendMode(d.renderTargetBlend[i].source);
-			dxdesc.RenderTarget[i].DestBlend = blendMode(d.renderTargetBlend[i].destination);
-			dxdesc.RenderTarget[i].BlendOp = blendOp(d.renderTargetBlend[i].blendOp);
-			dxdesc.RenderTarget[i].SrcBlendAlpha = blendMode(d.renderTargetBlend[i].sourceAlpha);
-			dxdesc.RenderTarget[i].DestBlendAlpha = blendMode(d.renderTargetBlend[i].destinationAlpha);
-			dxdesc.RenderTarget[i].BlendOpAlpha = blendOp(d.renderTargetBlend[i].blendOpAlpha);
-			dxdesc.RenderTarget[i].RenderTargetWriteMask = d.renderTargetBlend[i].writeMask;
+			dxdesc.RenderTarget[i].BlendEnable				= d.renderTargetBlend[i].enabled;
+			dxdesc.RenderTarget[i].SrcBlend					= blendMode(d.renderTargetBlend[i].source);
+			dxdesc.RenderTarget[i].DestBlend				= blendMode(d.renderTargetBlend[i].destination);
+			dxdesc.RenderTarget[i].BlendOp					= blendOp(d.renderTargetBlend[i].blendOp);
+			dxdesc.RenderTarget[i].SrcBlendAlpha			= blendMode(d.renderTargetBlend[i].sourceAlpha);
+			dxdesc.RenderTarget[i].DestBlendAlpha			= blendMode(d.renderTargetBlend[i].destinationAlpha);
+			dxdesc.RenderTarget[i].BlendOpAlpha				= blendOp(d.renderTargetBlend[i].blendOpAlpha);
+			dxdesc.RenderTarget[i].RenderTargetWriteMask	= d.renderTargetBlend[i].writeMask;
 		}
 
 		HRESULT hr = m_device.m_device->CreateBlendState(&dxdesc, &m_blendState);
@@ -136,16 +108,46 @@ namespace graphics
 		dxdesc.FillMode = (d.fillMode == desc::FillMode::Solid) ? D3D11_FILL_SOLID : D3D11_FILL_WIREFRAME;
 		dxdesc.CullMode = (d.cullMode == desc::CullMode::Back) ? D3D11_CULL_BACK :
 			(d.cullMode == desc::CullMode::Front) ? D3D11_CULL_FRONT : D3D11_CULL_NONE;
-		dxdesc.FrontCounterClockwise = false;
-		dxdesc.DepthBias = d.depthBias;
-		dxdesc.DepthBiasClamp = d.depthBiasClamp;
-		dxdesc.SlopeScaledDepthBias = d.depthBiasSlopeScale;
-		dxdesc.DepthClipEnable = true;
-		dxdesc.ScissorEnable = false;
-		dxdesc.MultisampleEnable = false;
-		dxdesc.AntialiasedLineEnable = false;
+		dxdesc.FrontCounterClockwise	= false;
+		dxdesc.DepthBias				= d.depthBias;
+		dxdesc.DepthBiasClamp			= d.depthBiasClamp;
+		dxdesc.SlopeScaledDepthBias		= d.depthBiasSlopeScale;
+		dxdesc.DepthClipEnable			= true;
+		dxdesc.ScissorEnable			= d.enableScissors;
+		dxdesc.MultisampleEnable		= false;
+		dxdesc.AntialiasedLineEnable	= false;
 
 		HRESULT hr = m_device.m_device->CreateRasterizerState(&dxdesc, &m_rasterizerState);
 		SP_ASSERT_HR(hr, ERROR_CODE_RASTERIZER_STATE_NOT_CREATED);
+	}
+
+	void GraphicsPipelineImpl::createInputLayout(const std::vector<desc::InputElement>& desc)
+	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> dxdescs;
+
+		uint32_t byteOffset = 0;
+		for (const auto& element : desc)
+		{
+			D3D11_INPUT_ELEMENT_DESC dxdesc;
+			dxdesc.SemanticName			= element.semanticName.c_str();
+			dxdesc.SemanticIndex		= element.semanticIndex;
+			dxdesc.Format				= dxgiFormat(element.format);
+			dxdesc.InputSlot			= element.inputSlot;
+			dxdesc.AlignedByteOffset	= byteOffset;
+			dxdesc.InputSlotClass		= element.isInstanceData ? D3D11_INPUT_PER_INSTANCE_DATA :
+																   D3D11_INPUT_PER_VERTEX_DATA;
+			dxdesc.InstanceDataStepRate = element.isInstanceData ? element.instanceDataStepRate : 0;
+
+			dxdescs.emplace_back(dxdesc);
+
+			byteOffset += element.format.byteWidth();
+		}
+
+		ID3DBlob* byteCode = m_vertexShader.compiledSource();
+		HRESULT hr = m_device.m_device->CreateInputLayout(dxdescs.data(),
+														  static_cast<uint32_t>(dxdescs.size()),
+														  byteCode->GetBufferPointer(),
+														  byteCode->GetBufferSize(), &m_inputLayout);
+		SP_ASSERT_HR(hr, ERROR_CODE_INPUT_LAYOUT_NOT_CREATED);
 	}
 }

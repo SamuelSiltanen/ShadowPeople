@@ -20,6 +20,7 @@ namespace graphics
 	private:
 		friend class BufferViewImpl;
 		friend class CommandBufferImpl;
+		friend class MappingImpl;
 
 		ID3D11Buffer*	m_buffer;
 		desc::Buffer	m_descriptor;

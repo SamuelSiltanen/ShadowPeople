@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics.hpp"
+#include "ImGuiRenderer.hpp"
 
 namespace rendering
 {
@@ -24,5 +25,7 @@ namespace rendering
 
 		graphics::Texture			m_depthBuffer;
 		graphics::TextureView		m_depthBufferDSV;
+
+		ImGuiRenderer				m_imGuiRenderer;
 	};
 }

@@ -2,12 +2,14 @@
 #include "Camera.hpp"
 #include "shaders/Test.if.h"
 #include "shaders/Test2.if.h"
+#include "imgui\imgui.h"
 
 using namespace graphics;
 
 namespace rendering
 {
-	SceneRenderer::SceneRenderer(Device device)
+	SceneRenderer::SceneRenderer(Device device) :
+		m_imGuiRenderer(device)
 	{
 		// Just testing - replace with real code later
 		int2 s = device.swapChainSize();
@@ -52,6 +54,12 @@ namespace rendering
 			.binding<shaders::Test2GS>()
 			.setPrimitiveTopology(desc::PrimitiveTopology::TriangleList)
 			.numRenderTargets(1)
+			.inputLayoutElement(desc::InputElement("POSITION", 0,
+				{ desc::FormatChannels::RG, desc::FormatBytesPerChannel::B32, desc::FormatType::Float }, 0))
+			.inputLayoutElement(desc::InputElement("TEXCOORD", 0,
+				{ desc::FormatChannels::RG, desc::FormatBytesPerChannel::B32, desc::FormatType::Float }, 0))
+			.inputLayoutElement(desc::InputElement("COLOR", 0,
+				{ desc::FormatChannels::RGBA, desc::FormatBytesPerChannel::B8, desc::FormatType::UNorm }, 0))
 			.rasterizerState(desc::RasterizerState().cullMode(desc::CullMode::None))
 			.depthStencilState(desc::DepthStencilState()
 				.depthTestingEnable(true)
@@ -60,6 +68,8 @@ namespace rendering
 
 	void SceneRenderer::render(CommandBuffer& gfx, const Camera& camera)
 	{
+		ImGui::NewFrame();
+
 		gfx.clear(m_clearTextureUAV, 1.f, 0.5f, 0.f, 1.f);
 
 		{
@@ -75,7 +85,7 @@ namespace rendering
 		gfx.clear(m_renderTargetRTV, 0.f, 0.f, 0.f, 0.f);
 		gfx.clear(m_depthBufferDSV, 1.f);
 
-		m_graphicsPipeline.setRenderTargets(m_depthBufferDSV, m_renderTargetRTV);
+		gfx.setRenderTargets(m_depthBufferDSV, m_renderTargetRTV);
 		{
 			auto binding = m_graphicsPipeline.bind<shaders::Test2GS>(gfx);
 
@@ -84,7 +94,15 @@ namespace rendering
 
 			gfx.draw(*binding, 12 * 3, 0);
 		}
-		m_graphicsPipeline.setRenderTargets();
+
+		ImGui::ShowDemoWindow();
+
+		ImGui::EndFrame();
+		ImGui::Render();
+
+		m_imGuiRenderer.render(gfx, ImGui::GetDrawData());
+
+		gfx.setRenderTargets();
 
 		gfx.copyToBackBuffer(m_renderTarget);
 	}
