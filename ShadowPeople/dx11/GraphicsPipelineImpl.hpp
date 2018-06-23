@@ -23,7 +23,7 @@ namespace graphics
 
 		void setScissorRect(Rect<int, 2> rect);
 
-		const desc::GraphicsPipeline& descriptor() const { return m_descriptor; }
+		const desc::GraphicsPipeline::Descriptor& descriptor() const { return m_descriptor.descriptor(); }
 		const ShaderImpl&			vertexShader() const { return m_vertexShader; }
 		const ShaderImpl&			pixelShader() const	 { return m_pixelShader; }
 		ShaderResourcesImpl&		resources()			 { return m_resources; }

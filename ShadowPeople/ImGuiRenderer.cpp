@@ -94,11 +94,11 @@ namespace rendering
 
 	void ImGuiRenderer::render(graphics::CommandBuffer& gfx, ImDrawData* drawData)
 	{
-		if (m_vertexBuffer.descriptor().descriptor().elements < drawData->TotalVtxCount)
+		if (m_vertexBuffer.descriptor().elements < drawData->TotalVtxCount)
 		{
 			createVertexBuffer(drawData->TotalVtxCount);
 		}
-		if (m_indexBuffer.descriptor().descriptor().elements < drawData->TotalIdxCount)
+		if (m_indexBuffer.descriptor().elements < drawData->TotalIdxCount)
 		{
 			createIndexBuffer(drawData->TotalIdxCount);
 		}

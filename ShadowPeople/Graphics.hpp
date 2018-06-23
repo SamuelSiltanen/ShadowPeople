@@ -36,7 +36,7 @@ namespace graphics
 		Texture(Device& device, const desc::Texture& desc);
 
 		bool valid() const { return (pImpl != nullptr); }
-		const desc::Texture& descriptor() const;
+		const desc::Texture::Descriptor& descriptor() const;
 	private:
 		friend class TextureView;
 		friend class CommandBuffer;
@@ -65,7 +65,7 @@ namespace graphics
 
 		bool valid() const override { return (pImpl != nullptr); }
 
-		const desc::TextureView& descriptor() const;
+		const desc::TextureView::Descriptor& descriptor() const;
 
 	protected:
 		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
@@ -84,7 +84,7 @@ namespace graphics
 		Buffer(Device& buffer, const desc::Buffer& desc);
 
 		bool valid() const { return (pImpl != nullptr); }
-		const desc::Buffer& descriptor() const;
+		const desc::Buffer::Descriptor& descriptor() const;
 	private:
 		friend class BufferView;
 		friend class CommandBuffer;
@@ -100,7 +100,7 @@ namespace graphics
 
 		bool valid() const override { return (pImpl != nullptr); }
 
-		const desc::BufferView& descriptor() const;
+		const desc::BufferView::Descriptor& descriptor() const;
 
 	protected:
 		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
@@ -128,7 +128,7 @@ namespace graphics
 		Sampler(Device& device, const desc::Sampler& desc);
 
 		bool valid() { return (pImpl != nullptr); }
-		const desc::Sampler& descriptor();
+		const desc::Sampler::Descriptor& descriptor();
 	private:
 		friend class CommandBuffer;
 
@@ -215,7 +215,7 @@ namespace graphics
 						 const desc::GraphicsPipeline&	desc);
 
 		bool valid() const { return (pImpl != nullptr); }
-		const desc::GraphicsPipeline& descriptor() const;
+		const desc::GraphicsPipeline::Descriptor& descriptor() const;
 
 		template<typename T>
 		std::unique_ptr<T> bind(CommandBuffer& gfx)
@@ -240,7 +240,7 @@ namespace graphics
 						const desc::ComputePipeline&	desc);
 
 		bool valid() { return (pImpl != nullptr); }
-		const desc::ComputePipeline& descriptor();
+		const desc::ComputePipeline::Descriptor& descriptor();
 
 		template<typename T> 
 		std::unique_ptr<T> bind(CommandBuffer& gfx)

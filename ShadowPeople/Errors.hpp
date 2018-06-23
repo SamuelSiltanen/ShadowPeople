@@ -33,6 +33,16 @@
 #define ERROR_CODE_INPUT_LAYOUT_NOT_CREATED			__COUNTER__
 #define ERROR_CODE_PRESENT_FAILED					__COUNTER__
 
+#define ERROR_CODE_TEXTURE_NULL						__COUNTER__
+#define ERROR_CODE_TEXTURE_VIEW_NULL				__COUNTER__
+#define ERROR_CODE_BUFFER_NULL						__COUNTER__
+#define ERROR_CODE_BUFFER_VIEW_NULL					__COUNTER__
+#define ERROR_CODE_SAMPLER_NULL						__COUNTER__
+#define ERROR_CODE_COMMAND_BUFFER_NULL				__COUNTER__
+#define ERROR_CODE_GRAPHICS_PIPELINE_NULL			__COUNTER__
+#define ERROR_CODE_COMPUTE_PIPELINE_NULL			__COUNTER__
+#define ERROR_CODE_DEVICE_NULL						__COUNTER__
+
 static const LPSTR SP_error_messages[] = 
 {
 	_T("Success."),
@@ -48,7 +58,18 @@ static const LPSTR SP_error_messages[] =
 	_T("Failed to create blend state!"),
 	_T("Failed to create rasterizer state!"),
 	_T("Map discard failed!"),
-	_T("Present failed!")
+	_T("Failed to create input layout!"),
+	_T("Present failed!"),
+
+	_T("Texture used, but not created with Device::createTexture()!"),
+	_T("TextureView used, but not created with Device::createTextureView()!"),
+	_T("Buffer used, but not created with Device::createBuffer()!"),
+	_T("BufferView used, but not created with Device::createBufferView()!"),
+	_T("Sampler used, but not created with Device::createSampler()!"),
+	_T("CommandBuffer used, but created with Device::createCommandBuffer()!"),
+	_T("GraphicsPipeline used, but not created with Device::createGraphicsPipeline()!"),
+	_T("ComputePipeline used, but not created with Device::createComputePipeline()!"),
+	_T("Device used after a failed Device creation!")
 };
 
 #define SP_EXPECT_NOT_NULL_RET(var, code, ret) \
@@ -57,7 +78,12 @@ static const LPSTR SP_error_messages[] =
 		MessageBox(NULL, SP_error_messages[code], _T("Error"), NULL); \
 		return ret; \
 	}
-#define SP_EXPECT_NOT_NULL(var, code) SP_EXPECT_NOT_NULL_RET(var, code, code)
+#define SP_EXPECT_NOT_NULL(var, code) \
+	if (var == nullptr) \
+	{ \
+		MessageBox(NULL, SP_error_messages[code], _T("Error"), NULL); \
+		assert(false); \
+	}
 
 #define SP_ASSERT_HR(hr, code) \
 	if (FAILED(hr)) \

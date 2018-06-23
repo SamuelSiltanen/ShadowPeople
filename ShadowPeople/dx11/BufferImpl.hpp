@@ -16,7 +16,7 @@ namespace graphics
 
 		NO_COPY_CLASS(BufferImpl);
 
-		const desc::Buffer& descriptor() const { return m_descriptor; }
+		const desc::Buffer::Descriptor& descriptor() const { return m_descriptor.descriptor(); }
 	private:
 		friend class BufferViewImpl;
 		friend class CommandBufferImpl;

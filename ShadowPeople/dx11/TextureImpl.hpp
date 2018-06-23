@@ -17,7 +17,7 @@ namespace graphics
 
 		NO_COPY_CLASS(TextureImpl)
 
-		const desc::Texture& descriptor() const { return m_descriptor; }
+		const desc::Texture::Descriptor& descriptor() const { return m_descriptor.descriptor(); }
 	private:
 		friend class TextureViewImpl;
 		friend class CommandBufferImpl;

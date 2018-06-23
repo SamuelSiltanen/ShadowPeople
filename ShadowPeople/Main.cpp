@@ -28,11 +28,11 @@ void			 trackMouseLeave(HWND hWnd);
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	HWND hWnd = createWindow(hInstance);
-	SP_EXPECT_NOT_NULL(hWnd, ERROR_CODE_WINDOW_CREATION_FAILED);
+	SP_EXPECT_NOT_NULL_RET(hWnd, ERROR_CODE_WINDOW_CREATION_FAILED, ERROR_CODE_WINDOW_CREATION_FAILED);
 	
 	RECT clientRect;
 	BOOL isOK = GetClientRect(hWnd, &clientRect);
-	SP_EXPECT_NOT_NULL(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED);
+	SP_EXPECT_NOT_NULL_RET(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED, ERROR_CODE_GET_CLIENT_RECT_FAILED);
 
 	int2 clientArea {clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
 

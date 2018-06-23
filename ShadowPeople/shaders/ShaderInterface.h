@@ -70,7 +70,7 @@ namespace graphics
 				} \
 				X& operator=(const graphics::Y& view) \
 				{ \
-					SP_ASSERT(view.descriptor().descriptor().type == graphics::desc::ViewType::SRV, \
+					SP_ASSERT(view.descriptor().type == graphics::desc::ViewType::SRV, \
 							  "Only SRVs can be bound to SRV slot."); \
 					detail::srvs[index] = &view; \
 					return *this; \
@@ -101,7 +101,7 @@ namespace graphics
 				} \
 				X& operator=(const graphics::Y& view) \
 				{ \
-					SP_ASSERT(view.descriptor().descriptor().type == graphics::desc::ViewType::UAV, \
+					SP_ASSERT(view.descriptor().type == graphics::desc::ViewType::UAV, \
 							  "Only UAVs can be bound to UAV slot."); \
 					detail::uavs[index] = &view; \
 					return *this; \

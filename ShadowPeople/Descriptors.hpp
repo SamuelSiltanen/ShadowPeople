@@ -463,15 +463,15 @@ namespace graphics
 				int			numSlices;
 			};
 
-			TextureView(const Texture& texture)
+			TextureView(const Texture::Descriptor& texture)
 			{
 				desc.type		= ViewType::SRV;
-				desc.format		= texture.descriptor().format;
-				desc.dimension	= texture.descriptor().dimension;
+				desc.format		= texture.format;
+				desc.dimension	= texture.dimension;
 				desc.firstMip	= 0;
-				desc.numMips	= texture.descriptor().mipLevels;
+				desc.numMips	= texture.mipLevels;
 				desc.firstSlice = 0;
-				desc.numSlices	= texture.descriptor().arraySize;
+				desc.numSlices	= texture.arraySize;
 			}
 
 			const Descriptor& descriptor() const { return desc; }

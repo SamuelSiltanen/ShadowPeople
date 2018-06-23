@@ -11,20 +11,20 @@ namespace graphics
 		pImpl = std::make_shared<TextureImpl>(*device.pImpl, desc);
 	}
 
-	const desc::Texture& Texture::descriptor() const
+	const desc::Texture::Descriptor& Texture::descriptor() const
 	{
-		SP_ASSERT(pImpl != nullptr, "Texture used, but not created with Device::createTexture().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_TEXTURE_NULL);
 		return pImpl->descriptor();
 	}
 
 	TextureView::TextureView(Device& device, const desc::TextureView& desc, const Texture& texture)
 	{
-		pImpl = std::make_shared<TextureViewImpl>(*device.pImpl, desc, *texture.pImpl);
+		pImpl = std::make_shared<TextureViewImpl>(*device.pImpl, desc.descriptor(), *texture.pImpl);
 	}
 
-	const desc::TextureView& TextureView::descriptor() const
+	const desc::TextureView::Descriptor& TextureView::descriptor() const
 	{
-		SP_ASSERT(pImpl != nullptr, "TextureView used, but not created with Device::createTextureView().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_TEXTURE_VIEW_NULL);
 		return pImpl->descriptor();
 	}
 
@@ -33,20 +33,20 @@ namespace graphics
 		pImpl = std::make_shared<BufferImpl>(*device.pImpl, desc);
 	}
 
-	const desc::Buffer& Buffer::descriptor() const
+	const desc::Buffer::Descriptor& Buffer::descriptor() const
 	{
-		SP_ASSERT(pImpl != nullptr, "Buffer used, but not created with Device::createBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_BUFFER_NULL);
 		return pImpl->descriptor();
 	}
 
 	BufferView::BufferView(Device& device, const desc::BufferView& desc, const Buffer& buffer)
 	{
-		pImpl = std::make_shared<BufferViewImpl>(*device.pImpl, desc, *buffer.pImpl);
+		pImpl = std::make_shared<BufferViewImpl>(*device.pImpl, desc.descriptor(), *buffer.pImpl);
 	}
 
-	const desc::BufferView& BufferView::descriptor() const
+	const desc::BufferView::Descriptor& BufferView::descriptor() const
 	{
-		SP_ASSERT(pImpl != nullptr, "BufferView used, but not created with Device::createBufferView().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_BUFFER_VIEW_NULL);
 		return pImpl->descriptor();
 	}
 
@@ -59,10 +59,10 @@ namespace graphics
 		pImpl = std::make_shared<SamplerImpl>(*device.pImpl, desc);
 	}
 
-	const desc::Sampler& Sampler::descriptor()
+	const desc::Sampler::Descriptor& Sampler::descriptor()
 	{
-		SP_ASSERT(pImpl != nullptr, "Sampler used, but not created with Device::createSampler().");
-		return pImpl->descriptor();
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_SAMPLER_NULL);
+		return pImpl->descriptor().descriptor();
 	}
 
 	CommandBuffer::CommandBuffer(Device& device)
@@ -72,37 +72,37 @@ namespace graphics
 
 	void CommandBuffer::clear(TextureView view, float r, float g, float b, float a)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->clear(*view.pImpl, r, g, b, a);
 	}
 
 	void CommandBuffer::clear(TextureView view, uint32_t r, uint32_t g, uint32_t b, uint32_t a)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->clear(*view.pImpl, r, g, b, a);
 	}
 
 	void CommandBuffer::clear(TextureView view, float depth)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->clear(*view.pImpl, depth);
 	}
 
 	void CommandBuffer::clear(TextureView view, float depth, uint8_t stencil)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->clear(*view.pImpl, depth, stencil);
 	}
 
 	void CommandBuffer::clear(TextureView view, uint8_t stencil)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->clear(*view.pImpl, stencil);
 	}
 
 	void CommandBuffer::copy(Texture dst, Texture src)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->copy(*dst.pImpl, *src.pImpl);
 	}
 
@@ -110,7 +110,7 @@ namespace graphics
 							 int2 dstCorner, Rect<int, 2> srcRect,
 							 Subresource dstSubresource, Subresource srcSubresource)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		int3 dstCorner3D = { dstCorner[0], dstCorner[1], 0 };
 		Rect<int, 3> srcRect3D = Rect<int, 3>({ srcRect.minCorner()[0], srcRect.minCorner()[1], 0 },
 											  { srcRect.size()[0], srcRect.size()[1], 1 });
@@ -121,65 +121,65 @@ namespace graphics
 							 int3 dstCorner, Rect<int, 3> srcRect,
 							 Subresource dstSubresource, Subresource srcSubresource)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->copy(*dst.pImpl, *src.pImpl, dstCorner, srcRect, dstSubresource, srcSubresource);
 	}
 
 	void CommandBuffer::copyToBackBuffer(Texture src)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->copyToBackBuffer(*src.pImpl);
 	}
 
 	void CommandBuffer::setRenderTargets()
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->setRenderTargets();
 	}
 
 	void CommandBuffer::setRenderTargets(TextureView rtv)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->setRenderTargets(*rtv.pImpl);
 	}
 
 	void CommandBuffer::setRenderTargets(TextureView dsv, TextureView rtv)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->setRenderTargets(*dsv.pImpl, *rtv.pImpl);
 	}
 
 	void CommandBuffer::setVertexBuffer()
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->setVertexBuffer();
 	}
 
 	void CommandBuffer::setVertexBuffer(Buffer buffer, GraphicsPipeline pipeline)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
-		SP_ASSERT(buffer.descriptor().descriptor().type == desc::BufferType::Vertex,
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
+		SP_ASSERT(buffer.descriptor().type == desc::BufferType::Vertex,
 				 "Buffer bound as vertex buffer must be created as a vertex buffer");
 		pImpl->setVertexBuffer(*buffer.pImpl, *pipeline.pImpl);
 	}
 	
 	void CommandBuffer::setIndexBuffer()
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->setIndexBuffer();
 	}
 
 	void CommandBuffer::setIndexBuffer(Buffer buffer)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
-		SP_ASSERT(buffer.descriptor().descriptor().type == desc::BufferType::Index,
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
+		SP_ASSERT(buffer.descriptor().type == desc::BufferType::Index,
 				 "Buffer bound as index buffer must be created as a index buffer");
 		pImpl->setIndexBuffer(*buffer.pImpl);
 	}
 
 	Mapping CommandBuffer::map(Buffer buf)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		return Mapping(pImpl->map(*buf.pImpl));
 	}
 
@@ -240,7 +240,7 @@ namespace graphics
 	void CommandBuffer::dispatch(desc::ShaderBinding& binding,
 								 uint32_t threadsX, uint32_t threadsY, uint32_t threadsZ)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.computePipeline() != nullptr, "ComputePipeline must be bound defore calling dispatch().");
 
 		setupResourceBindings(binding);
@@ -257,7 +257,7 @@ namespace graphics
 	void CommandBuffer::dispatchIndirect(desc::ShaderBinding& binding,
 										 const Buffer& argsBuffer, uint32_t argsOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.computePipeline() != nullptr, "ComputePipeline must be bound defore calling dispatchIndirect().");
 
 		setupResourceBindings(binding);
@@ -269,7 +269,7 @@ namespace graphics
 
 	void CommandBuffer::draw(desc::ShaderBinding& binding, uint32_t vertexCount, uint32_t startVertexOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
 		setupResourceBindings(binding);
@@ -282,7 +282,7 @@ namespace graphics
 	void CommandBuffer::drawIndexed(desc::ShaderBinding& binding, uint32_t indexCount,
 									uint32_t startIndexOffset, uint32_t vertexOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
 		setupResourceBindings(binding);
@@ -296,7 +296,7 @@ namespace graphics
 									  uint32_t instanceCount, uint32_t startVextexOffset,
 									  uint32_t startInstanceOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
 		setupResourceBindings(binding);
@@ -311,7 +311,7 @@ namespace graphics
 											 uint32_t instanceCount, uint32_t startVextexOffset,
 											 uint32_t vertexOffset, uint32_t startInstanceOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
 		setupResourceBindings(binding);
@@ -325,7 +325,7 @@ namespace graphics
 	void CommandBuffer::drawInstancedIndirect(desc::ShaderBinding& binding, const Buffer& argsBuffer,
 											  uint32_t argsOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
 		setupResourceBindings(binding);
@@ -338,7 +338,7 @@ namespace graphics
 	void CommandBuffer::drawIndexedInstancedIndirect(desc::ShaderBinding& binding, const Buffer& argsBuffer,
 													 uint32_t argsOffset)
 	{
-		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		SP_ASSERT(binding.graphicsPipeline() != nullptr, "GraphicsPipeline must be bound defore calling draw().");
 
 		setupResourceBindings(binding);
@@ -355,15 +355,15 @@ namespace graphics
 		pImpl = std::make_shared<GraphicsPipelineImpl>(*device.pImpl, *shaderManager.pImpl, desc);
 	}
 
-	const desc::GraphicsPipeline& GraphicsPipeline::descriptor() const
+	const desc::GraphicsPipeline::Descriptor& GraphicsPipeline::descriptor() const
 	{
-		SP_ASSERT(pImpl != nullptr, "GraphicsPipeline used, but not created with Device::createGraphicsPipeline().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_GRAPHICS_PIPELINE_NULL);
 		return pImpl->descriptor();
 	}
 
 	void GraphicsPipeline::setScissorRect(Rect<int, 2> rect)
 	{
-		SP_ASSERT(pImpl != nullptr, "GraphicsPipeline used, but not created with Device::createGraphicsPipeline().");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_GRAPHICS_PIPELINE_NULL);
 		pImpl->setScissorRect(rect);
 	}
 
@@ -374,10 +374,10 @@ namespace graphics
 		pImpl = std::make_shared<ComputePipelineImpl>(*device.pImpl, *shaderManager.pImpl, desc);
 	}
 
-	const desc::ComputePipeline& ComputePipeline::descriptor()
+	const desc::ComputePipeline::Descriptor& ComputePipeline::descriptor()
 	{
-		SP_ASSERT(pImpl != nullptr, "ComputePipeline used, but not created with Device::createComputePipeline().");
-		return pImpl->descriptor();
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMPUTE_PIPELINE_NULL);
+		return pImpl->descriptor().descriptor();
 	}
 
 	Device::Device(HWND hWnd, int2 screenSize)
@@ -393,9 +393,6 @@ namespace graphics
 
 	Buffer Device::createBuffer(const desc::Buffer& desc)
 	{
-		void *ptr = this;
-		SP_DEBUG_OUTPUT(std::to_string((uint64_t)ptr).append("\n").c_str());
-
 		return Buffer(*this, desc);
 	}
 
@@ -436,19 +433,19 @@ namespace graphics
 		
 	void Device::submit(CommandBuffer& gfx)
 	{
-		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_DEVICE_NULL);
 		pImpl->submit(*gfx.pImpl);
 	}
 
 	void Device::present(int syncInterval)
 	{
-		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_DEVICE_NULL);
 		pImpl->present(syncInterval);
 	}
 
 	int2 Device::swapChainSize()
 	{
-		SP_ASSERT(pImpl != nullptr, "Device used after a failed Device creation.");
+		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_DEVICE_NULL);
 		return pImpl->swapChainSize();
 	}
 

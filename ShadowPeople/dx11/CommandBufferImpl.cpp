@@ -29,11 +29,11 @@ namespace graphics
 		colors[2] = b;
 		colors[3] = a;
 		
-		switch (view.m_descriptor.descriptor().type)
+		switch (view.descriptor().type)
 		{
 		case desc::ViewType::UAV:
 			{
-				auto t = view.m_descriptor.descriptor().format.type;
+				auto t = view.descriptor().format.type;
 				SP_ASSERT((t == desc::FormatType::Float) || (t == desc::FormatType::UNorm) || (t == desc::FormatType::SNorm),
 						  "View is not float-type. Use another clear command for clearing.");				
 				m_context.ClearUnorderedAccessViewFloat((ID3D11UnorderedAccessView *)view.m_view, colors);
@@ -43,12 +43,12 @@ namespace graphics
 			m_context.ClearRenderTargetView((ID3D11RenderTargetView *)view.m_view, colors);
 			break;
 		case desc::ViewType::DSV:
-			SP_ASSERT(view.m_descriptor.descriptor().type != desc::ViewType::DSV,
+			SP_ASSERT(view.descriptor().type != desc::ViewType::DSV,
 					  "Cannot clear DSV with colors. Use depth clearing commands for clearing DSVs.");
 			break;
 		case desc::ViewType::SRV:
 		default:
-			SP_ASSERT(view.m_descriptor.descriptor().type != desc::ViewType::SRV,
+			SP_ASSERT(view.descriptor().type != desc::ViewType::SRV,
 					  "Cannot clear SRVs. Use UAVs, RTVs, or DSVs for clearing.");
 			break;
 		}
@@ -62,27 +62,27 @@ namespace graphics
 		values[2] = b;
 		values[3] = a;
 
-		switch (view.m_descriptor.descriptor().type)
+		switch (view.descriptor().type)
 		{
 		case desc::ViewType::UAV:
 			{
-				auto t = view.m_descriptor.descriptor().format.type;
+				auto t = view.descriptor().format.type;
 				SP_ASSERT((t != desc::FormatType::Float) && (t != desc::FormatType::UNorm) && (t != desc::FormatType::SNorm),
 						  "View is float-type. Use another clear command for clearing.");
 				m_context.ClearUnorderedAccessViewUint((ID3D11UnorderedAccessView *)view.m_view, values);
 			}
 			break;
 		case desc::ViewType::RTV:
-			SP_ASSERT(view.m_descriptor.descriptor().type != desc::ViewType::RTV,
+			SP_ASSERT(view.descriptor().type != desc::ViewType::RTV,
 					  "Cannot clear RTV with non-float values. Use another command for clearing.");
 			break;
 		case desc::ViewType::DSV:
-			SP_ASSERT(view.m_descriptor.descriptor().type != desc::ViewType::DSV,
+			SP_ASSERT(view.descriptor().type != desc::ViewType::DSV,
 					  "Cannot clear DSV with colors. Use depth clearing commands for clearing DSVs.");
 			break;
 		case desc::ViewType::SRV:
 		default:
-			SP_ASSERT(view.m_descriptor.descriptor().type != desc::ViewType::SRV,
+			SP_ASSERT(view.descriptor().type != desc::ViewType::SRV,
 					  "Cannot clear SRVs. Use UAVs, RTVs, or DSVs for clearing.");
 			break;
 		}
@@ -90,14 +90,14 @@ namespace graphics
 
 	void CommandBufferImpl::clear(TextureViewImpl& view, float depth)
 	{
-		SP_ASSERT(view.m_descriptor.descriptor().type == desc::ViewType::DSV,
+		SP_ASSERT(view.descriptor().type == desc::ViewType::DSV,
 				  "Only DSVs can be cleared with depth clear command.");
 		m_context.ClearDepthStencilView((ID3D11DepthStencilView *)view.m_view, D3D11_CLEAR_DEPTH, depth, 0);
 	}
 
 	void CommandBufferImpl::clear(TextureViewImpl& view, float depth, uint8_t stencil)
 	{
-		SP_ASSERT(view.m_descriptor.descriptor().type == desc::ViewType::DSV,
+		SP_ASSERT(view.descriptor().type == desc::ViewType::DSV,
 				  "Only DSVs can be cleared with depth clear command.");
 		m_context.ClearDepthStencilView((ID3D11DepthStencilView *)view.m_view,
 										D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
@@ -105,7 +105,7 @@ namespace graphics
 
 	void CommandBufferImpl::clear(TextureViewImpl& view, uint8_t stencil)
 	{
-		SP_ASSERT(view.m_descriptor.descriptor().type == desc::ViewType::DSV,
+		SP_ASSERT(view.descriptor().type == desc::ViewType::DSV,
 				  "Only DSVs can be cleared with depth clear command.");
 		m_context.ClearDepthStencilView((ID3D11DepthStencilView *)view.m_view, D3D11_CLEAR_STENCIL, 0, stencil);
 	}
@@ -120,15 +120,15 @@ namespace graphics
 	void CommandBufferImpl::copy(TextureImpl& dst, const TextureImpl& src)
 	{
 		SP_ASSERT(dst.m_texture != src.m_texture, "Copy source and destination cannot be the same texture.");
-		SP_ASSERT(dst.m_descriptor.descriptor().dimension == src.m_descriptor.descriptor().dimension,
+		SP_ASSERT(dst.descriptor().dimension == src.descriptor().dimension,
 				  "Textures in copy operation must have the same dimensions.");
-		SP_ASSERT((dst.m_descriptor.descriptor().width == src.m_descriptor.descriptor().width) &&
-				  (dst.m_descriptor.descriptor().height == src.m_descriptor.descriptor().height) &&
-				  (dst.m_descriptor.descriptor().depth == src.m_descriptor.descriptor().depth),
+		SP_ASSERT((dst.descriptor().width == src.descriptor().width) &&
+				  (dst.descriptor().height == src.descriptor().height) &&
+				  (dst.descriptor().depth == src.descriptor().depth),
 				  "Textures in copy operation must have the same size or the subresource region must be defined.");
 		/*
 		// TODO: Some format are compatible, although not equal
-		SP_ASSERT(dst.m_descriptor.descriptor().format == src.m_descriptor.descriptor().format, 
+		SP_ASSERT(dst.descriptor().format == src.descriptor().format, 
 				  "Texture copy operations must have compatible formats.");
 				  */
 		m_context.CopyResource(dst.m_texture, src.m_texture);
@@ -141,10 +141,10 @@ namespace graphics
 		// TODO: Asserts
 		UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
 														dstSubresource.mipLevel,
-														dst.m_descriptor.descriptor().mipLevels);
+														dst.descriptor().mipLevels);
 		UINT srcSubresourceIndex = D3D11CalcSubresource(srcSubresource.mipLevel,
 														srcSubresource.mipLevel,
-														src.m_descriptor.descriptor().mipLevels);
+														src.descriptor().mipLevels);
 		D3D11_BOX srcBox;
 		
 		m_context.CopySubresourceRegion(dst.m_texture, dstSubresourceIndex,
@@ -176,26 +176,26 @@ namespace graphics
 
 	void CommandBufferImpl::setRenderTargets(TextureViewImpl& rtv)
 	{
-		SP_ASSERT(rtv.descriptor().descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");		
+		SP_ASSERT(rtv.descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");		
 		m_currentRenderTargets.rtvs[0]			= &rtv; // Note: This assumes only one render target
 		m_currentRenderTargets.dsv				= nullptr;
 		m_currentRenderTargets.renderTargetSize =
 		{
-			rtv.texture().descriptor().descriptor().width,
-			rtv.texture().descriptor().descriptor().height
+			rtv.texture().descriptor().width,
+			rtv.texture().descriptor().height
 		};
 	}
 	
 	void CommandBufferImpl::setRenderTargets(TextureViewImpl& dsv, TextureViewImpl& rtv)
 	{
-		SP_ASSERT(dsv.descriptor().descriptor().type == desc::ViewType::DSV, "Only DSV can be bound as depth stencil");
-		SP_ASSERT(rtv.descriptor().descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");
+		SP_ASSERT(dsv.descriptor().type == desc::ViewType::DSV, "Only DSV can be bound as depth stencil");
+		SP_ASSERT(rtv.descriptor().type == desc::ViewType::RTV, "Only RTV can be bound as render target");
 		m_currentRenderTargets.rtvs[0]			= &rtv; // Note: This assumes only one render target
 		m_currentRenderTargets.dsv				= &dsv;
 		m_currentRenderTargets.renderTargetSize =
 		{
-			rtv.texture().descriptor().descriptor().width,
-			rtv.texture().descriptor().descriptor().height
+			rtv.texture().descriptor().width,
+			rtv.texture().descriptor().height
 		};
 	}
 
@@ -208,7 +208,7 @@ namespace graphics
 	void CommandBufferImpl::setVertexBuffer(BufferImpl& buffer, GraphicsPipelineImpl& pipeline)
 	{
 		uint32_t stride = 0;
-		for (auto& element : pipeline.descriptor().descriptor().inputLayout)
+		for (auto& element : pipeline.descriptor().inputLayout)
 		{
 			stride += element.format.byteWidth();
 		}
@@ -224,7 +224,7 @@ namespace graphics
 
 	void CommandBufferImpl::setIndexBuffer(BufferImpl& buffer)
 	{
-		uint32_t stride = buffer.descriptor().descriptor().stride;
+		uint32_t stride = buffer.descriptor().stride;
 		SP_ASSERT((stride == 4) || (stride == 2), "Only 32- and 16-bit index buffers are supported");
 		DXGI_FORMAT format = (stride == 4) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
 		m_context.IASetIndexBuffer(buffer.m_buffer, format, 0);
@@ -409,13 +409,13 @@ namespace graphics
 
 	void CommandBufferImpl::setDepthStencilState(GraphicsPipelineImpl& pipeline)
 	{
-		auto desc = pipeline.descriptor().descriptor().depthStencilState;
+		auto desc = pipeline.descriptor().depthStencilState;
 		m_context.OMSetDepthStencilState(pipeline.depthStencilState(), desc.descriptor().stencilRef);
 	}
 
 	void CommandBufferImpl::setBlendState(GraphicsPipelineImpl& pipeline)
 	{
-		auto desc = pipeline.descriptor().descriptor().blendState;
+		auto desc = pipeline.descriptor().blendState;
 		m_context.OMSetBlendState(pipeline.blendState(), &desc.descriptor().blendFactor[0], 0xffffffff);
 	}
 
@@ -423,7 +423,7 @@ namespace graphics
 	{
 		D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
-		auto desc = pipeline.descriptor().descriptor().primitiveTopology;
+		auto desc = pipeline.descriptor().primitiveTopology;
 		switch(desc)
 		{
 		case desc::PrimitiveTopology::PointList:
