@@ -80,9 +80,6 @@
     <ClCompile Include="Types.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameLogic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="dx11\MappingImpl.cpp">
       <Filter>Source Files\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiInputHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +184,6 @@
     <ClInclude Include="Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Action.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -222,6 +222,12 @@
     </ClInclude>
     <ClInclude Include="dx11\InputLayoutImpl.hpp">
       <Filter>Header Files\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiInputHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

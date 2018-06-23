@@ -25,10 +25,10 @@ namespace input
 	constexpr uint16_t FlagMiddleButton = 16;
 
 	// Maps input events into game actions
-	class InputManager
+	class InputHandler
 	{
 	public:
-		InputManager();
+		InputHandler();
 
 		void keyDown(uint8_t keyCode);
 		void keyUp(uint8_t keyCode);

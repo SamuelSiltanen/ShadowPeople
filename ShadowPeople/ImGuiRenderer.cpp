@@ -15,11 +15,6 @@ namespace rendering
 
 		int2 screenSize = device.swapChainSize();
 
-		ImGuiIO& io = ImGui::GetIO();
-		io.DeltaTime = 1.f / 60.f;	// This works if the vsync is on
-		io.DisplaySize.x = static_cast<float>(screenSize[0]);
-		io.DisplaySize.y = static_cast<float>(screenSize[1]);
-
 		m_imGuiRenderingPipeline = device.createGraphicsPipeline(desc::GraphicsPipeline()
 			.binding<shaders::ImGuiRendererGS>()
 			.numRenderTargets(1)

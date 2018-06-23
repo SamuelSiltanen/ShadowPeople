@@ -134,11 +134,12 @@
     <ClCompile Include="dx11\TextureViewImpl.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="ImGuiInputHandler.cpp" />
     <ClCompile Include="ImGuiRenderer.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Errors.hpp" />
     <ClInclude Include="GameLogic.hpp" />
     <ClInclude Include="Graphics.hpp" />
+    <ClInclude Include="ImGuiInputHandler.hpp" />
     <ClInclude Include="ImGuiRenderer.hpp" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -175,7 +177,7 @@
     <ClInclude Include="imgui\stb_rect_pack.h" />
     <ClInclude Include="imgui\stb_textedit.h" />
     <ClInclude Include="imgui\stb_truetype.h" />
-    <ClInclude Include="InputManager.hpp" />
+    <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="ShaderManager.hpp" />

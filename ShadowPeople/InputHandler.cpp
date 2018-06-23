@@ -1,9 +1,9 @@
-#include "InputManager.hpp"
+#include "InputHandler.hpp"
 #include "Errors.hpp"
 
 namespace input
 {
-	InputManager::InputManager() :
+	InputHandler::InputHandler() :
 		m_prevMousePos({-1, -1}),
 		m_movementsTop(0)
 	{
@@ -13,7 +13,7 @@ namespace input
 		}
 	}
 
-	void InputManager::keyDown(uint8_t keyCode)
+	void InputHandler::keyDown(uint8_t keyCode)
 	{
 		// If the previous key down messages were not handled already,
 		// use negative numbers to indicate the number of key presses.
@@ -27,7 +27,7 @@ namespace input
 		}
 	}
 
-	void InputManager::keyUp(uint8_t keyCode)
+	void InputHandler::keyUp(uint8_t keyCode)
 	{
 		// Reset the key press counter only if the messages were handled,
 		// which is indicated by positive number. This way, key presses that
@@ -38,7 +38,7 @@ namespace input
 		}
 	}
 
-	void InputManager::mouseButtonDown(MouseButton button)
+	void InputHandler::mouseButtonDown(MouseButton button)
 	{
 		if (button == MouseButton::Left)
 		{
@@ -46,11 +46,11 @@ namespace input
 		}
 	}
 
-	void InputManager::mouseButtonUp(MouseButton button)
+	void InputHandler::mouseButtonUp(MouseButton button)
 	{	
 	}
 
-	void InputManager::mouseMove(uint16_t x, uint16_t y, uint16_t flags)
+	void InputHandler::mouseMove(uint16_t x, uint16_t y, uint16_t flags)
 	{
 		if (!any(m_prevMousePos < 0))
 		{
@@ -67,17 +67,17 @@ namespace input
 		m_prevMousePos = { x, y };
 	}
 
-	void InputManager::outOfFocus()
+	void InputHandler::outOfFocus()
 	{
 		m_prevMousePos = { -1, -1 };
 	}
 
-	void InputManager::registerListener(std::shared_ptr<ActionListener> listener)
+	void InputHandler::registerListener(std::shared_ptr<ActionListener> listener)
 	{
 		m_listeners.emplace_back(listener);
 	}
 
-	void InputManager::tick()
+	void InputHandler::tick()
 	{
 		// Generate keyboard actions once per frame for smoother control
 		// To catch less than one frame long key presses, set a special value for the first key press
