@@ -51,7 +51,9 @@ namespace graphics
 		void setRenderTargets(TextureViewImpl& rtv);
 		void setRenderTargets(TextureViewImpl& dsv, TextureViewImpl& rtv);
 
+		void setVertexBuffer();
 		void setVertexBuffer(BufferImpl& buffer, GraphicsPipelineImpl& pipeline);
+		void setIndexBuffer();
 		void setIndexBuffer(BufferImpl& buffer);
 
 		std::shared_ptr<MappingImpl> map(BufferImpl& buf);

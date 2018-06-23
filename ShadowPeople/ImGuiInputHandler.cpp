@@ -190,6 +190,15 @@ namespace input
 		io.KeysDown[keyCode] = 0;
 	}
 
+	void ImGuiInputHandler::addInputCharacter(uint32_t ch)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (ch > 0 && ch < 0x10000)
+		{
+			io.AddInputCharacter((unsigned short)ch);
+		}
+	}
+
 	bool ImGuiInputHandler::mouseCaptured()
 	{
 		ImGuiIO& io = ImGui::GetIO();

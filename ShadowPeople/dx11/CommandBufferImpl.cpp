@@ -15,7 +15,7 @@
 namespace graphics
 {
 	CommandBufferImpl::CommandBufferImpl(DeviceImpl& device) :
-		m_context(*device.m_context),
+		m_context(*device.context()),
 		m_device(device)
 	{
 		m_currentRenderTargets.rtvs.resize(1); // Note: Reserve slot for one render target
@@ -199,6 +199,12 @@ namespace graphics
 		};
 	}
 
+	void CommandBufferImpl::setVertexBuffer()
+	{
+		m_context.IAGetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+		m_context.IASetInputLayout(nullptr);
+	}
+
 	void CommandBufferImpl::setVertexBuffer(BufferImpl& buffer, GraphicsPipelineImpl& pipeline)
 	{
 		uint32_t stride = 0;
@@ -209,6 +215,11 @@ namespace graphics
 		uint32_t offset = 0;
 		m_context.IASetVertexBuffers(0, 1, &buffer.m_buffer, &stride, &offset);
 		m_context.IASetInputLayout(pipeline.inputLayout());
+	}
+
+	void CommandBufferImpl::setIndexBuffer()
+	{
+		m_context.IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
 	}
 
 	void CommandBufferImpl::setIndexBuffer(BufferImpl& buffer)
@@ -337,7 +348,7 @@ namespace graphics
 		viewport.Height		= static_cast<float>(m_currentRenderTargets.renderTargetSize[1]);
 		viewport.MinDepth	= 0.f;
 		viewport.MaxDepth	= 1.f;
-		m_device.m_context->RSSetViewports(1, &viewport);
+		m_device.context()->RSSetViewports(1, &viewport);
 	}
 
 	void CommandBufferImpl::clearResources(ComputePipelineImpl& pipeline)

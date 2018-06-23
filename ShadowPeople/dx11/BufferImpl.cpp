@@ -49,7 +49,7 @@ namespace graphics
 			dxdesc.StructureByteStride = 0;
 		}
 
-		HRESULT hr = device.m_device->CreateBuffer(&dxdesc, NULL, &m_buffer);
+		HRESULT hr = device.device()->CreateBuffer(&dxdesc, NULL, &m_buffer);
 		if (hr != S_OK)
 		{
 			MessageBox(NULL, _T("CreateBuffer() failed!"), _T("Error"), NULL);

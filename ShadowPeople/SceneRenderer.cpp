@@ -8,7 +8,7 @@ using namespace graphics;
 
 namespace rendering
 {
-	SceneRenderer::SceneRenderer(Device device) :
+	SceneRenderer::SceneRenderer(Device& device) :
 		m_imGuiRenderer(device)
 	{
 		// Just testing - replace with real code later

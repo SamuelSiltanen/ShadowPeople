@@ -50,7 +50,7 @@ namespace graphics
 
 		dxdesc.Format = dxgiFormat(buffer.m_descriptor.descriptor().format);
 
-		HRESULT hr = device.m_device->CreateShaderResourceView(buffer.m_buffer, &dxdesc,
+		HRESULT hr = device.device()->CreateShaderResourceView(buffer.m_buffer, &dxdesc,
 						(ID3D11ShaderResourceView **)&m_view);
 		if (hr != S_OK)
 		{
@@ -86,7 +86,7 @@ namespace graphics
 			dxdesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 		}
 
-		HRESULT hr = device.m_device->CreateUnorderedAccessView(buffer.m_buffer, &dxdesc,
+		HRESULT hr = device.device()->CreateUnorderedAccessView(buffer.m_buffer, &dxdesc,
 						(ID3D11UnorderedAccessView **)&m_view);
 		if (hr != S_OK)
 		{

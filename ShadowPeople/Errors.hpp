@@ -31,6 +31,7 @@
 #define ERROR_CODE_RASTERIZER_STATE_NOT_CREATED		__COUNTER__
 #define ERROR_CODE_MAP_DISCARD_FAILED				__COUNTER__
 #define ERROR_CODE_INPUT_LAYOUT_NOT_CREATED			__COUNTER__
+#define ERROR_CODE_PRESENT_FAILED					__COUNTER__
 
 static const LPSTR SP_error_messages[] = 
 {
@@ -46,7 +47,8 @@ static const LPSTR SP_error_messages[] =
 	_T("Failed to create depth stencil state!"),
 	_T("Failed to create blend state!"),
 	_T("Failed to create rasterizer state!"),
-	_T("Map discard failed!")
+	_T("Map discard failed!"),
+	_T("Present failed!")
 };
 
 #define SP_EXPECT_NOT_NULL_RET(var, code, ret) \

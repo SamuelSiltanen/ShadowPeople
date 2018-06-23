@@ -46,7 +46,7 @@ namespace graphics
 		dxrect.top		= rect.minCorner()[1];
 		dxrect.right	= rect.minCorner()[0] + rect.size()[0];
 		dxrect.bottom	= rect.minCorner()[1] + rect.size()[1];
-		m_device.m_context->RSSetScissorRects(1, &dxrect);
+		m_device.context()->RSSetScissorRects(1, &dxrect);
 	}
 
 	void GraphicsPipelineImpl::createDepthStencilState(const desc::DepthStencilState& desc)
@@ -71,7 +71,7 @@ namespace graphics
 		dxdesc.BackFace.StencilPassOp		= stencilOp(d.stencilBackFace.passOp);
 		dxdesc.BackFace.StencilFunc			= comparisonFunc(d.stencilBackFace.func);
 
-		HRESULT hr = m_device.m_device->CreateDepthStencilState(&dxdesc, &m_depthStencilState);
+		HRESULT hr = m_device.device()->CreateDepthStencilState(&dxdesc, &m_depthStencilState);
 		SP_ASSERT_HR(hr, ERROR_CODE_DEPTH_STENCIL_STATE_NOT_CREATED);
 	}
 
@@ -95,7 +95,7 @@ namespace graphics
 			dxdesc.RenderTarget[i].RenderTargetWriteMask	= d.renderTargetBlend[i].writeMask;
 		}
 
-		HRESULT hr = m_device.m_device->CreateBlendState(&dxdesc, &m_blendState);
+		HRESULT hr = m_device.device()->CreateBlendState(&dxdesc, &m_blendState);
 		SP_ASSERT_HR(hr, ERROR_CODE_BLEND_STATE_NOT_CREATED);
 	}
 
@@ -117,7 +117,7 @@ namespace graphics
 		dxdesc.MultisampleEnable		= false;
 		dxdesc.AntialiasedLineEnable	= false;
 
-		HRESULT hr = m_device.m_device->CreateRasterizerState(&dxdesc, &m_rasterizerState);
+		HRESULT hr = m_device.device()->CreateRasterizerState(&dxdesc, &m_rasterizerState);
 		SP_ASSERT_HR(hr, ERROR_CODE_RASTERIZER_STATE_NOT_CREATED);
 	}
 
@@ -144,7 +144,7 @@ namespace graphics
 		}
 
 		ID3DBlob* byteCode = m_vertexShader.compiledSource();
-		HRESULT hr = m_device.m_device->CreateInputLayout(dxdescs.data(),
+		HRESULT hr = m_device.device()->CreateInputLayout(dxdescs.data(),
 														  static_cast<uint32_t>(dxdescs.size()),
 														  byteCode->GetBufferPointer(),
 														  byteCode->GetBufferSize(), &m_inputLayout);

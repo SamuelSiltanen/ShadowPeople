@@ -9,6 +9,9 @@
 #define NO_COPY_CLASS(X)	X::X(const X&)			= delete; \
 							X& operator=(const X&)	= delete;
 
+#define NO_MOVE_CLASS(X)	X::X(X&&)			= delete; \
+							X& operator=(X&&)	= delete;
+
 #define SAFE_RELEASE(X) if (X) { X->Release(); X = nullptr; }
 
 namespace graphics

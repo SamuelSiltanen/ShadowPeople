@@ -66,7 +66,7 @@ namespace graphics
 		SP_ASSERT(shader.m_type == desc::ShaderType::Compute, "Shader type mismatch - expecting compute shader");
 		auto shaderBlob = shader.m_compiledSource;
 		SP_ASSERT(shaderBlob != nullptr, "Shader source not compiled - call compile() first");
-		HRESULT hr = m_device.m_device->CreateComputeShader(shaderBlob->GetBufferPointer(),
+		HRESULT hr = m_device.device()->CreateComputeShader(shaderBlob->GetBufferPointer(),
 															shaderBlob->GetBufferSize(),
 															NULL, (ID3D11ComputeShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_COMPUTE_SHADER_NOT_CREATED);
@@ -77,7 +77,7 @@ namespace graphics
 		SP_ASSERT(shader.m_type == desc::ShaderType::Vertex, "Shader type mismatch - expecting vertex shader");
 		auto shaderBlob = shader.m_compiledSource;
 		SP_ASSERT(shaderBlob != nullptr, "Shader source not compiled - call compile() first");
-		HRESULT hr = m_device.m_device->CreateVertexShader(shaderBlob->GetBufferPointer(),
+		HRESULT hr = m_device.device()->CreateVertexShader(shaderBlob->GetBufferPointer(),
 														   shaderBlob->GetBufferSize(),
 														   NULL, (ID3D11VertexShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_VERTEX_SHADER_NOT_CREATED);
@@ -88,7 +88,7 @@ namespace graphics
 		SP_ASSERT(shader.m_type == desc::ShaderType::Pixel, "Shader type mismatch - expecting pixel shader");
 		auto shaderBlob = shader.m_compiledSource;
 		SP_ASSERT(shaderBlob != nullptr, "Shader source not compiled - call compile() first");
-		HRESULT hr = m_device.m_device->CreatePixelShader(shaderBlob->GetBufferPointer(),
+		HRESULT hr = m_device.device()->CreatePixelShader(shaderBlob->GetBufferPointer(),
 														  shaderBlob->GetBufferSize(),
 														  NULL, (ID3D11PixelShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_PIXEL_SHADER_NOT_CREATED);

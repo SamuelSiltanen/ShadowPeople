@@ -73,7 +73,7 @@ namespace graphics
 			dxInit.SysMemSlicePitch	= init.pitchDepth;
 		}
 
-		HRESULT hr = device.m_device->CreateTexture1D(&dxdesc, init.dataPtr ? &dxInit : NULL,
+		HRESULT hr = device.device()->CreateTexture1D(&dxdesc, init.dataPtr ? &dxInit : NULL,
 													  reinterpret_cast<ID3D11Texture1D**>(&m_texture));
 		if (hr != S_OK)
 		{
@@ -122,7 +122,7 @@ namespace graphics
 			dxInit.SysMemSlicePitch	= init.pitchDepth;
 		}
 
-		HRESULT hr = device.m_device->CreateTexture2D(&dxdesc, init.dataPtr ? &dxInit : NULL,
+		HRESULT hr = device.device()->CreateTexture2D(&dxdesc, init.dataPtr ? &dxInit : NULL,
 													  reinterpret_cast<ID3D11Texture2D**>(&m_texture));
 		if (hr != S_OK)
 		{
@@ -155,7 +155,7 @@ namespace graphics
 			dxInit.SysMemSlicePitch	= init.pitchDepth;
 		}
 		
-		HRESULT hr = device.m_device->CreateTexture3D(&dxdesc, init.dataPtr ? &dxInit : NULL,
+		HRESULT hr = device.device()->CreateTexture3D(&dxdesc, init.dataPtr ? &dxInit : NULL,
 													  reinterpret_cast<ID3D11Texture3D**>(&m_texture));
 		if (hr != S_OK)
 		{

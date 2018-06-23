@@ -59,7 +59,7 @@ namespace graphics
 		dxdesc.BorderColor[2] = desc.descriptor().borderColor[2];
 		dxdesc.BorderColor[3] = desc.descriptor().borderColor[3];
 
-		HRESULT hr = device.m_device->CreateSamplerState(&dxdesc, &m_sampler);
+		HRESULT hr = device.device()->CreateSamplerState(&dxdesc, &m_sampler);
 		if (hr != S_OK)
 		{
 			MessageBox(NULL, _T("CreateSamplerState() failed!"), _T("Error"), NULL);

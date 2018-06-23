@@ -74,7 +74,9 @@ namespace graphics
 	void DeviceImpl::present(int syncInterval)
 	{
 		SP_ASSERT(m_swapChain, "Swap chain used, but not properly initialized.");
-		m_swapChain->Present(syncInterval, 0);
+		HRESULT hr = m_swapChain->Present(syncInterval, 0);
+
+		SP_ASSERT_HR(hr, ERROR_CODE_PRESENT_FAILED);
 	}
 
 	int2 DeviceImpl::swapChainSize()
@@ -88,5 +90,22 @@ namespace graphics
 		int w = static_cast<int>(desc.BufferDesc.Width);
 		int h = static_cast<int>(desc.BufferDesc.Height);
 		return { w, h };
+	}
+
+	ID3D11Device* DeviceImpl::device()
+	{
+		void *ptr0 = this;
+		void *ptr = m_device;
+		SP_DEBUG_OUTPUT(
+			std::to_string((uint64_t)ptr).append(" ")
+			.append(std::to_string((uint64_t)ptr0))
+			.append("\n").c_str());
+
+		return m_device;
+	}
+
+	ID3D11DeviceContext* DeviceImpl::context()
+	{
+		return m_context;
 	}
 }

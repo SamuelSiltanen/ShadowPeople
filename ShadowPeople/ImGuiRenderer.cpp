@@ -86,7 +86,7 @@ namespace rendering
 		const uint32_t IndexBufferResizeIncrement = 10000;
 
 		m_indexBuffer = m_device.createBuffer(desc::Buffer()
-			.elements(IndexBufferResizeIncrement)
+			.elements(minVertices + IndexBufferResizeIncrement)
 			.format<ImDrawIdx>()
 			.type(desc::BufferType::Index)
 			.usage(desc::Usage::CpuToGpuFrequent));
@@ -133,6 +133,9 @@ namespace rendering
 			}
 			vtxOffset += cmdList->VtxBuffer.Size;
 		}
+
+		gfx.setIndexBuffer();
+		gfx.setVertexBuffer();
 	}
 
 	void ImGuiRenderer::copyVertexAndIndexBufferData(graphics::CommandBuffer& gfx, ImDrawData* drawData)

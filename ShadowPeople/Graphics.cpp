@@ -149,6 +149,12 @@ namespace graphics
 		pImpl->setRenderTargets(*dsv.pImpl, *rtv.pImpl);
 	}
 
+	void CommandBuffer::setVertexBuffer()
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		pImpl->setVertexBuffer();
+	}
+
 	void CommandBuffer::setVertexBuffer(Buffer buffer, GraphicsPipeline pipeline)
 	{
 		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
@@ -157,6 +163,12 @@ namespace graphics
 		pImpl->setVertexBuffer(*buffer.pImpl, *pipeline.pImpl);
 	}
 	
+	void CommandBuffer::setIndexBuffer()
+	{
+		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
+		pImpl->setIndexBuffer();
+	}
+
 	void CommandBuffer::setIndexBuffer(Buffer buffer)
 	{
 		SP_ASSERT(pImpl != nullptr, "CommandBuffer used, but created with Device::createCommandBuffer().");
@@ -381,6 +393,9 @@ namespace graphics
 
 	Buffer Device::createBuffer(const desc::Buffer& desc)
 	{
+		void *ptr = this;
+		SP_DEBUG_OUTPUT(std::to_string((uint64_t)ptr).append("\n").c_str());
+
 		return Buffer(*this, desc);
 	}
 

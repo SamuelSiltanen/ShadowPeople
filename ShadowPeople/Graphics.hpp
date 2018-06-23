@@ -163,7 +163,9 @@ namespace graphics
 		void setRenderTargets(TextureView rtv);
 		void setRenderTargets(TextureView dsv, TextureView rtv);
 
+		void setVertexBuffer();
 		void setVertexBuffer(Buffer buffer, GraphicsPipeline pipeline);
+		void setIndexBuffer();
 		void setIndexBuffer(Buffer buffer);		
 
 		// This is mainly for filling index and vertex buffers

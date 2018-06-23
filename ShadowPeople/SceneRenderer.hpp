@@ -10,7 +10,7 @@ namespace rendering
 	class SceneRenderer
 	{
 	public:
-		SceneRenderer(graphics::Device device);
+		SceneRenderer(graphics::Device& device);
 
 		void render(graphics::CommandBuffer& gfx, const Camera& camera);
 	private:

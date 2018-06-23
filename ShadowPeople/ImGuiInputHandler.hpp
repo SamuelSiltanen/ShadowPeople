@@ -21,6 +21,7 @@ namespace input
 		void mouseWheelH(float change);
 		void keyDown(uint8_t keyCode);
 		void keyUp(uint8_t keyCode);
+		void addInputCharacter(uint32_t ch);
 
 		bool updateMouseCursor();
 

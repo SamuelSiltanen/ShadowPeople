@@ -66,12 +66,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			DispatchMessage(&msg);
 		}
 
-		std::string text("Frame ");
-		text.append(std::to_string(counter));
-		if (mouseCaptured) text.append(" mouse captured");
-		text.append("\n");
-		SP_DEBUG_OUTPUT(text.c_str());
-
 		// Update input handlers
 		gameInputHandler->tick();
 		imGuiInputHandler->tick(hWnd);
@@ -209,6 +203,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				case WM_KEYUP:
 					imGuiInputHandler->keyUp(static_cast<uint8_t>(wParam));
 					break;
+				case WM_CHAR:
+					imGuiInputHandler->addInputCharacter(wParam);
+					break;
 				default:
 					break;
 			}
@@ -220,8 +217,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		exitApplication = TRUE;
-		return 0;	
-	
+		return 0;
 	case WM_MOUSELEAVE:
 		gameInputHandler->outOfFocus();
 		mouseOutOfWindow = TRUE;

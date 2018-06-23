@@ -123,7 +123,7 @@ namespace graphics
 			break;
 		}
 
-		HRESULT hr = device.m_device->CreateShaderResourceView(texture.m_texture, &dxdesc,
+		HRESULT hr = device.device()->CreateShaderResourceView(texture.m_texture, &dxdesc,
 						(ID3D11ShaderResourceView **)&m_view);
 		if (hr != S_OK)
 		{
@@ -187,7 +187,7 @@ namespace graphics
 			break;
 		}
 
-		HRESULT hr = device.m_device->CreateUnorderedAccessView(texture.m_texture, &dxdesc,
+		HRESULT hr = device.device()->CreateUnorderedAccessView(texture.m_texture, &dxdesc,
 						(ID3D11UnorderedAccessView **)&m_view);
 		if (hr != S_OK)
 		{
@@ -264,7 +264,7 @@ namespace graphics
 			break;
 		}
 
-		HRESULT hr = device.m_device->CreateRenderTargetView(texture.m_texture, &dxdesc,
+		HRESULT hr = device.device()->CreateRenderTargetView(texture.m_texture, &dxdesc,
 						(ID3D11RenderTargetView **)&m_view);
 		if (hr != S_OK)
 		{
@@ -339,7 +339,7 @@ namespace graphics
 		}
 		dxdesc.Flags = 0;
 
-		HRESULT hr = device.m_device->CreateDepthStencilView(texture.m_texture, &dxdesc,
+		HRESULT hr = device.device()->CreateDepthStencilView(texture.m_texture, &dxdesc,
 						(ID3D11DepthStencilView **)&m_view);
 		if (hr != S_OK)
 		{
