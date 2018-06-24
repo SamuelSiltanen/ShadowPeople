@@ -1,11 +1,24 @@
 #pragma once
 
 #include "Graphics.hpp"
+#include "ScreenBuffers.hpp"
+#include "ImageBuffers.hpp"
 #include "ImGuiRenderer.hpp"
 
 namespace rendering
 {
 	class Camera;
+
+	struct VisibleGeometry
+	{
+		graphics::Buffer	objects;
+	};
+
+	struct OutputImage
+	{
+		graphics::Texture		output;
+		graphics::TextureView	outputRTV;
+	};
 
 	class SceneRenderer
 	{
@@ -14,18 +27,21 @@ namespace rendering
 
 		void render(graphics::CommandBuffer& gfx, const Camera& camera);
 	private:
+		void culling(graphics::CommandBuffer& gfx, const Camera& camera);
+		void geometryRendering(graphics::CommandBuffer& gfx, const Camera& camera);
+		void lighting(graphics::CommandBuffer& gfx, const Camera& camera);
+		void postprocess(graphics::CommandBuffer& gfx);
+
+		VisibleGeometry				m_visibleGeometry;
+		ScreenBuffers				m_screenBuffers;
+		ImageBuffers				m_imageBuffers;
+		OutputImage					m_outputImage;
+
 		graphics::ComputePipeline	m_computePipeline;
 		graphics::GraphicsPipeline	m_graphicsPipeline;
 
-		graphics::Texture			m_clearTexture;
-		graphics::TextureView		m_clearTextureUAV;
-
-		graphics::Texture			m_renderTarget;
-		graphics::TextureView		m_renderTargetRTV;
-
-		graphics::Texture			m_depthBuffer;
-		graphics::TextureView		m_depthBufferDSV;
-
 		ImGuiRenderer				m_imGuiRenderer;
+
+		int2						m_screenSize;
 	};
 }

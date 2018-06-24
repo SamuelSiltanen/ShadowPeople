@@ -306,7 +306,14 @@ namespace graphics
 			RTVs.emplace_back((ID3D11RenderTargetView*)rtv->view());
 		}
 		
-		DSV = (ID3D11DepthStencilView*)m_currentRenderTargets.dsv->view();
+		if (m_currentRenderTargets.dsv)
+		{
+			DSV = (ID3D11DepthStencilView*)m_currentRenderTargets.dsv->view();
+		}
+		else
+		{
+			DSV = nullptr;
+		}
 
 		for (auto sampler : resources.samplers)
 		{

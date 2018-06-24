@@ -9,44 +9,21 @@ using namespace graphics;
 namespace rendering
 {
 	SceneRenderer::SceneRenderer(Device& device) :
-		m_imGuiRenderer(device)
+		m_screenBuffers(device, device.swapChainSize()),
+		m_imageBuffers(device, device.swapChainSize()),
+		m_imGuiRenderer(device),
+		m_screenSize(device.swapChainSize())
 	{
-		// Just testing - replace with real code later
-		int2 s = device.swapChainSize();
-
-		m_clearTexture = device.createTexture(desc::Texture()
-			.width(s[0])
-			.height(s[1])
-			.usage(desc::Usage::GpuReadWrite));
-	
-		m_clearTextureUAV = device.createTextureView(
-			desc::TextureView(m_clearTexture.descriptor())
-				.type(desc::ViewType::UAV), m_clearTexture);
-
-		m_renderTarget = device.createTexture(desc::Texture()
-			.width(s[0])
-			.height(s[1])
+		m_outputImage.output = device.createTexture(desc::Texture()
+			.width(m_screenSize[0])
+			.height(m_screenSize[1])
 			.usage(desc::Usage::RenderTarget));
 	
-		m_renderTargetRTV = device.createTextureView(
-			desc::TextureView(m_renderTarget.descriptor())
-				.type(desc::ViewType::RTV), m_renderTarget);
+		m_outputImage.outputRTV = device.createTextureView(
+			desc::TextureView(m_outputImage.output.descriptor())
+				.type(desc::ViewType::RTV), m_outputImage.output);
 
-		desc::Format depthFormat;
-		depthFormat.channels	= desc::FormatChannels::Depth;
-		depthFormat.bytes		= desc::FormatBytesPerChannel::B32;
-		depthFormat.type		= desc::FormatType::Float;
-
-		m_depthBuffer = device.createTexture(desc::Texture()
-			.width(s[0])
-			.height(s[1])
-			.format(depthFormat)
-			.usage(desc::Usage::DepthBuffer));
-
-		m_depthBufferDSV = device.createTextureView(
-			desc::TextureView(m_depthBuffer.descriptor())
-				.type(desc::ViewType::DSV), m_depthBuffer);
-
+		// Just testing - replace with real code later
 		m_computePipeline = device.createComputePipeline(desc::ComputePipeline()
 			.binding<shaders::TestCS>());
 
@@ -62,24 +39,23 @@ namespace rendering
 
 	void SceneRenderer::render(CommandBuffer& gfx, const Camera& camera)
 	{
-		ImGui::NewFrame();
+		culling(gfx, camera);
+		geometryRendering(gfx, camera);
+		lighting(gfx, camera);
+		postprocess(gfx);
+		gfx.copyToBackBuffer(m_outputImage.output);
+	}
 
-		gfx.clear(m_clearTextureUAV, 1.f, 0.5f, 0.f, 1.f);
+	void SceneRenderer::culling(CommandBuffer& gfx, const Camera& camera)
+	{
 
-		{
-			auto binding = m_computePipeline.bind<shaders::TestCS>(gfx);
+	}
+	
+	void SceneRenderer::geometryRendering(CommandBuffer& gfx, const Camera& camera)
+	{
+		m_screenBuffers.clear(gfx);
+		m_screenBuffers.setRenderTargets(gfx);
 
-			binding->constants.size	= { 128, 256 };
-			binding->backBuffer		= m_clearTextureUAV;
-		
-			gfx.dispatch(*binding, 256, 256, 1);
-		}
-		gfx.copyToBackBuffer(m_clearTexture);
-
-		gfx.clear(m_renderTargetRTV, 0.f, 0.f, 0.f, 0.f);
-		gfx.clear(m_depthBufferDSV, 1.f);
-
-		gfx.setRenderTargets(m_depthBufferDSV, m_renderTargetRTV);
 		{
 			auto binding = m_graphicsPipeline.bind<shaders::Test2GS>(gfx);
 
@@ -89,15 +65,33 @@ namespace rendering
 			gfx.draw(*binding, 12 * 3, 0);
 		}
 
-		ImGui::ShowDemoWindow();
+		gfx.setRenderTargets();
+	}
 
+	void SceneRenderer::lighting(CommandBuffer& gfx, const Camera& camera)
+	{
+		{
+			auto binding = m_computePipeline.bind<shaders::TestCS>(gfx);
+
+			binding->constants.size	= m_screenSize;
+			binding->gBuffer		= m_screenBuffers.gBuffer();
+			binding->litBuffer		= m_imageBuffers.litBuffer();
+		
+			gfx.dispatch(*binding, m_screenSize[0], m_screenSize[1], 1);
+		}
+
+		m_imageBuffers.copyTo(gfx, m_outputImage.output);
+	}
+
+	void SceneRenderer::postprocess(CommandBuffer& gfx)
+	{
+		ImGui::NewFrame();
+		ImGui::ShowDemoWindow();
 		ImGui::EndFrame();
 		ImGui::Render();
 
+		gfx.setRenderTargets(m_outputImage.outputRTV);
 		m_imGuiRenderer.render(gfx, ImGui::GetDrawData());
-
 		gfx.setRenderTargets();
-
-		gfx.copyToBackBuffer(m_renderTarget);
 	}
 }

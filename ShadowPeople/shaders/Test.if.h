@@ -4,11 +4,12 @@ BEGIN_SHADER_INTERFACE(TestCS)
 
 CBuffer(constants,
 {
-	uint2	size;
+	int2	size;
 	uint2	__padding;
 });
 
-RWTexture2D<float4> backBuffer;
+Texture2D<uint4>	gBuffer;
+RWTexture2D<float4> litBuffer;
 
 THREAD_GROUP_SIZE(16, 16, 1)
 

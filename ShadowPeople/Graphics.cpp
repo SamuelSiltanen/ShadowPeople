@@ -246,8 +246,8 @@ namespace graphics
 		setupResourceBindings(binding);
 
 		uint32_t threadGroupsX = math::divRoundUp(threadsX, binding.threadGroupSizeX());
-		uint32_t threadGroupsY = math::divRoundUp(threadsX, binding.threadGroupSizeY());
-		uint32_t threadGroupsZ = math::divRoundUp(threadsX, binding.threadGroupSizeZ());
+		uint32_t threadGroupsY = math::divRoundUp(threadsY, binding.threadGroupSizeY());
+		uint32_t threadGroupsZ = math::divRoundUp(threadsZ, binding.threadGroupSizeZ());
 
 		pImpl->dispatch(*binding.computePipeline()->pImpl, threadGroupsX, threadGroupsY, threadGroupsZ);
 
