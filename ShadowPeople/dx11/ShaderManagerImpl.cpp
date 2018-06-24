@@ -22,6 +22,14 @@ namespace graphics
 		return wstrTo;
 	}
 
+	uint64_t fileTimeToUInt64(FILETIME ft)
+	{
+		ULARGE_INTEGER u;
+		u.LowPart	= ft.dwLowDateTime;
+		u.HighPart	= ft.dwHighDateTime;
+		return u.QuadPart;
+	}
+
 	bool ShaderManagerImpl::compile(ShaderImpl& shader)
 	{
 		std::string shaderName	= getShaderName(shader.m_bindingName, shader.m_type);
@@ -33,12 +41,16 @@ namespace graphics
 		shader.m_compiledSource = nullptr;
 		ID3DBlob* errorBlob		= nullptr;
 
+		OutputDebugString(std::string("Compiling shader ").append(shaderName).append("\n").c_str());
+
 		HRESULT hr = D3DCompileFromFile(s2ws(shaderName).c_str(), NULL,
 										D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", target.c_str(),
 										flags1, flags2, &shader.m_compiledSource, &errorBlob);
 
 		if (FAILED(hr))
 		{
+			OutputDebugString("COMPILATION FAILED\n");
+
 			if (errorBlob)
 			{
 				OutputDebugString((char*)errorBlob->GetBufferPointer());
@@ -58,7 +70,80 @@ namespace graphics
 			return false;
 		}
 
+		OutputDebugString("Success.\n");
+
+		SYSTEMTIME compilationTime;
+		GetSystemTime(&compilationTime);
+
+		FILETIME ft;
+		SP_ASSERT(SystemTimeToFileTime(&compilationTime, &ft), "Time conversion failed.");		
+
+		ShaderReference ref = { &shader, fileTimeToUInt64(ft) };
+		m_shaderNameToShader[shaderName] = ref;
+
 		return true;
+	}
+
+	void ShaderManagerImpl::hotReload()
+	{
+		for (auto& shader : m_shaderNameToShader)
+		{
+			auto& name	= shader.first;
+			auto& ref	= shader.second;
+
+			HANDLE file = CreateFile(name.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
+									 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (file == INVALID_HANDLE_VALUE)
+			{
+				OutputDebugString(std::string("Could not find: ").append(name).append("\n").c_str());
+				continue;
+			}
+
+			FILETIME lastWriteTime;
+			if (!GetFileTime(file, NULL, NULL, &lastWriteTime))
+			{
+				OutputDebugString(std::string("Unable to read modification time for ").append(name).append("\n").c_str());
+				CloseHandle(file);
+				continue;
+			}
+
+			CloseHandle(file);
+
+			uint64_t modificationTime = fileTimeToUInt64(lastWriteTime);
+			if (modificationTime > ref.compilationTime)
+			{
+				// Store the old shader code, so that we may recover if the compilation fails
+				ID3DBlob* oldSource = ref.shader->m_compiledSource;
+
+				bool success = compile(*ref.shader);
+
+				if (success)
+				{
+					SAFE_RELEASE(oldSource);
+					SAFE_RELEASE(ref.shader->m_shader);
+
+					switch (ref.shader->m_type)
+					{
+					case desc::ShaderType::Compute:
+						createComputeShader(*ref.shader);
+						break;
+					case desc::ShaderType::Vertex:
+						createVertexShader(*ref.shader);
+						break;
+					case desc::ShaderType::Pixel:
+						createPixelShader(*ref.shader);
+						break;
+					default:
+						break;
+					}
+				}
+				else
+				{
+					// Restore the old source after a failed compilation
+					ref.shader->m_compiledSource = oldSource;
+				}
+			}
+		}
 	}
 
 	void ShaderManagerImpl::createComputeShader(ShaderImpl& shader)

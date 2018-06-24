@@ -42,6 +42,7 @@
 #define ERROR_CODE_GRAPHICS_PIPELINE_NULL			__COUNTER__
 #define ERROR_CODE_COMPUTE_PIPELINE_NULL			__COUNTER__
 #define ERROR_CODE_DEVICE_NULL						__COUNTER__
+#define ERROR_CODE_SHADER_MANAGER_NULL				__COUNTER__
 
 static const LPSTR SP_error_messages[] = 
 {
@@ -69,7 +70,8 @@ static const LPSTR SP_error_messages[] =
 	_T("CommandBuffer used, but created with Device::createCommandBuffer()!"),
 	_T("GraphicsPipeline used, but not created with Device::createGraphicsPipeline()!"),
 	_T("ComputePipeline used, but not created with Device::createComputePipeline()!"),
-	_T("Device used after a failed Device creation!")
+	_T("Device used after a failed Device creation!"),
+	_T("ShaderManager used after a failed Device creation!")
 };
 
 #define SP_EXPECT_NOT_NULL_RET(var, code, ret) \

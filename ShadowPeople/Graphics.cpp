@@ -449,6 +449,12 @@ namespace graphics
 		return pImpl->swapChainSize();
 	}
 
+	void Device::shaderHotReload()
+	{
+		SP_EXPECT_NOT_NULL(m_shaderManager, ERROR_CODE_SHADER_MANAGER_NULL);
+		m_shaderManager->hotReload();
+	}
+
 	// These are needed for the shader bindings
 	namespace shaders
 	{

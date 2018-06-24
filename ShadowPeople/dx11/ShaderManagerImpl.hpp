@@ -4,6 +4,8 @@
 
 #include "DX11Utils.hpp"
 
+#include <unordered_map>
+
 namespace graphics
 {
 	class DeviceImpl;
@@ -18,6 +20,8 @@ namespace graphics
 		NO_COPY_CLASS(ShaderManagerImpl);
 
 		bool compile(ShaderImpl& shader);
+		void hotReload();
+
 		void createComputeShader(ShaderImpl& shader);
 		void createVertexShader(ShaderImpl& shader);
 		void createPixelShader(ShaderImpl& shader);
@@ -28,6 +32,12 @@ namespace graphics
 
 		DeviceImpl& m_device;
 
-		// TODO: Mapping of shaders
+		struct ShaderReference
+		{
+			ShaderImpl*	shader;
+			uint64_t	compilationTime;
+		};
+
+		std::unordered_map<std::string, ShaderReference>	m_shaderNameToShader;
 	};
 }

@@ -15,11 +15,8 @@ namespace graphics
 	public:
 		ShaderManager(Device& device);
 
-		//void		registerShader();
-		//const void* compiledByteCode();
-
 		bool compile(Shader& shader);
-
+		void hotReload();
 	private:
 		friend class ComputePipeline;
 		friend class GraphicsPipeline;

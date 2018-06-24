@@ -17,6 +17,7 @@ static BOOL exitApplication		= FALSE;
 static BOOL mouseOutOfWindow	= FALSE;
 static BOOL mouseCaptured		= FALSE;
 static BOOL keyboardCaptured	= FALSE;
+static BOOL shaderHotReload		= FALSE;
 
 static std::unique_ptr<input::InputHandler>			gameInputHandler	= nullptr;
 static std::unique_ptr<input::ImGuiInputHandler>	imGuiInputHandler	= nullptr;
@@ -64,6 +65,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+		}
+
+		// Shader hot reload
+		if (shaderHotReload)
+		{
+			device.shaderHotReload();
+			shaderHotReload = FALSE;
 		}
 
 		// Update input handlers
@@ -173,7 +181,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				default:
 					break;
 			}
-
 		}
 	}
 
@@ -209,6 +216,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				default:
 					break;
 			}
+		}
+
+		// Special handling for F6 - shader hot reload
+		if ((uMsg == WM_KEYDOWN) && (wParam == VK_F6))
+		{
+			shaderHotReload = TRUE;
 		}
 	}
 

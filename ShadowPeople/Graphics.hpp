@@ -278,6 +278,8 @@ namespace graphics
 		void				present(int syncInterval);
 
 		int2				swapChainSize();
+
+		void				shaderHotReload();
 	private:
 		friend class Texture;
 		friend class TextureView;

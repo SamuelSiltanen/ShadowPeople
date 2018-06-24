@@ -14,6 +14,8 @@ namespace graphics
 
 		NO_COPY_CLASS(ShaderImpl);
 
+		
+
 		ID3DBlob* compiledSource() { return m_compiledSource; };
 	private:
 		friend class ShaderManagerImpl;

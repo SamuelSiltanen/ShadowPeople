@@ -94,13 +94,6 @@ namespace graphics
 
 	ID3D11Device* DeviceImpl::device()
 	{
-		void *ptr0 = this;
-		void *ptr = m_device;
-		SP_DEBUG_OUTPUT(
-			std::to_string((uint64_t)ptr).append(" ")
-			.append(std::to_string((uint64_t)ptr0))
-			.append("\n").c_str());
-
 		return m_device;
 	}
 
