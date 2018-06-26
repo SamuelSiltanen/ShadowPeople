@@ -7,6 +7,8 @@
 #include "GameLogic.hpp"
 #include "InputHandler.hpp"
 #include "ImGuiInputHandler.hpp"
+#include "AssetLoader.hpp"
+#include "Mesh.hpp"
 
 #include <tchar.h>
 
@@ -35,7 +37,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	BOOL isOK = GetClientRect(hWnd, &clientRect);
 	SP_EXPECT_NOT_NULL_RET(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED, ERROR_CODE_GET_CLIENT_RECT_FAILED);
 
-	int2 clientArea {clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
+	int2 clientArea{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
 
 	graphics::Device device(hWnd, clientArea);
 
@@ -50,6 +52,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	ShowWindow(hWnd, nCmdShow);
 	trackMouseLeave(hWnd);
+
+	asset::AssetLoader assetLoader;
+	rendering::Mesh mesh;
+	if (!assetLoader.load("data/house/house_obj.obj", mesh))
+	{
+		OutputDebugString("Load failed\n");
+	}
 
 	int counter = 0;
 

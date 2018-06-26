@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <string>
 
 template<int N>
@@ -390,7 +391,14 @@ public:
 		m_byteSize(byteSize)
 	{}
 
+	Range(std::vector<T>& vector) :
+		m_begin(vector.data()),
+		m_byteSize(vector.size() * sizeof(T))
+	{}
+
 	T*		begin()		{ return m_begin; }
+	T*		end()		{ return m_begin + size(); }
+	size_t	size()		{ return m_byteSize / sizeof(T); }
 	size_t  byteSize()	{ return m_byteSize; }
 	// TODO: Fill other member as required
 private:
