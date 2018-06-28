@@ -192,14 +192,13 @@ public:
 	ArithmeticVector& operator=(const ArithmeticVector&) = default;
 	ArithmeticVector& operator=(const ArithmeticVector&&) = default;
 	*/
-	BooleanVector<N> operator==(const ArithmeticVector& rhs)
+	bool operator==(const ArithmeticVector& rhs) const
 	{
-		BooleanVector<N> b(false);
 		for (int i = 0; i < N; i++)
 		{
-			if (m_elements[i] == rhs.m_elements[i]) return b.m_elements[i];
+			if (m_elements[i] != rhs.m_elements[i]) return false;
 		}
-		return b;
+		return true;
 	}
 
 	T& operator[](const int i)
@@ -318,6 +317,20 @@ using float2 = ArithmeticVector<float, 2>;
 using float3 = ArithmeticVector<float, 3>;
 using float4 = ArithmeticVector<float, 4>;
 
+namespace std
+{
+	template<> struct hash<uint3>
+	{
+		std::size_t operator()(const uint3& i) const noexcept
+		{
+			std::size_t h = std::hash<uint32_t>{}(i[0]);
+			h ^= std::hash<uint32_t>{}(i[1]);
+			h ^= std::hash<uint32_t>{}(i[2]);
+			return h;
+		}
+	};
+}
+
 float3 cross(const float3& a, const float3& b);
 float4 cross(const float4& a, const float4& b);
 
@@ -400,6 +413,9 @@ public:
 	T*		end()		{ return m_begin + size(); }
 	size_t	size()		{ return m_byteSize / sizeof(T); }
 	size_t  byteSize()	{ return m_byteSize; }
+
+	const T& operator[](uint32_t i) const { return m_begin[i]; }
+
 	// TODO: Fill other member as required
 private:
 	T*		m_begin;

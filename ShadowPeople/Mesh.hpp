@@ -16,7 +16,9 @@ namespace rendering
 	{
 	public:
 		Mesh() = default;
-		Mesh(Range<Vertex>& vertices, Range<uint32_t>& indices);
+		Mesh(Range<Vertex> vertices, Range<uint32_t> indices);
+
+		void fill(Range<Vertex> vertices, Range<uint32_t> indices);
 	private:
 		std::vector<Vertex>		m_vertices;
 		std::vector<uint32_t>	m_indices;

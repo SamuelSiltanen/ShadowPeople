@@ -186,6 +186,7 @@
     <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Scene.hpp" />
     <ClInclude Include="SceneRenderer.hpp" />
     <ClInclude Include="ScreenBuffers.hpp" />
     <ClInclude Include="ShaderManager.hpp" />

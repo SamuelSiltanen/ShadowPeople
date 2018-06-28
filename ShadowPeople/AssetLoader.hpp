@@ -24,6 +24,6 @@ namespace asset
 
 		bool parseObj(char* buffer, uint32_t bytes, rendering::Mesh& mesh);
 		bool constructMesh(Range<float3> positions, Range<float2> texcoords, Range<float3> normals,
-						   rendering::Mesh& mesh);
+						   Range<Face> faces, rendering::Mesh& mesh);
 	};
 }

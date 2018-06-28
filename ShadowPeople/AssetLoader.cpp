@@ -6,6 +6,7 @@
 #include <Windows.h>
 
 #include <memory>
+#include <unordered_map>
 
 namespace asset
 {
@@ -169,6 +170,7 @@ namespace asset
 							}
 						}
 					}
+					f.indices.emplace_back(indices);
 					token = strtok_s(NULL, " \t\n\r", &next_token);
 				}
 				faces.emplace_back(f);
@@ -212,13 +214,71 @@ namespace asset
 		msg.append(std::string("Using material ").append(materialName).append("\n"));
 		OutputDebugString(msg.c_str());
 
-		return constructMesh(vtxPositions, vtxTexCoords, vtxNormals, mesh);
+		return constructMesh(vtxPositions, vtxTexCoords, vtxNormals, faces, mesh);
 	}
 
 	bool AssetLoader::constructMesh(Range<float3> positions, Range<float2> texcoords, Range<float3> normals,
-									rendering::Mesh& mesh)
+									Range<Face> faces, rendering::Mesh& mesh)
 	{
+		std::unordered_map<uint3, uint32_t> uniqueIndices;
+		std::vector<rendering::Vertex> vertices;
+		std::vector<uint32_t> indices;
+		std::vector<uint32_t> faceIndices;
+		for (auto &face : faces)
+		{
+			faceIndices.clear();
+			for (auto indexTrio : face.indices)
+			{
+				uint32_t index;
+				auto it = uniqueIndices.find(indexTrio);
+				if (it == uniqueIndices.end())
+				{
+					rendering::Vertex vtx;
+					vtx.position	= positions[indexTrio[0]];
+					vtx.uv			= texcoords[indexTrio[1]];
+					vtx.normal		= normals[indexTrio[2]];
 
+					index = static_cast<uint32_t>(vertices.size());
+					uniqueIndices[indexTrio] = index;
+
+					vertices.emplace_back(vtx);
+				}
+				else
+				{
+					index = it->second;
+				}
+				faceIndices.emplace_back(index);
+			}
+
+			if (faceIndices.size() == 3)
+			{
+				indices.insert(indices.end(), faceIndices.begin(), faceIndices.end());
+			}
+			else if (faceIndices.size() == 4)
+			{
+				indices.emplace_back(faceIndices[0]);
+				indices.emplace_back(faceIndices[2]);
+				indices.emplace_back(faceIndices[1]);
+
+				indices.emplace_back(faceIndices[0]);
+				indices.emplace_back(faceIndices[3]);
+				indices.emplace_back(faceIndices[2]);
+			}
+			else
+			{
+				std::string err("Complex polygons not yet supported: ");
+				err.append(std::to_string(faceIndices.size())).append(" vertices\n");
+				OutputDebugString(err.c_str());
+				return false;
+			}
+		}
+
+		mesh.fill(vertices, indices);
+
+		std::string msg("Loaded model with ");
+		msg.append(std::to_string(vertices.size())).append(" unique vertices and ");
+		msg.append(std::to_string(indices.size())).append(" triangles\n");
+		OutputDebugString(msg.c_str());
 
 		return true;
 	}

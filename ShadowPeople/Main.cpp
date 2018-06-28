@@ -39,6 +39,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	int2 clientArea{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
 
+	asset::AssetLoader assetLoader;
+	rendering::Mesh mesh;
+	if (!assetLoader.load("data/house/house_obj.obj", mesh))
+	{
+		OutputDebugString("Load failed\n");
+	}
+
 	graphics::Device device(hWnd, clientArea);
 
 	rendering::SceneRenderer sceneRenderer(device);
@@ -52,15 +59,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	ShowWindow(hWnd, nCmdShow);
 	trackMouseLeave(hWnd);
-
-	asset::AssetLoader assetLoader;
-	rendering::Mesh mesh;
-	if (!assetLoader.load("data/house/house_obj.obj", mesh))
-	{
-		OutputDebugString("Load failed\n");
-	}
-
-	int counter = 0;
 
 	MSG msg	= {};
 	while (!exitApplication)
@@ -92,8 +90,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		sceneRenderer.render(gfx, gameLogic->camera());
 		device.submit(gfx);
 		device.present(1);
-
-		counter++;
 	}
 
 	return msg.wParam;
