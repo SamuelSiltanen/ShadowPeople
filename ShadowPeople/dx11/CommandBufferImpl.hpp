@@ -59,7 +59,7 @@ namespace graphics
         std::shared_ptr<MappingImpl> map(BufferImpl& buf);
 
         void dispatch(ComputePipelineImpl& pipeline,
-                      int32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ);
+                      uint32_t threadGroupsX, uint32_t threadGroupsY, uint32_t threadGroupsZ);
         void dispatchIndirect(ComputePipelineImpl& pipeline,
                               const BufferImpl& argsBuffer, uint32_t argsOffset);
 

@@ -3,96 +3,100 @@
 
 #include "Graphics.hpp"
 #include "Errors.hpp"
-#include "SceneRenderer.hpp"
 #include "GameLogic.hpp"
 #include "InputHandler.hpp"
 #include "ImGuiInputHandler.hpp"
 #include "AssetLoader.hpp"
-#include "Mesh.hpp"
+
+#include "rendering/SceneRenderer.hpp"
+#include "rendering/Mesh.hpp"
+#include "rendering/Scene.hpp"
 
 #include <tchar.h>
 
-static TCHAR szWindowClass[]	= _T("shadowpeople");
-static TCHAR szTitle[]			= _T("Shadow People");
+static TCHAR szWindowClass[]    = _T("shadowpeople");
+static TCHAR szTitle[]          = _T("Shadow People");
 
-static BOOL exitApplication		= FALSE;
-static BOOL mouseOutOfWindow	= FALSE;
-static BOOL mouseCaptured		= FALSE;
-static BOOL keyboardCaptured	= FALSE;
-static BOOL shaderHotReload		= FALSE;
+static BOOL exitApplication     = FALSE;
+static BOOL mouseOutOfWindow    = FALSE;
+static BOOL mouseCaptured       = FALSE;
+static BOOL keyboardCaptured    = FALSE;
+static BOOL shaderHotReload     = FALSE;
 
-static std::unique_ptr<input::InputHandler>			gameInputHandler	= nullptr;
-static std::unique_ptr<input::ImGuiInputHandler>	imGuiInputHandler	= nullptr;
+static std::unique_ptr<input::InputHandler>         gameInputHandler    = nullptr;
+static std::unique_ptr<input::ImGuiInputHandler>    imGuiInputHandler   = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-HWND			 createWindow(HINSTANCE hInstance);
-void			 trackMouseLeave(HWND hWnd);
+HWND             createWindow(HINSTANCE hInstance);
+void             trackMouseLeave(HWND hWnd);
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	HWND hWnd = createWindow(hInstance);
-	SP_EXPECT_NOT_NULL_RET(hWnd, ERROR_CODE_WINDOW_CREATION_FAILED, ERROR_CODE_WINDOW_CREATION_FAILED);
-	
-	RECT clientRect;
-	BOOL isOK = GetClientRect(hWnd, &clientRect);
-	SP_EXPECT_NOT_NULL_RET(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED, ERROR_CODE_GET_CLIENT_RECT_FAILED);
+    HWND hWnd = createWindow(hInstance);
+    SP_EXPECT_NOT_NULL_RET(hWnd, ERROR_CODE_WINDOW_CREATION_FAILED, ERROR_CODE_WINDOW_CREATION_FAILED);
 
-	int2 clientArea{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
+    RECT clientRect;
+    BOOL isOK = GetClientRect(hWnd, &clientRect);
+    SP_EXPECT_NOT_NULL_RET(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED, ERROR_CODE_GET_CLIENT_RECT_FAILED);
 
-	asset::AssetLoader assetLoader;
-	rendering::Mesh mesh;
-	if (!assetLoader.load("data/house/house_obj.obj", mesh))
-	{
-		OutputDebugString("Load failed\n");
-	}
+    int2 clientArea{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
 
-	graphics::Device device(hWnd, clientArea);
+    asset::AssetLoader assetLoader;
+    rendering::Mesh mesh;
+    if (!assetLoader.load("data/house/house_obj.obj", mesh))
+    {
+        OutputDebugString("Load failed\n");
+    }
 
-	rendering::SceneRenderer sceneRenderer(device);
+    graphics::Device device(hWnd, clientArea);
 
-	gameInputHandler = std::make_unique<input::InputHandler>();
+    rendering::SceneRenderer sceneRenderer(device);
 
-	std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(clientArea);
-	gameInputHandler->registerListener(gameLogic);
+    gameInputHandler = std::make_unique<input::InputHandler>();
 
-	imGuiInputHandler = std::make_unique<input::ImGuiInputHandler>(hWnd);
+    std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(clientArea);
+    gameInputHandler->registerListener(gameLogic);
 
-	ShowWindow(hWnd, nCmdShow);
-	trackMouseLeave(hWnd);
+    rendering::Scene scene(gameLogic->camera());
 
-	MSG msg	= {};
-	while (!exitApplication)
-	{
-		// Check if the GUI has captured input devices, so that they don't go to he game input handler
-		mouseCaptured		= imGuiInputHandler->mouseCaptured();
-		keyboardCaptured	= imGuiInputHandler->keyboardCaptured();
+    imGuiInputHandler = std::make_unique<input::ImGuiInputHandler>(hWnd);
 
-		// Read Windows messages and send them to event handler
-		while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+    ShowWindow(hWnd, nCmdShow);
+    trackMouseLeave(hWnd);
 
-		// Shader hot reload
-		if (shaderHotReload)
-		{
-			device.shaderHotReload();
-			shaderHotReload = FALSE;
-		}
+    MSG msg	= {};
+    while (!exitApplication)
+    {
+        // Check if the GUI has captured input devices, so that they don't go to he game input handler
+        mouseCaptured       = imGuiInputHandler->mouseCaptured();
+        keyboardCaptured    = imGuiInputHandler->keyboardCaptured();
 
-		// Update input handlers
-		gameInputHandler->tick();
-		imGuiInputHandler->tick(hWnd);
+        // Read Windows messages and send them to event handler
+        while (PeekMessage(&msg, hWnd, 0, 0, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
 
-		// Draw frame
-		graphics::CommandBuffer gfx = device.createCommandBuffer();
-		sceneRenderer.render(gfx, gameLogic->camera());
-		device.submit(gfx);
-		device.present(1);
-	}
+        // Shader hot reload
+        if (shaderHotReload)
+        {
+            device.shaderHotReload();
+            shaderHotReload = FALSE;
+        }
 
-	return msg.wParam;
+        // Update input handlers
+        gameInputHandler->tick();
+        imGuiInputHandler->tick(hWnd);
+
+        // Draw frame
+        graphics::CommandBuffer gfx = device.createCommandBuffer();
+        sceneRenderer.render(gfx, scene);
+        device.submit(gfx);
+        device.present(1);
+    }
+
+    return msg.wParam;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

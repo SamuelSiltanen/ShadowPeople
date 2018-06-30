@@ -9,78 +9,96 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\dx11">
-      <UniqueIdentifier>{4420630b-6e23-4084-934a-16e7d7edcf43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\dx11">
-      <UniqueIdentifier>{a69e8947-17fe-44fd-b130-95c6b4c33f7c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\shaders">
-      <UniqueIdentifier>{d8f69b72-db64-4da9-bee6-ef615f034f58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{9e44e6a8-6141-4b61-9148-903fd5a4aac9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{3eb78680-3e76-4ded-a857-9e072d91c9d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\rendering">
+      <UniqueIdentifier>{6ad9dda8-2494-492b-af42-6600dc5876f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics">
+      <UniqueIdentifier>{55142e57-183e-4c4a-85b2-cd2035eac758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\input">
+      <UniqueIdentifier>{e0c0aa23-8478-4a2a-a5de-c653a77737f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\asset">
+      <UniqueIdentifier>{c4527403-cf92-4d5d-af13-dcd08028f37c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game">
+      <UniqueIdentifier>{145df9fa-eba3-4b70-8be7-2dd6c1160c3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics\dx11">
+      <UniqueIdentifier>{4420630b-6e23-4084-934a-16e7d7edcf43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{a974d235-f615-45f4-9fad-a9263d843314}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics\dx11">
+      <UniqueIdentifier>{a69e8947-17fe-44fd-b130-95c6b4c33f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\input">
+      <UniqueIdentifier>{1f2a09d2-cf8d-4322-b983-98fa1ca0a3b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\asset">
+      <UniqueIdentifier>{a3bf52be-ea14-4278-ba9c-98295d476086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{9b49d924-c4be-4295-ab2f-422012ab2747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rendering">
+      <UniqueIdentifier>{5515ac82-9a8a-4093-92bb-79420ed8f8fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{18d45a49-dc8e-4936-a604-0ba1ab9a48f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader Files\shaders">
+      <UniqueIdentifier>{d8f69b72-db64-4da9-bee6-ef615f034f58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dx11\DeviceImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\TextureImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\TextureViewImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\BufferImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\BufferViewImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\CommandBufferImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\DX11Utils.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\SamplerImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\GraphicsPipelineImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\ComputePipelineImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\ShaderManagerImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="dx11\ShaderImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
     <ClCompile Include="Types.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameLogic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
@@ -95,112 +113,103 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dx11\MappingImpl.cpp">
-      <Filter>Source Files\dx11</Filter>
+      <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiInputHandler.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Source Files\graphics</Filter>
     </ClCompile>
     <ClCompile Include="InputHandler.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\input</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenBuffers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageBuffers.cpp">
-      <Filter>Source Files\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ImGuiInputHandler.cpp">
+      <Filter>Source Files\input</Filter>
     </ClCompile>
     <ClCompile Include="AssetLoader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\asset</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLogic.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\Camera.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\ImGuiRenderer.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\Mesh.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\SceneRenderer.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\ScreenBuffers.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\ImageBuffers.cpp">
+      <Filter>Source Files\rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Descriptors.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Errors.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Types.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dx11\DeviceImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\TextureImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\TextureViewImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\BufferImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\BufferViewImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\CommandBufferImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Graphics.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\DX11Utils.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\SamplerImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\GraphicsPipelineImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\ComputePipelineImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderManager.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="shaders\Test.if.h">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="dx11\ResourceViewImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="Math.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShaderResourcesImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="shaders\Test2.if.h">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="dx11\ShaderManagerImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\ShaderImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Action.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameLogic.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="imgui\stb_truetype.h">
       <Filter>Header Files\imgui</Filter>
@@ -220,58 +229,82 @@
     <ClInclude Include="imgui\imgui_internal.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiRenderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="shaders\ImGuiRenderer.if.h">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="shaders\ShaderInterface.h">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="dx11\MappingImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="dx11\InputLayoutImpl.hpp">
-      <Filter>Header Files\dx11</Filter>
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiInputHandler.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DX11Graphics.hpp">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="InputHandler.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Descriptors.hpp">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ScreenBuffers.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Graphics.hpp">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="ImageBuffers.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Action.hpp">
+      <Filter>Header Files\input</Filter>
     </ClInclude>
     <ClInclude Include="AssetLoader.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\asset</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GameLogic.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ImGuiInputHandler.hpp">
+      <Filter>Header Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.hpp">
+      <Filter>Header Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\Camera.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\ImageBuffers.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\ImGuiRenderer.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\Mesh.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\Scene.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\SceneRenderer.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\ScreenBuffers.hpp">
+      <Filter>Header Files\rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\Test.cs.hlsl">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\Test2.vs.hlsl">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\Test2.ps.hlsl">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\ImGuiRenderer.vs.hlsl">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\ImGuiRenderer.ps.hlsl">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Shader Files\shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #include "Camera.hpp"
-#include "Errors.hpp"
-#include "Math.hpp"
+#include "../Errors.hpp"
+#include "../Math.hpp"
 
 namespace rendering
 {

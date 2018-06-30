@@ -119,7 +119,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetLoader.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="dx11\BufferImpl.cpp" />
     <ClCompile Include="dx11\BufferViewImpl.cpp" />
     <ClCompile Include="dx11\CommandBufferImpl.cpp" />
@@ -135,25 +134,25 @@
     <ClCompile Include="dx11\TextureViewImpl.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="ImageBuffers.cpp" />
     <ClCompile Include="ImGuiInputHandler.cpp" />
-    <ClCompile Include="ImGuiRenderer.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="SceneRenderer.cpp" />
-    <ClCompile Include="ScreenBuffers.cpp" />
+    <ClCompile Include="rendering\Camera.cpp" />
+    <ClCompile Include="rendering\ImageBuffers.cpp" />
+    <ClCompile Include="rendering\ImGuiRenderer.cpp" />
+    <ClCompile Include="rendering\Mesh.cpp" />
+    <ClCompile Include="rendering\SceneRenderer.cpp" />
+    <ClCompile Include="rendering\ScreenBuffers.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.hpp" />
     <ClInclude Include="AssetLoader.hpp" />
-    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Descriptors.hpp" />
     <ClInclude Include="DX11Graphics.hpp" />
     <ClInclude Include="dx11\BufferImpl.hpp" />
@@ -174,9 +173,7 @@
     <ClInclude Include="Errors.hpp" />
     <ClInclude Include="GameLogic.hpp" />
     <ClInclude Include="Graphics.hpp" />
-    <ClInclude Include="ImageBuffers.hpp" />
     <ClInclude Include="ImGuiInputHandler.hpp" />
-    <ClInclude Include="ImGuiRenderer.hpp" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_internal.h" />
@@ -185,10 +182,13 @@
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="InputHandler.hpp" />
     <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Mesh.hpp" />
-    <ClInclude Include="Scene.hpp" />
-    <ClInclude Include="SceneRenderer.hpp" />
-    <ClInclude Include="ScreenBuffers.hpp" />
+    <ClInclude Include="rendering\Camera.hpp" />
+    <ClInclude Include="rendering\ImageBuffers.hpp" />
+    <ClInclude Include="rendering\ImGuiRenderer.hpp" />
+    <ClInclude Include="rendering\Mesh.hpp" />
+    <ClInclude Include="rendering\Scene.hpp" />
+    <ClInclude Include="rendering\SceneRenderer.hpp" />
+    <ClInclude Include="rendering\ScreenBuffers.hpp" />
     <ClInclude Include="ShaderManager.hpp" />
     <ClInclude Include="ShaderResourcesImpl.hpp" />
     <ClInclude Include="shaders\ImGuiRenderer.if.h" />

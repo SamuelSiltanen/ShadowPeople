@@ -1,8 +1,9 @@
 #include "SceneRenderer.hpp"
 #include "Camera.hpp"
-#include "shaders/Test.if.h"
-#include "shaders/Test2.if.h"
-#include "imgui\imgui.h"
+#include "Scene.hpp"
+#include "../shaders/Test.if.h"
+#include "../shaders/Test2.if.h"
+#include "../imgui/imgui.h"
 
 using namespace graphics;
 
@@ -37,11 +38,11 @@ namespace rendering
 				.depthFunc(desc::ComparisonMode::Less)));
 	}
 
-	void SceneRenderer::render(CommandBuffer& gfx, const Camera& camera)
+	void SceneRenderer::render(CommandBuffer& gfx, const Scene& scene)
 	{
-		culling(gfx, camera);
-		geometryRendering(gfx, camera);
-		lighting(gfx, camera);
+		culling(gfx, scene.camera());
+		geometryRendering(gfx, scene.camera());
+		lighting(gfx, scene.camera());
 		postprocess(gfx);
 		gfx.copyToBackBuffer(m_outputImage.output);
 	}

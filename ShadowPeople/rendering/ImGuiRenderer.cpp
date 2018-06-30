@@ -1,7 +1,7 @@
 #include "ImGuiRenderer.hpp"
-#include "shaders/ImGuiRenderer.if.h"
-#include "imgui/imgui.h"
-#include "Types.hpp"
+#include "../shaders/ImGuiRenderer.if.h"
+#include "../imgui/imgui.h"
+#include "../Types.hpp"
 
 using namespace graphics;
 
