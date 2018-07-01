@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Action.hpp"
-#include "rendering/Camera.hpp"
+#include "../input/Action.hpp"
+
+#include "../rendering/Camera.hpp"
 
 namespace game
 {

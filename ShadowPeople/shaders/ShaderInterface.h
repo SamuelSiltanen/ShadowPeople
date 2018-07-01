@@ -3,8 +3,8 @@
 
 #ifdef __cplusplus	// C++
 
-#include "../Graphics.hpp"
-#include "../Descriptors.hpp"
+#include "../graphics/Graphics.hpp"
+#include "../graphics/Descriptors.hpp"
 #include "../Errors.hpp"
 #include "../Types.hpp"
 

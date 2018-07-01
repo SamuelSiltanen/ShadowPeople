@@ -1,5 +1,5 @@
 #include "GameLogic.hpp"
-#include "Errors.hpp"
+#include "../Errors.hpp"
 
 #include <string>
 

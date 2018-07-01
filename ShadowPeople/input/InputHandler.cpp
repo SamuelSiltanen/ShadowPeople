@@ -1,5 +1,6 @@
 #include "InputHandler.hpp"
-#include "Errors.hpp"
+
+#include "../Errors.hpp"
 
 namespace input
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Graphics.hpp"
+#include "../graphics/Graphics.hpp"
 #include "ScreenBuffers.hpp"
 #include "ImageBuffers.hpp"
 #include "ImGuiRenderer.hpp"

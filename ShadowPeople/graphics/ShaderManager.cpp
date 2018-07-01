@@ -1,8 +1,9 @@
 #include "ShaderManager.hpp"
-#include "Errors.hpp"
 #include "Graphics.hpp"
 
-#include "dx11/ShaderManagerImpl.hpp"
+#include "../Errors.hpp"
+
+#include "../dx11/ShaderManagerImpl.hpp"
 
 namespace graphics
 {

@@ -1,7 +1,7 @@
 #include "ImGuiInputHandler.hpp"
-#include "imgui\imgui.h"
+#include "../imgui/imgui.h"
 
-#include "Errors.hpp"
+#include "../Errors.hpp"
 
 namespace input
 {

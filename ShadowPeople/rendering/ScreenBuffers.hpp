@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Graphics.hpp"
+#include "../graphics/Graphics.hpp"
 
 namespace rendering
 {

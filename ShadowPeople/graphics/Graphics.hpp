@@ -7,7 +7,7 @@
 #include <cstdint>
 
 #include "Descriptors.hpp"
-#include "Types.hpp"
+#include "../Types.hpp"
 
 namespace graphics
 {

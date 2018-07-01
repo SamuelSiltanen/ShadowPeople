@@ -2,7 +2,7 @@
 
 #include <d3d11.h>
 
-#include "../Descriptors.hpp"
+#include "../graphics/Descriptors.hpp"
 
 // We don't want to allow copying the implementation classes, 
 // because that could mess up the reference counting by smart pointers

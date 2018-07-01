@@ -5,8 +5,9 @@
 #include <vector>
 #include <array>
 
-#include "Types.hpp"
 #include "Action.hpp"
+
+#include "../Types.hpp"
 
 namespace input
 {

@@ -1,5 +1,5 @@
 #include "AssetLoader.hpp"
-#include "rendering/Mesh.hpp"
+#include "../rendering/Mesh.hpp"
 
 // File operations requires OS specific stuff, move it later to a separate file
 #define WIN32_LEAN_AND_MEAN

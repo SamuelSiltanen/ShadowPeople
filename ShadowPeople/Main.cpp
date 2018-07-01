@@ -1,16 +1,20 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include "Graphics.hpp"
-#include "Errors.hpp"
-#include "GameLogic.hpp"
-#include "InputHandler.hpp"
-#include "ImGuiInputHandler.hpp"
-#include "AssetLoader.hpp"
+#include "graphics/Graphics.hpp"
+
+#include "asset/AssetLoader.hpp"
+
+#include "input/InputHandler.hpp"
+#include "input/ImGuiInputHandler.hpp"
 
 #include "rendering/SceneRenderer.hpp"
 #include "rendering/Mesh.hpp"
 #include "rendering/Scene.hpp"
+
+#include "game/GameLogic.hpp"
+
+#include "Errors.hpp"
 
 #include <tchar.h>
 

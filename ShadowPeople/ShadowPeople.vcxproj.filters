@@ -116,24 +116,6 @@
     <ClCompile Include="dx11\MappingImpl.cpp">
       <Filter>Source Files\graphics\dx11</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
-      <Filter>Source Files\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHandler.cpp">
-      <Filter>Source Files\input</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGuiInputHandler.cpp">
-      <Filter>Source Files\input</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetLoader.cpp">
-      <Filter>Source Files\asset</Filter>
-    </ClCompile>
-    <ClCompile Include="GameLogic.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
     <ClCompile Include="rendering\Camera.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
@@ -151,6 +133,24 @@
     </ClCompile>
     <ClCompile Include="rendering\ImageBuffers.cpp">
       <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Graphics.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\ShaderManager.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="input\ImGuiInputHandler.cpp">
+      <Filter>Source Files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="input\InputHandler.cpp">
+      <Filter>Source Files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="asset\AssetLoader.cpp">
+      <Filter>Source Files\asset</Filter>
+    </ClCompile>
+    <ClCompile Include="game\GameLogic.cpp">
+      <Filter>Source Files\game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,33 +241,6 @@
     <ClInclude Include="dx11\InputLayoutImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Graphics.hpp">
-      <Filter>Header Files\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Descriptors.hpp">
-      <Filter>Header Files\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.hpp">
-      <Filter>Header Files\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Action.hpp">
-      <Filter>Header Files\input</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetLoader.hpp">
-      <Filter>Header Files\asset</Filter>
-    </ClInclude>
-    <ClInclude Include="GameLogic.hpp">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiInputHandler.hpp">
-      <Filter>Header Files\input</Filter>
-    </ClInclude>
-    <ClInclude Include="InputHandler.hpp">
-      <Filter>Header Files\input</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderManager.hpp">
-      <Filter>Header Files\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="rendering\Camera.hpp">
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
@@ -288,6 +261,33 @@
     </ClInclude>
     <ClInclude Include="rendering\ScreenBuffers.hpp">
       <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Descriptors.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\DX11Graphics.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Graphics.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\ShaderManager.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Action.hpp">
+      <Filter>Header Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\ImGuiInputHandler.hpp">
+      <Filter>Header Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\InputHandler.hpp">
+      <Filter>Header Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="asset\AssetLoader.hpp">
+      <Filter>Header Files\asset</Filter>
+    </ClInclude>
+    <ClInclude Include="game\GameLogic.hpp">
+      <Filter>Header Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
