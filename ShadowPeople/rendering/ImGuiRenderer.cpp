@@ -37,13 +37,9 @@ namespace rendering
 				.enableScissors(true))
 			.depthStencilState(desc::DepthStencilState().depthTestingEnable(false)));
 
-		// TODO: Create input assembler layout and set in rendering
-
 		createFontsTexture();
 		createVertexBuffer(0);
 		createIndexBuffer(0);
-
-		// TODO: Set vertex and index buffers in rendering
 	}
 
 	ImGuiRenderer::~ImGuiRenderer()
@@ -63,7 +59,7 @@ namespace rendering
 		m_fontTexture		= m_device.createTexture(desc::Texture()
 								.width(width).height(height)
 								.initialData(desc::InitialData(pixels, width * BytesPerPixel)));
-		m_fontTextureSRV	= m_device.createTextureView(m_fontTexture.descriptor(), m_fontTexture);
+		m_fontTextureSRV	= m_device.createTextureView(m_fontTexture, m_fontTexture.descriptor());
 
 		io.Fonts->TexID		= (void *)&m_fontTextureSRV;
 

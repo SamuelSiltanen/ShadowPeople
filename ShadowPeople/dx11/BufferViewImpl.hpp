@@ -14,7 +14,7 @@ namespace graphics
     class BufferViewImpl : public ResourceViewImpl
     {
     public:
-        BufferViewImpl(DeviceImpl& device, const desc::BufferView::Descriptor& desc, const BufferImpl& buffer);
+        BufferViewImpl(DeviceImpl& device, const BufferImpl& buffer, const desc::BufferView::Descriptor& desc);
         ~BufferViewImpl();
 
         NO_COPY_CLASS(BufferViewImpl)

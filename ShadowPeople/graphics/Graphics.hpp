@@ -61,7 +61,7 @@ namespace graphics
 	{
 	public:
 		TextureView() : pImpl(nullptr) {}
-		TextureView(Device& device, const desc::TextureView& desc, const Texture& texture);
+		TextureView(Device& device, const Texture& texture, const desc::TextureView::Descriptor& desc);
 
 		bool valid() const override { return (pImpl != nullptr); }
 
@@ -96,7 +96,7 @@ namespace graphics
 	{
 	public:
 		BufferView() : pImpl(nullptr) {}
-		BufferView(Device& device, const desc::BufferView& desc, const Buffer& buffer);
+		BufferView(Device& device, const Buffer& buffer, const desc::BufferView::Descriptor& desc);
 
 		bool valid() const override { return (pImpl != nullptr); }
 
@@ -158,6 +158,9 @@ namespace graphics
 				  Subresource dstSubresource, Subresource srcSubresource);
 
 		void copyToBackBuffer(Texture src);
+
+        void update(Texture dst, Range<uint8_t> cpuData, Subresource dstSubresource = Subresource());
+        void update(Buffer dst, Range<uint8_t> cpuData);
 
 		void setRenderTargets();
 		void setRenderTargets(TextureView rtv);
@@ -264,8 +267,8 @@ namespace graphics
 		Texture				createTexture(const desc::Texture& desc);
 		Buffer				createBuffer(const desc::Buffer& desc);
 
-		TextureView			createTextureView(const desc::TextureView& desc, const Texture& texture);
-		BufferView			createBufferView(const desc::BufferView& desc, const Buffer& buffer);
+		TextureView			createTextureView(const Texture& texture, const desc::TextureView& desc);
+		BufferView			createBufferView(const Buffer& buffer, const desc::BufferView& desc);
 
 		Sampler				createSampler(const desc::Sampler& desc);
 

@@ -9,8 +9,8 @@ namespace graphics
 {
 	struct Subresource
 	{
-		int mipLevel;
-		int arraySlice;
+		int mipLevel    = 0;
+		int arraySlice  = 0;
 	};
 
 	class Buffer;
@@ -162,6 +162,8 @@ namespace graphics
 					4;
 				return channelFactor * byteFactor;
 			}
+
+            // TODO: Helper functions for most common formats
 
 			static Format unknown()
 			{
@@ -544,11 +546,11 @@ namespace graphics
 				bool		counter;
 			};
 
-			BufferView(const Buffer& buffer)
+			BufferView(const Buffer::Descriptor& buffer)
 			{
 				desc.type			= ViewType::SRV;
 				desc.firstElement	= 0;
-				desc.numElements	= buffer.descriptor().elements;
+				desc.numElements	= buffer.elements;
 				desc.raw			= false;
 				desc.append			= false;
 				desc.counter		= false;

@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    SceneRenderer.hpp
+*/
+
 #pragma once
 
 #include "../graphics/Graphics.hpp"
@@ -9,6 +14,7 @@ namespace rendering
 {
     class Camera;
     class Scene;
+    class GeometryCache;
 
     struct VisibleGeometry
     {
@@ -24,12 +30,12 @@ namespace rendering
     class SceneRenderer
     {
     public:
-        SceneRenderer(graphics::Device& device);
+        SceneRenderer(graphics::Device& device, GeometryCache& geometry);
 
         void render(graphics::CommandBuffer& gfx, const Scene& scene);
     private:
         void culling(graphics::CommandBuffer& gfx, const Camera& camera);
-        void geometryRendering(graphics::CommandBuffer& gfx, const Camera& camera);
+        void geometryRendering(graphics::CommandBuffer& gfx, const Camera& camera, const Scene& scene);
         void lighting(graphics::CommandBuffer& gfx, const Camera& camera);
         void postprocess(graphics::CommandBuffer& gfx);
 
@@ -44,5 +50,7 @@ namespace rendering
         ImGuiRenderer               m_imGuiRenderer;
 
         int2                        m_screenSize;
+
+        GeometryCache&              m_geometry;
     };
 }

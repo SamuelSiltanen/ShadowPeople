@@ -49,6 +49,8 @@ namespace graphics
 			dxdesc.StructureByteStride = 0;
 		}
 
+        // TODO: Assert if usage is IMMUTABLE and there is no initial data
+
 		HRESULT hr = device.device()->CreateBuffer(&dxdesc, NULL, &m_buffer);
 		if (hr != S_OK)
 		{

@@ -6,8 +6,8 @@
 namespace graphics
 {
 	TextureViewImpl::TextureViewImpl(DeviceImpl& device,
-									 const desc::TextureView::Descriptor& desc,
-									 const TextureImpl& texture) :
+									 const TextureImpl& texture,
+									 const desc::TextureView::Descriptor& desc) :
 		m_descriptor(desc),
 		m_texture(texture)
 	{

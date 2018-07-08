@@ -5,7 +5,7 @@
 
 namespace graphics
 {
-	BufferViewImpl::BufferViewImpl(DeviceImpl& device, const desc::BufferView::Descriptor& desc, const BufferImpl& buffer) :
+	BufferViewImpl::BufferViewImpl(DeviceImpl& device, const BufferImpl& buffer, const desc::BufferView::Descriptor& desc) :
 		m_descriptor(desc)
 	{
 		switch (desc.type)
@@ -30,7 +30,7 @@ namespace graphics
 
 	void BufferViewImpl::createSRV(DeviceImpl& device, const desc::BufferView::Descriptor& desc, const BufferImpl& buffer)
 	{
-		SP_ASSERT(desc.raw && !buffer.descriptor().raw,
+		SP_ASSERT(!(desc.raw && !buffer.descriptor().raw),
 			"Cannot create a raw view, if the buffer is not created with raw view enabled.");
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC dxdesc;

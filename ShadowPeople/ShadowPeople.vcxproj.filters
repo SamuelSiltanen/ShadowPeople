@@ -152,6 +152,12 @@
     <ClCompile Include="game\GameLogic.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="rendering\GeometryCache.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\Scene.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Errors.hpp">
@@ -289,6 +295,15 @@
     <ClInclude Include="game\GameLogic.hpp">
       <Filter>Header Files\game</Filter>
     </ClInclude>
+    <ClInclude Include="rendering\GeometryCache.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\GeometryRenderer.if.h">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\OctahedralNormal.h.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\Test.cs.hlsl">
@@ -304,6 +319,12 @@
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\ImGuiRenderer.ps.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\GeometryRenderer.vs.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\GeometryRenderer.ps.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
   </ItemGroup>

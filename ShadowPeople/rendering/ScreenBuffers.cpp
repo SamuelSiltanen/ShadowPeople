@@ -17,13 +17,13 @@ namespace rendering
 			.format(depthFormat)
 			.usage(desc::Usage::DepthBuffer));
 
-		m_zBufferDSV = device.createTextureView(
+		m_zBufferDSV = device.createTextureView(m_zBuffer,
 			desc::TextureView(m_zBuffer.descriptor())
-				.type(desc::ViewType::DSV), m_zBuffer);
+				.type(desc::ViewType::DSV));
 
-		m_zBufferSRV = device.createTextureView(
+		m_zBufferSRV = device.createTextureView(m_zBuffer,
 			desc::TextureView(m_zBuffer.descriptor())
-				.type(desc::ViewType::SRV), m_zBuffer);
+				.type(desc::ViewType::SRV));
 
 		desc::Format gFormat;
 		gFormat.channels	= desc::FormatChannels::RGBA;
@@ -36,13 +36,13 @@ namespace rendering
 			.format(gFormat)
 			.usage(desc::Usage::RenderTarget));
 	
-		m_gBufferRTV = device.createTextureView(
+		m_gBufferRTV = device.createTextureView(m_gBuffer,
 			desc::TextureView(m_gBuffer.descriptor())
-				.type(desc::ViewType::RTV), m_gBuffer);
+				.type(desc::ViewType::RTV));
 
-		m_gBufferSRV = device.createTextureView(
+		m_gBufferSRV = device.createTextureView(m_gBuffer,
 			desc::TextureView(m_gBuffer.descriptor())
-				.type(desc::ViewType::SRV), m_gBuffer);
+				.type(desc::ViewType::SRV));
 	}
 
 	void ScreenBuffers::clear(CommandBuffer& gfx)

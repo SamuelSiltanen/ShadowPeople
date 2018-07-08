@@ -1,72 +1,126 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    AssetLoader.cpp
+*/
+
 #include "AssetLoader.hpp"
+
 #include "../rendering/Mesh.hpp"
+#include "../rendering/Scene.hpp"
+
+#include "../rendering/GeometryCache.hpp"
 
 // File operations requires OS specific stuff, move it later to a separate file
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include <memory>
 #include <unordered_map>
+
+#define VERBOSE_MODE
 
 namespace asset
 {
-	bool AssetLoader::load(const std::string& filename, rendering::Mesh& mesh)
-	{
-		HANDLE file = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
-								 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (file == INVALID_HANDLE_VALUE)
-		{
-			if (GetLastError() == ERROR_FILE_NOT_FOUND)
-			{
-				std::string err("Could not find ");
-				err.append(filename).append("\n");
-				OutputDebugString(err.c_str());
-			}
-			return false;
-		}
+    AssetLoader::AssetLoader(rendering::GeometryCache& geometry) :
+        m_geometry(geometry)
+    {}
 
-		LARGE_INTEGER fileSize;
-		if (!GetFileSizeEx(file, &fileSize))
-		{
-			OutputDebugString("Unable to read file size\n");
-			CloseHandle(file);
-			return false;
-		}
+    AssetLoader::DataBlob AssetLoader::fileToBlob(const std::string& filename)
+    {
+        HANDLE file = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
+                                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (file == INVALID_HANDLE_VALUE)
+        {
+            if (GetLastError() == ERROR_FILE_NOT_FOUND)
+            {
+                std::string err("Could not find ");
+                err.append(filename).append("\n");
+                OutputDebugString(err.c_str());
+            }
+            return nullptr;
+        }
 
-		if (fileSize.QuadPart > (1 << 30))
-		{
-			OutputDebugString("File too big to read\n");
-			CloseHandle(file);
-			return false;
-		}
+        LARGE_INTEGER fileSize;
+        if (!GetFileSizeEx(file, &fileSize))
+        {
+            OutputDebugString("Unable to read file size\n");
+            CloseHandle(file);
+            return nullptr;
+        }
 
-		DWORD bytesToRead = fileSize.LowPart;
+        if (fileSize.QuadPart > (1 << 30))
+        {
+            OutputDebugString("File too big to read\n");
+            CloseHandle(file);
+            return nullptr;
+        }
 
-		char* buffer = new char[bytesToRead];
-		
-		DWORD bytesActualRead;
-		if (!ReadFile(file, buffer, bytesToRead, &bytesActualRead, NULL))
-		{
-			OutputDebugString("Could not read file contents\n");
-			CloseHandle(file);
-			delete[] buffer;
-			return false;
-		}
+        DWORD bytesToRead = fileSize.LowPart;
 
-		CloseHandle(file);
+        std::shared_ptr<std::vector<char>> buffer = std::make_shared<std::vector<char>>(bytesToRead);
 
-		if (!parseObj(buffer, bytesActualRead, mesh))
-		{			
-			delete[] buffer;
-			return false;
-		}
+        DWORD bytesActualRead;
+        if (!ReadFile(file, buffer->data(), bytesToRead, &bytesActualRead, NULL))
+        {
+            OutputDebugString("Could not read file contents\n");
+            CloseHandle(file);
+            return nullptr;
+        }
 
-		delete[] buffer;
+        CloseHandle(file);
 
-		return true;
-	}
+        buffer->resize(bytesActualRead);
 
-	bool AssetLoader::parseObj(char* buffer, uint32_t bytes, rendering::Mesh& mesh)
+        return buffer;
+    }
+
+    bool AssetLoader::loadModel(const std::string& filename, rendering::Mesh& mesh)
+    {
+        DataBlob buffer = fileToBlob(filename);
+        if (buffer == nullptr) return false;
+
+        if (!parseObj(buffer, mesh)) return false;
+
+        return true;
+    }
+
+    bool AssetLoader::loadScene(const std::string& filename, rendering::Scene& scene)
+    {
+        DataBlob buffer = fileToBlob(filename);
+        if (buffer == nullptr) return false;
+
+        char line[256];
+
+        uint32_t index = 0;
+        while(index < buffer->size())
+        {
+            int bytesRead = getLine(line, Range<const char>(buffer->data(), buffer->size()), index);
+            index += bytesRead;
+
+            // Parse line
+			char *next_token = NULL;
+			char *token = strtok_s(line, " \t\n\r", &next_token);
+			if (token == NULL) continue;		// Empty line
+
+            std::string modelFileName(token);
+            rendering::Mesh mesh;
+            if (!loadModel(modelFileName, mesh))
+            {
+                std::string err("File not found: ");
+                err.append(modelFileName).append("\n");
+                OutputDebugString(err.c_str());
+                return false;
+            }
+
+            // Pre-load the mesh now - later, implement proper streaming and only give a virtual offset here
+            int2 meshStartSize = m_geometry.preloadMesh(mesh);
+            rendering::Transform transform; // TODO: Fill
+            scene.addObject(rendering::Object(meshStartSize, transform));
+        }
+
+        return true;
+    }
+
+	bool AssetLoader::parseObj(DataBlob buffer, rendering::Mesh& mesh)
 	{
 		std::vector<float3>	vtxPositions;
 		std::vector<float2>	vtxTexCoords;
@@ -77,26 +131,17 @@ namespace asset
 		char line[256];
 
 		uint32_t index = 0;
-		while (index < bytes)
+		while (index < buffer->size())
 		{
-			// Copy line
-			int i = 0;
-			do
-			{
-				line[i] = buffer[index + i];
-				i++;
-			} while ((buffer[index + i - 1] != '\n') && (index + i < bytes));
-			line[i] = '\0';
-			index += i;
-
-			OutputDebugString(line);
+            int bytesRead = getLine(line, Range<const char>(buffer->data(), buffer->size()), index);
+            index += bytesRead;
 
 			// Parse line
 			char *next_token = NULL;
 			char *token = strtok_s(line, " \t\n\r", &next_token);
 			if (token == NULL) continue;		// Empty line
 			if (token[0] == '#') continue;		// Skip comments
-			if (strcmp(token, "v") == 0)				// Vertex position
+			if (strcmp(token, "v") == 0)		// Vertex position
 			{
 				token = strtok_s(NULL, " \t\n\r", &next_token);
 				float x = static_cast<float>(atof(token));
@@ -114,7 +159,7 @@ namespace asset
 					z /= w;
 				}
 				float3 position{ x, y, z };
-				vtxPositions.emplace_back(position);
+				vtxPositions.emplace_back(position * 0.01f); // Obj units are centimeters, but ours are meters
 			}
 			else if (strcmp(token, "vt") == 0)		// Vertex texture coordinates
 			{
@@ -150,6 +195,7 @@ namespace asset
 						indices[0] += token[j] - '0';
 						j++;
 					}
+                    indices[0]--;   // Obj-indices are 1-based, while ours are 0-based
 					if (token[j] != '\0')
 					{
 						j++;
@@ -159,6 +205,7 @@ namespace asset
 							indices[1] += token[j] - '0';
 							j++;
 						}
+                        indices[1]--;   // Obj-indices are 1-based, while ours are 0-based
 						if (token[j] != '\0')
 						{
 							j++;
@@ -168,6 +215,7 @@ namespace asset
 								indices[2] += token[j] - '0';
 								j++;
 							}
+                            indices[2]--;   // Obj-indices are 1-based, while ours are 0-based
 						}
 					}
 					f.indices.emplace_back(indices);
@@ -206,6 +254,7 @@ namespace asset
 			}
 		}
 
+#ifdef VERBOSE_MODE
 		std::string msg("Read ");
 		msg.append(std::to_string(vtxPositions.size())).append(" vertex positions, ");
 		msg.append(std::to_string(vtxTexCoords.size())).append(" vertex texture coordinates, ");
@@ -213,6 +262,7 @@ namespace asset
 		msg.append(std::to_string(faces.size())).append(" polygons\n");
 		msg.append(std::string("Using material ").append(materialName).append("\n"));
 		OutputDebugString(msg.c_str());
+#endif
 
 		return constructMesh(vtxPositions, vtxTexCoords, vtxNormals, faces, mesh);
 	}
@@ -275,11 +325,27 @@ namespace asset
 
 		mesh.fill(vertices, indices);
 
+#ifdef VERBOSE_MODE
 		std::string msg("Loaded model with ");
 		msg.append(std::to_string(vertices.size())).append(" unique vertices and ");
 		msg.append(std::to_string(indices.size())).append(" triangles\n");
 		OutputDebugString(msg.c_str());
+#endif
 
 		return true;
 	}
+
+    int AssetLoader::getLine(char *lineBuffer, Range<const char> sourceBuffer, int pos)
+    {
+        int i = 0;
+		do
+		{
+			lineBuffer[i] = sourceBuffer[pos + i];
+			i++;
+		} while ((sourceBuffer[pos + i - 1] != '\n') && (pos + i < sourceBuffer.byteSize()));
+
+		lineBuffer[i] = '\0';
+
+		return i;
+    }
 }

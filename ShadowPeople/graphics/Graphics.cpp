@@ -17,9 +17,9 @@ namespace graphics
 		return pImpl->descriptor();
 	}
 
-	TextureView::TextureView(Device& device, const desc::TextureView& desc, const Texture& texture)
+	TextureView::TextureView(Device& device, const Texture& texture, const desc::TextureView::Descriptor& desc)
 	{
-		pImpl = std::make_shared<TextureViewImpl>(*device.pImpl, desc.descriptor(), *texture.pImpl);
+		pImpl = std::make_shared<TextureViewImpl>(*device.pImpl, *texture.pImpl, desc);
 	}
 
 	const desc::TextureView::Descriptor& TextureView::descriptor() const
@@ -39,9 +39,11 @@ namespace graphics
 		return pImpl->descriptor();
 	}
 
-	BufferView::BufferView(Device& device, const desc::BufferView& desc, const Buffer& buffer)
+	BufferView::BufferView(Device& device, const Buffer& buffer, const desc::BufferView::Descriptor& desc)
 	{
-		pImpl = std::make_shared<BufferViewImpl>(*device.pImpl, desc.descriptor(), *buffer.pImpl);
+        SP_EXPECT_NOT_NULL(device.pImpl, ERROR_CODE_DEVICE_NULL);
+        SP_EXPECT_NOT_NULL(buffer.pImpl, ERROR_CODE_BUFFER_NULL);
+		pImpl = std::make_shared<BufferViewImpl>(*device.pImpl, *buffer.pImpl, desc);
 	}
 
 	const desc::BufferView::Descriptor& BufferView::descriptor() const
@@ -130,6 +132,18 @@ namespace graphics
 		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
 		pImpl->copyToBackBuffer(*src.pImpl);
 	}
+
+    void CommandBuffer::update(Texture dst, Range<uint8_t> cpuData, Subresource dstSubresource)
+    {
+        SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
+        pImpl->update(*dst.pImpl, cpuData, dstSubresource);
+    }
+
+    void CommandBuffer::update(Buffer dst, Range<uint8_t> cpuData)
+    {
+        SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
+        pImpl->update(*dst.pImpl, cpuData);
+    }
 
 	void CommandBuffer::setRenderTargets()
 	{
@@ -396,14 +410,14 @@ namespace graphics
 		return Buffer(*this, desc);
 	}
 
-	TextureView Device::createTextureView(const desc::TextureView& desc, const Texture& texture)
+	TextureView Device::createTextureView(const Texture& texture, const desc::TextureView& desc)
 	{
-		return TextureView(*this, desc, texture);
+		return TextureView(*this, texture, desc.descriptor());
 	}
 
-	BufferView Device::createBufferView(const desc::BufferView& desc, const Buffer& buffer)
+	BufferView Device::createBufferView(const Buffer& buffer, const desc::BufferView& desc)
 	{
-		return BufferView(*this, desc, buffer);
+		return BufferView(*this, buffer, desc.descriptor());
 	}
 
 	Sampler Device::createSampler(const desc::Sampler& desc)

@@ -399,6 +399,11 @@ template<typename T>
 class Range
 {
 public:
+    Range() :
+        m_begin(nullptr),
+        m_byteSize(0)
+    {}
+
 	Range(T *begin, size_t byteSize) :
 		m_begin(begin),
 		m_byteSize(byteSize)
@@ -411,8 +416,9 @@ public:
 
 	T*		begin()		{ return m_begin; }
 	T*		end()		{ return m_begin + size(); }
-	size_t	size()		{ return m_byteSize / sizeof(T); }
-	size_t  byteSize()	{ return m_byteSize; }
+
+	size_t	size() const		{ return m_byteSize / sizeof(T); }
+	size_t  byteSize() const	{ return m_byteSize; }
 
 	const T& operator[](uint32_t i) const { return m_begin[i]; }
 
@@ -421,3 +427,9 @@ private:
 	T*		m_begin;
 	size_t	m_byteSize;
 };
+
+template<typename T>
+Range<uint8_t> vectorAsByteRange(std::vector<T>& vector)
+{
+    return Range<uint8_t>(reinterpret_cast<uint8_t*>(vector.data()), vector.size() * sizeof(T));
+}

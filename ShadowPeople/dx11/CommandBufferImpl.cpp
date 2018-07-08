@@ -146,7 +146,7 @@ namespace graphics
 														srcSubresource.mipLevel,
 														src.descriptor().mipLevels);
 		D3D11_BOX srcBox;
-		
+		// TODO
 		m_context.CopySubresourceRegion(dst.m_texture, dstSubresourceIndex,
 										dstCorner[0], dstCorner[1], dstCorner[2],
 										src.m_texture, srcSubresourceIndex, &srcBox);
@@ -164,6 +164,31 @@ namespace graphics
 			// TODO: Must do a rectangle copy
 		}
 	}
+
+    void CommandBufferImpl::update(TextureImpl& dst, Range<uint8_t> cpuData, Subresource dstSubresource)
+    {
+        UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
+														dstSubresource.mipLevel,
+														dst.descriptor().mipLevels);
+        D3D11_BOX dstBox;
+        uint32_t srcRowPitch = 0;
+        uint32_t srcDepthPitch = 0;
+		// TODO
+        m_context.UpdateSubresource(dst.m_texture, dstSubresourceIndex, &dstBox, cpuData.begin(), srcRowPitch, srcDepthPitch);
+    }
+
+    void CommandBufferImpl::update(BufferImpl& dst, Range<uint8_t> cpuData)
+    {
+        D3D11_BOX dstBox;
+        dstBox.left     = 0;
+        dstBox.right    = cpuData.byteSize();
+        dstBox.top      = 0;
+        dstBox.bottom   = 1;
+        dstBox.front    = 0;
+        dstBox.back     = 1;
+
+        m_context.UpdateSubresource(dst.m_buffer, 0, &dstBox, cpuData.begin(), cpuData.byteSize(), 0);
+    }
 
 	void CommandBufferImpl::setRenderTargets()
 	{

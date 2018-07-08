@@ -13,7 +13,7 @@ namespace graphics
 	class TextureViewImpl : public ResourceViewImpl
 	{
 	public:
-		TextureViewImpl(DeviceImpl& device, const desc::TextureView::Descriptor& desc, const TextureImpl& texture);
+		TextureViewImpl(DeviceImpl& device, const TextureImpl& texture, const desc::TextureView::Descriptor& desc);
 		~TextureViewImpl();
 
 		NO_COPY_CLASS(TextureViewImpl)

@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Scene.hpp
+*/
+
 #pragma once
 
 #include <vector>
@@ -6,6 +11,8 @@
 
 namespace rendering
 {
+    class Camera;
+
     struct Transform
     {
         float3      position;
@@ -15,8 +22,13 @@ namespace rendering
 
     struct Object
     {
-        int         meshIndex;
+        int2        meshStartSize;
         Transform   transform;
+
+        Object(int2 meshStartSize, Transform transform) :
+            meshStartSize(meshStartSize),
+            transform(transform)
+        {}
     };
 
     struct Material
@@ -33,6 +45,10 @@ namespace rendering
         Scene(const Camera& camera) : m_camera(camera) {}
 
         const Camera& camera() const { return m_camera; }
+
+        int addObject(Object& object);
+
+        const std::vector<Object> objects() const { return m_geometry; }
     private:
         std::vector<Object>     m_geometry;
         std::vector<Material>   m_materials;

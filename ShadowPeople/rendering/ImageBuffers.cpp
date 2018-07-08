@@ -11,9 +11,9 @@ namespace rendering
 			.height(screenSize[1])
 			.usage(desc::Usage::GpuReadWrite));
 	
-		m_litBufferUAV = device.createTextureView(
+		m_litBufferUAV = device.createTextureView(m_litBuffer,
 			desc::TextureView(m_litBuffer.descriptor())
-				.type(desc::ViewType::UAV), m_litBuffer);
+				.type(desc::ViewType::UAV));
 	}
 
 	void ImageBuffers::copyTo(graphics::CommandBuffer& gfx, graphics::Texture& texture)

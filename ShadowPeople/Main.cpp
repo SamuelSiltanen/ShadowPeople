@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Main.cpp
+*/
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -11,6 +16,7 @@
 #include "rendering/SceneRenderer.hpp"
 #include "rendering/Mesh.hpp"
 #include "rendering/Scene.hpp"
+#include "rendering/GeometryCache.hpp"
 
 #include "game/GameLogic.hpp"
 
@@ -33,41 +39,42 @@ static std::unique_ptr<input::ImGuiInputHandler>    imGuiInputHandler   = nullpt
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HWND             createWindow(HINSTANCE hInstance);
 void             trackMouseLeave(HWND hWnd);
+int2             getScreenSize(HWND hWnd);
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+    // Create window
     HWND hWnd = createWindow(hInstance);
     SP_EXPECT_NOT_NULL_RET(hWnd, ERROR_CODE_WINDOW_CREATION_FAILED, ERROR_CODE_WINDOW_CREATION_FAILED);
 
-    RECT clientRect;
-    BOOL isOK = GetClientRect(hWnd, &clientRect);
-    SP_EXPECT_NOT_NULL_RET(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED, ERROR_CODE_GET_CLIENT_RECT_FAILED);
+    // Create graphics device
+    int2 screenSize = getScreenSize(hWnd);
+    graphics::Device device(hWnd, screenSize);
 
-    int2 clientArea{ clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
+    // Create asset loader
+    rendering::GeometryCache geometry(device);
+    asset::AssetLoader assetLoader(geometry);
 
-    asset::AssetLoader assetLoader;
-    rendering::Mesh mesh;
-    if (!assetLoader.load("data/house/house_obj.obj", mesh))
-    {
-        OutputDebugString("Load failed\n");
-    }
+    // Initialize game logic
+    std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(screenSize);
 
-    graphics::Device device(hWnd, clientArea);
-
-    rendering::SceneRenderer sceneRenderer(device);
-
-    gameInputHandler = std::make_unique<input::InputHandler>();
-
-    std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(clientArea);
-    gameInputHandler->registerListener(gameLogic);
-
+    // Load test scene
     rendering::Scene scene(gameLogic->camera());
+    assetLoader.loadScene("data/scenes/testscene.scn", scene);
 
+    // Create scene renderer
+    // TODO: Separate ImGui-initialization stuff out of SceneRenderer, so that it can be loaded earlier
+    rendering::SceneRenderer sceneRenderer(device, geometry);
+
+    // Initialize input handlers
     imGuiInputHandler = std::make_unique<input::ImGuiInputHandler>(hWnd);
+    gameInputHandler = std::make_unique<input::InputHandler>();
+    gameInputHandler->registerListener(gameLogic);
 
     ShowWindow(hWnd, nCmdShow);
     trackMouseLeave(hWnd);
 
+    // Main loop
     MSG msg	= {};
     while (!exitApplication)
     {
@@ -292,4 +299,13 @@ void trackMouseLeave(HWND hWnd)
 	mouseTracking.hwndTrack		= hWnd;
 	mouseTracking.dwHoverTime	= HOVER_DEFAULT;
 	TrackMouseEvent(&mouseTracking);
+}
+
+int2 getScreenSize(HWND hWnd)
+{
+    RECT clientRect;
+    BOOL isOK = GetClientRect(hWnd, &clientRect);
+    SP_EXPECT_NOT_NULL_RET(isOK, ERROR_CODE_GET_CLIENT_RECT_FAILED, ERROR_CODE_GET_CLIENT_RECT_FAILED);
+
+    return { clientRect.right - clientRect.left, clientRect.bottom - clientRect.top };
 }

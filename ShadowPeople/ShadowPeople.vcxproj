@@ -143,9 +143,11 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="rendering\Camera.cpp" />
+    <ClCompile Include="rendering\GeometryCache.cpp" />
     <ClCompile Include="rendering\ImageBuffers.cpp" />
     <ClCompile Include="rendering\ImGuiRenderer.cpp" />
     <ClCompile Include="rendering\Mesh.cpp" />
+    <ClCompile Include="rendering\Scene.cpp" />
     <ClCompile Include="rendering\SceneRenderer.cpp" />
     <ClCompile Include="rendering\ScreenBuffers.cpp" />
     <ClCompile Include="Types.cpp" />
@@ -184,6 +186,7 @@
     <ClInclude Include="input\InputHandler.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="rendering\Camera.hpp" />
+    <ClInclude Include="rendering\GeometryCache.hpp" />
     <ClInclude Include="rendering\ImageBuffers.hpp" />
     <ClInclude Include="rendering\ImGuiRenderer.hpp" />
     <ClInclude Include="rendering\Mesh.hpp" />
@@ -191,6 +194,7 @@
     <ClInclude Include="rendering\SceneRenderer.hpp" />
     <ClInclude Include="rendering\ScreenBuffers.hpp" />
     <ClInclude Include="ShaderResourcesImpl.hpp" />
+    <ClInclude Include="shaders\GeometryRenderer.if.h" />
     <ClInclude Include="shaders\ImGuiRenderer.if.h" />
     <ClInclude Include="shaders\ShaderInterface.h" />
     <ClInclude Include="shaders\Test.if.h" />
@@ -198,12 +202,27 @@
     <ClInclude Include="Types.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="shaders\GeometryRenderer.ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shaders\GeometryRenderer.vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="shaders\ImGuiRenderer.ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <ClInclude Include="shaders\OctahedralNormal.h.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
     <FxCompile Include="shaders\Test.cs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
