@@ -92,12 +92,11 @@ namespace graphics
 		dxdesc.ArraySize	= desc.descriptor().arraySize;
 
 		desc::Format format = desc.descriptor().format;
-		if (format.channels == desc::FormatChannels::Depth)
+		if (format.descriptor().channels == desc::FormatChannels::Depth)
 		{
 			// Because the depth buffer can be used as a shader resource,
 			// we create it as a typeless format
-			format.channels = desc::FormatChannels::R;
-			format.type		= desc::FormatType::Typeless;
+            format = desc::Format(desc::FormatChannels::R, format.descriptor().bytes, desc::FormatType::Typeless);
 		}
 
 		dxdesc.Format		= dxgiFormat(format);

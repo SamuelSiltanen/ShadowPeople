@@ -13,10 +13,10 @@
 #include "input/InputHandler.hpp"
 #include "input/ImGuiInputHandler.hpp"
 
-#include "rendering/SceneRenderer.hpp"
-#include "rendering/Mesh.hpp"
-#include "rendering/Scene.hpp"
 #include "rendering/GeometryCache.hpp"
+#include "rendering/MaterialCache.hpp"
+#include "rendering/SceneRenderer.hpp"
+#include "rendering/Scene.hpp"
 
 #include "game/GameLogic.hpp"
 
@@ -51,20 +51,26 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     int2 screenSize = getScreenSize(hWnd);
     graphics::Device device(hWnd, screenSize);
 
-    // Create asset loader
+    // Create caches for geometry and material
     rendering::GeometryCache geometry(device);
-    asset::AssetLoader assetLoader(geometry);
+    rendering::MaterialCache materials(device);
+
+    // Create asset loader
+    asset::AssetLoader assetLoader(geometry, materials);
 
     // Initialize game logic
     std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(screenSize);
 
     // Load test scene
     rendering::Scene scene(gameLogic->camera());
-    assetLoader.loadScene("data/scenes/testscene.scn", scene);
+    if (!assetLoader.loadScene("data/scenes/testscene.scn", scene))
+    {
+        OutputDebugString("Scene load failed!");
+    }
 
     // Create scene renderer
     // TODO: Separate ImGui-initialization stuff out of SceneRenderer, so that it can be loaded earlier
-    rendering::SceneRenderer sceneRenderer(device, geometry);
+    rendering::SceneRenderer sceneRenderer(device, geometry, materials);
 
     // Initialize input handlers
     imGuiInputHandler = std::make_unique<input::ImGuiInputHandler>(hWnd);

@@ -1,4 +1,4 @@
-#include "ShaderInterface.h"
+#include "../cpugpu/ShaderInterface.h"
 
 BEGIN_SHADER_INTERFACE(ImGuiRendererGS)
 

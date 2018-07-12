@@ -159,8 +159,8 @@ namespace graphics
 
 		void copyToBackBuffer(Texture src);
 
-        void update(Texture dst, Range<uint8_t> cpuData, Subresource dstSubresource = Subresource());
-        void update(Buffer dst, Range<uint8_t> cpuData);
+        void update(Texture dst, Range<const uint8_t> cpuData, Subresource dstSubresource = Subresource());
+        void update(Buffer dst, Range<const uint8_t> cpuData);
 
 		void setRenderTargets();
 		void setRenderTargets(TextureView rtv);

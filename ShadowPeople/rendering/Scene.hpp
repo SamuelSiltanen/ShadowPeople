@@ -33,6 +33,11 @@ namespace rendering
 
     struct Material
     {
+        Rect<int, 2>  materialRect;
+
+        Material(Rect<int, 2> materialRect) :
+            materialRect(materialRect)
+        {}
     };
 
     struct Light
@@ -47,6 +52,7 @@ namespace rendering
         const Camera& camera() const { return m_camera; }
 
         int addObject(Object& object);
+        int addMaterial(Material& material);
 
         const std::vector<Object> objects() const { return m_geometry; }
     private:

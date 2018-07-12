@@ -15,9 +15,11 @@ VSOutput main(uint vertexId : SV_VertexID)
     float4 viewPos  = mul(view, worldPos);
     float4 ndcPos   = mul(proj, viewPos);
 
+    float3 viewNorm = mul(view, float4(v.normal, 0.f)).xyz;
+
     VSOutput output;
 
-    output.normal   = v.normal;
+    output.normal   = viewNorm;
     output.uv       = v.uv;
     output.pos      = ndcPos;
 

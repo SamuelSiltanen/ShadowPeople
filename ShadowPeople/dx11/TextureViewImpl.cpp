@@ -41,11 +41,11 @@ namespace graphics
 		D3D11_SHADER_RESOURCE_VIEW_DESC dxdesc;
 
 		desc::Format format		= desc.format;
-		if (format.channels == desc::FormatChannels::Depth)
+		if (format.descriptor().channels == desc::FormatChannels::Depth)
 		{
 			// Because the depth buffer can be used as a shader resource,
 			// we replace the depth format with an equivalent regular format
-			format.channels = desc::FormatChannels::R;
+			format = desc::Format(desc::FormatChannels::R, format.descriptor().bytes, format.descriptor().type);                
 		}
 
 		dxdesc.Format			= dxgiFormat(format);

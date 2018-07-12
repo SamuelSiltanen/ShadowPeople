@@ -10,14 +10,14 @@
 
 namespace game
 {
-    const float GameLogic::CameraMoveSpeed      = 1.0f;
+    const float GameLogic::CameraMoveSpeed      = 0.1f;
     const float GameLogic::CameraRotateSpeed    = 3.0f;
 
     GameLogic::GameLogic(int2 screenSize) :
         m_screenSize(screenSize),
         m_camera(rendering::DefaultFov,
                  static_cast<float>(screenSize[0]) / static_cast<float>(screenSize[1]),
-            float4({0.f, 1.5f, -10.f, 1.f}))
+                 float4({0.f, 1.5f, -10.f, 1.f}))
     {
     }
 

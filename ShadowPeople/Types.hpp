@@ -249,6 +249,24 @@ public:
 		return *this;
 	}
 
+    ArithmeticVector& operator*=(const ArithmeticVector& a)
+	{
+		for (int i = 0; i < N; i++)
+		{
+			m_elements[i] *= a.m_elements[i];
+		}
+		return *this;
+	}
+
+	ArithmeticVector& operator/=(const ArithmeticVector& a)
+	{
+		for (int i = 0; i < N; i++)
+		{
+			m_elements[i] /= a.m_elements[i];
+		}
+		return *this;
+	}
+
 	BooleanVector<N> operator<(const ArithmeticVector& a)
 	{
 		BooleanVector<N> b(false);
@@ -346,6 +364,11 @@ public:
 
 	float4 operator*(float4 vec);
 
+    float4 row(int row) const;
+    Matrix4x4 transpose() const;
+
+    std::string debugOutput() const;
+
 	friend Matrix4x4 operator*(const Matrix4x4& lhs, const Matrix4x4& rhs);
 private:
 	std::array<float, 16>	m_elements;	// Row-major order
@@ -429,7 +452,7 @@ private:
 };
 
 template<typename T>
-Range<uint8_t> vectorAsByteRange(std::vector<T>& vector)
+Range<const uint8_t> vectorAsByteRange(std::vector<T>& vector)
 {
-    return Range<uint8_t>(reinterpret_cast<uint8_t*>(vector.data()), vector.size() * sizeof(T));
+    return Range<const uint8_t>(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T));
 }

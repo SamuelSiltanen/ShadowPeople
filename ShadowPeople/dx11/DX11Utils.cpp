@@ -47,13 +47,13 @@ namespace graphics
 
 	DXGI_FORMAT dxgiFormat(const desc::Format& format)
 	{
-		switch (format.bytes)
+		switch (format.descriptor().bytes)
 		{
 		case desc::FormatBytesPerChannel::B8:
-			switch (format.channels)
+			switch (format.descriptor().channels)
 			{
 			case desc::FormatChannels::R:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R8_TYPELESS;
 				case desc::FormatType::UNorm:		return DXGI_FORMAT_R8_UNORM;
@@ -65,7 +65,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RG:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R8G8_TYPELESS;
 				case desc::FormatType::UNorm:		return DXGI_FORMAT_R8G8_UNORM;
@@ -77,7 +77,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RGBA:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R8G8B8A8_TYPELESS;
 				case desc::FormatType::UNorm:		return DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -97,10 +97,10 @@ namespace graphics
 			}
 			break;
 		case desc::FormatBytesPerChannel::B16:
-			switch (format.channels)
+			switch (format.descriptor().channels)
 			{
 			case desc::FormatChannels::R:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R16_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R16_FLOAT;
@@ -113,7 +113,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RG:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R16G16_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R16G16_FLOAT;
@@ -126,7 +126,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RGBA:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R16G16B16A16_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -147,10 +147,10 @@ namespace graphics
 			}
 			break;
 		case desc::FormatBytesPerChannel::B32:
-			switch (format.channels)
+			switch (format.descriptor().channels)
 			{
 			case desc::FormatChannels::R:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R32_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R32_FLOAT;
@@ -161,7 +161,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RG:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R32G32_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R32G32_FLOAT;
@@ -172,7 +172,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RGB:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R32G32B32_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R32G32B32_FLOAT;
@@ -183,7 +183,7 @@ namespace graphics
 				}
 				break;
 			case desc::FormatChannels::RGBA:
-				switch (format.type)
+				switch (format.descriptor().type)
 				{
 				case desc::FormatType::Typeless:	return DXGI_FORMAT_R32G32B32A32_TYPELESS;
 				case desc::FormatType::Float:		return DXGI_FORMAT_R32G32B32A32_FLOAT;

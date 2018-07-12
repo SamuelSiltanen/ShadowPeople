@@ -15,6 +15,7 @@ namespace rendering
     class Camera;
     class Scene;
     class GeometryCache;
+    class MaterialCache;
 
     struct VisibleGeometry
     {
@@ -30,7 +31,7 @@ namespace rendering
     class SceneRenderer
     {
     public:
-        SceneRenderer(graphics::Device& device, GeometryCache& geometry);
+        SceneRenderer(graphics::Device& device, GeometryCache& geometry, MaterialCache& materials);
 
         void render(graphics::CommandBuffer& gfx, const Scene& scene);
     private:
@@ -44,13 +45,16 @@ namespace rendering
         ImageBuffers                m_imageBuffers;
         OutputImage                 m_outputImage;
 
-        graphics::ComputePipeline   m_computePipeline;
-        graphics::GraphicsPipeline  m_graphicsPipeline;
+        graphics::ComputePipeline   m_lightingPipeline;
+        graphics::GraphicsPipeline  m_geometryRenderingPipeline;
+
+        graphics::Sampler           m_bilinearSampler;
 
         ImGuiRenderer               m_imGuiRenderer;
 
         int2                        m_screenSize;
 
         GeometryCache&              m_geometry;
+        MaterialCache&              m_materials;
     };
 }

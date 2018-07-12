@@ -39,6 +39,8 @@ namespace rendering
 
         Matrix4x4 viewMatrix() const;
         Matrix4x4 projectionMatrix() const;
+        Matrix4x4 invViewMatrix() const;
+        Matrix4x4 invProjMatrix() const;
 
         float4 position() const;
         float yaw() const;
@@ -49,6 +51,9 @@ namespace rendering
         float4 front() const;
         float4 up() const;
         float4 right() const;
+
+        float nearZ() const { return m_near; }
+        float farZ() const { return m_far; }
     private:
         float4          m_position;
         float           m_yaw;

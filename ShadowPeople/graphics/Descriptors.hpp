@@ -135,44 +135,61 @@ namespace graphics
 			BlockCompressed
 		};
 
-		struct Format
-		{			
-			FormatChannels			channels	= FormatChannels::RGBA;
-			FormatBytesPerChannel	bytes		= FormatBytesPerChannel::B8;
-			FormatType				type		= FormatType::UNorm;
+		class Format
+        {
+        public:
+            struct Descriptor
+            {
+			    FormatChannels			channels	= FormatChannels::RGBA;
+			    FormatBytesPerChannel	bytes		= FormatBytesPerChannel::B8;
+			    FormatType				type		= FormatType::UNorm;
+            };
+
+            Format() = default;
+            Format(FormatChannels c, FormatBytesPerChannel b, FormatType t) :
+                desc({c, b, t})
+            {}
 
 			bool operator==(const Format& f) const
 			{
-				if (channels != f.channels) return false;
-				if (bytes != f.bytes) return false;
-				if (type != f.type) return false;
+				if (desc.channels != f.desc.channels) return false;
+				if (desc.bytes    != f.desc.bytes)    return false;
+				if (desc.type     != f.desc.type)     return false;
 				return true;
 			}
 
 			uint32_t byteWidth() const
 			{
 				uint32_t channelFactor = 
-					(channels == FormatChannels::RG) ? 2 :
-					(channels == FormatChannels::RGB) ? 3 :
-					(channels == FormatChannels::RGBA) ? 4 :
+					(desc.channels == FormatChannels::RG) ? 2 :
+					(desc.channels == FormatChannels::RGB) ? 3 :
+					(desc.channels == FormatChannels::RGBA) ? 4 :
 					1;
 				uint32_t byteFactor = 
-					(bytes == FormatBytesPerChannel::B8) ? 1 :
-					(bytes == FormatBytesPerChannel::B16) ? 2 :
+					(desc.bytes == FormatBytesPerChannel::B8) ? 1 :
+					(desc.bytes == FormatBytesPerChannel::B16) ? 2 :
 					4;
 				return channelFactor * byteFactor;
 			}
+
+            Format& channels(FormatChannels c)     { desc.channels = c; return *this; }
+            Format& bytes(FormatBytesPerChannel b) { desc.bytes = b; return *this; }
+            Format& type(FormatType t)             { desc.type = t; return *this; }
+
+            const Descriptor& descriptor() const { return desc; }
 
             // TODO: Helper functions for most common formats
 
 			static Format unknown()
 			{
 				Format f;
-				f.channels	= FormatChannels::RGBA;
-				f.bytes		= FormatBytesPerChannel::B32;
-				f.type		= FormatType::Unknown;
+				f.desc.channels	= FormatChannels::RGBA;
+				f.desc.bytes	= FormatBytesPerChannel::B32;
+				f.desc.type		= FormatType::Unknown;
 				return f;
-			}			
+			}
+        private:
+            Descriptor desc;
 		};
 
 		enum class StencilOp
@@ -211,7 +228,7 @@ namespace graphics
 			TriangleStrip
 		};
 
-		struct DepthStencilState
+		class DepthStencilState
 		{
 		public:
 			struct Descriptor

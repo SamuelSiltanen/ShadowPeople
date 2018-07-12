@@ -57,6 +57,9 @@
     <Filter Include="Shader Files\shaders">
       <UniqueIdentifier>{d8f69b72-db64-4da9-bee6-ef615f034f58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\cpugpu">
+      <UniqueIdentifier>{ee79438a-7097-40a1-ae32-1f8aae1a945d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -158,6 +161,12 @@
     <ClCompile Include="rendering\Scene.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="rendering\MaterialCache.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="rendering\Image.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Errors.hpp">
@@ -196,9 +205,6 @@
     <ClInclude Include="dx11\ComputePipelineImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
-    <ClInclude Include="shaders\Test.if.h">
-      <Filter>Shader Files\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="dx11\ResourceViewImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
@@ -207,9 +213,6 @@
     </ClInclude>
     <ClInclude Include="ShaderResourcesImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
-    </ClInclude>
-    <ClInclude Include="shaders\Test2.if.h">
-      <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="dx11\ShaderManagerImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
@@ -236,9 +239,6 @@
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="shaders\ImGuiRenderer.if.h">
-      <Filter>Shader Files\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="shaders\ShaderInterface.h">
       <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="dx11\MappingImpl.hpp">
@@ -304,17 +304,23 @@
     <ClInclude Include="shaders\OctahedralNormal.h.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="rendering\Image.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="rendering\MaterialCache.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\Lighting.if.h">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="cpugpu\ShaderInterface.h">
+      <Filter>Header Files\cpugpu</Filter>
+    </ClInclude>
+    <ClInclude Include="cpugpu\GeometryTypes.h">
+      <Filter>Header Files\cpugpu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders\Test.cs.hlsl">
-      <Filter>Shader Files\shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\Test2.vs.hlsl">
-      <Filter>Shader Files\shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\Test2.ps.hlsl">
-      <Filter>Shader Files\shaders</Filter>
-    </FxCompile>
     <FxCompile Include="shaders\ImGuiRenderer.vs.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
@@ -325,6 +331,9 @@
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\GeometryRenderer.ps.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\Lighting.cs.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
   </ItemGroup>

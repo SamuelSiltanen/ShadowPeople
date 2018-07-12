@@ -33,7 +33,7 @@ namespace graphics
 		{
 		case desc::ViewType::UAV:
 			{
-				auto t = view.descriptor().format.type;
+				auto t = view.descriptor().format.descriptor().type;
 				SP_ASSERT((t == desc::FormatType::Float) || (t == desc::FormatType::UNorm) || (t == desc::FormatType::SNorm),
 						  "View is not float-type. Use another clear command for clearing.");				
 				m_context.ClearUnorderedAccessViewFloat((ID3D11UnorderedAccessView *)view.m_view, colors);
@@ -66,7 +66,7 @@ namespace graphics
 		{
 		case desc::ViewType::UAV:
 			{
-				auto t = view.descriptor().format.type;
+				auto t = view.descriptor().format.descriptor().type;
 				SP_ASSERT((t != desc::FormatType::Float) && (t != desc::FormatType::UNorm) && (t != desc::FormatType::SNorm),
 						  "View is float-type. Use another clear command for clearing.");
 				m_context.ClearUnorderedAccessViewUint((ID3D11UnorderedAccessView *)view.m_view, values);
@@ -165,19 +165,27 @@ namespace graphics
 		}
 	}
 
-    void CommandBufferImpl::update(TextureImpl& dst, Range<uint8_t> cpuData, Subresource dstSubresource)
+    void CommandBufferImpl::update(TextureImpl& dst, Range<const uint8_t> cpuData, Subresource dstSubresource)
     {
         UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
 														dstSubresource.mipLevel,
 														dst.descriptor().mipLevels);
+        // TODO: This assumes the sizes of destination and source match
         D3D11_BOX dstBox;
-        uint32_t srcRowPitch = 0;
-        uint32_t srcDepthPitch = 0;
+        dstBox.left     = 0;
+        dstBox.right    = dst.descriptor().width;
+        dstBox.top      = 0;
+        dstBox.bottom   = dst.descriptor().height;
+        dstBox.front    = 0;
+        dstBox.back     = 1;
+
+        uint32_t srcRowPitch    = dst.descriptor().width * dst.descriptor().format.byteWidth();
+        uint32_t srcDepthPitch  = 0;
 		// TODO
         m_context.UpdateSubresource(dst.m_texture, dstSubresourceIndex, &dstBox, cpuData.begin(), srcRowPitch, srcDepthPitch);
     }
 
-    void CommandBufferImpl::update(BufferImpl& dst, Range<uint8_t> cpuData)
+    void CommandBufferImpl::update(BufferImpl& dst, Range<const uint8_t> cpuData)
     {
         D3D11_BOX dstBox;
         dstBox.left     = 0;

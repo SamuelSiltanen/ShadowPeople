@@ -1,4 +1,5 @@
-#include "ShaderInterface.h"
+#include "../cpugpu/ShaderInterface.h"
+#include "../cpugpu/GeometryTypes.h"
 
 BEGIN_SHADER_INTERFACE(GeometryRenderer)
 
@@ -6,15 +7,9 @@ CBuffer(constants,
 {
     float4x4    view;
     float4x4    proj;
+    float       camNear;
+    float3      __padding;
 });
-
-// TODO: Share this between CPU and GPU
-struct Vertex
-{
-    float3  position;
-    float3  normal;
-    float2  uv;
-};
 
 StructuredBuffer<Vertex>    vertexBuffer;
 

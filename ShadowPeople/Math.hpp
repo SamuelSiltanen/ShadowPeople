@@ -16,4 +16,7 @@ namespace math
 	Matrix4x4 rotateAroundX(float angle);
 	Matrix4x4 rotateAroundZ(float angle);
 	Matrix4x4 rotationMatrix(float yaw, float pitch = 0.f, float roll = 0.f);
+
+    float2 encodeOctahedral(float3 n);
+    float3 decodeOctahedral(float2 f);
 }

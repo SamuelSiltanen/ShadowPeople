@@ -2,16 +2,10 @@
 
 #include <vector>
 #include "../Types.hpp"
+#include "../cpugpu/GeometryTypes.h"
 
 namespace rendering
 {
-	struct Vertex
-	{
-		float3	position;
-		float3	normal;
-		float2	uv;
-	};
-
 	class Mesh
 	{
 	public:

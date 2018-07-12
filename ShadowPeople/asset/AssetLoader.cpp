@@ -9,6 +9,9 @@
 #include "../rendering/Scene.hpp"
 
 #include "../rendering/GeometryCache.hpp"
+#include "../rendering/MaterialCache.hpp"
+
+#include "../Math.hpp"
 
 // File operations requires OS specific stuff, move it later to a separate file
 #define WIN32_LEAN_AND_MEAN
@@ -20,8 +23,9 @@
 
 namespace asset
 {
-    AssetLoader::AssetLoader(rendering::GeometryCache& geometry) :
-        m_geometry(geometry)
+    AssetLoader::AssetLoader(rendering::GeometryCache& geometry, rendering::MaterialCache& materials) :
+        m_geometry(geometry),
+        m_materials(materials)
     {}
 
     AssetLoader::DataBlob AssetLoader::fileToBlob(const std::string& filename)
@@ -114,9 +118,42 @@ namespace asset
             // Pre-load the mesh now - later, implement proper streaming and only give a virtual offset here
             int2 meshStartSize = m_geometry.preloadMesh(mesh);
             rendering::Transform transform; // TODO: Fill
-            scene.addObject(rendering::Object(meshStartSize, transform));
+            int objectOffset = scene.addObject(rendering::Object(meshStartSize, transform));
         }
 
+        
+        rendering::Image image;
+        if (!loadImage("data/models/house/house_diffuse.tga", image)) return false;
+
+        int2 size{ image.width(), image.height() };
+        Rect<int, 2> materialRect = m_materials.allocate(size);
+
+        m_materials.preloadMaterial(image, materialRect, rendering::MaterialChannel::Albedo);
+
+        if (!loadImage("data/models/house/house_spec.tga", image)) return false;
+        m_materials.preloadMaterial(image, materialRect, rendering::MaterialChannel::Roughness);
+
+        if (!loadImage("data/models/house/house_normal.tga", image)) return false;
+        m_materials.preloadMaterial(image, materialRect, rendering::MaterialChannel::Normal);
+
+        int materialOffset = scene.addMaterial(rendering::Material(materialRect));
+
+        return true;
+    }
+
+    bool AssetLoader::loadImage(const std::string& filename, rendering::Image& image)
+    {
+        DataBlob buffer = fileToBlob(filename);
+        if (buffer == nullptr) return false;
+
+        if (!parseTga(buffer, image)) return false;
+
+        return true;
+    }
+
+    bool AssetLoader::loadMaterial(const std::string& filename, rendering::Material& material)
+    {
+        // TODO
         return true;
     }
 
@@ -244,7 +281,7 @@ namespace asset
 				token = strtok_s(NULL, " \t\n\r", &next_token);
 				materialName = token;
 			}
-			else if (strcmp(token, "usemt") == 0)	// Use material
+			else if (strcmp(token, "usemtl") == 0)	// Use material
 			{
 
 			}
@@ -271,7 +308,7 @@ namespace asset
 									Range<Face> faces, rendering::Mesh& mesh)
 	{
 		std::unordered_map<uint3, uint32_t> uniqueIndices;
-		std::vector<rendering::Vertex> vertices;
+		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		std::vector<uint32_t> faceIndices;
 		for (auto &face : faces)
@@ -283,7 +320,7 @@ namespace asset
 				auto it = uniqueIndices.find(indexTrio);
 				if (it == uniqueIndices.end())
 				{
-					rendering::Vertex vtx;
+					Vertex vtx;
 					vtx.position	= positions[indexTrio[0]];
 					vtx.uv			= texcoords[indexTrio[1]];
 					vtx.normal		= normals[indexTrio[2]];
@@ -347,5 +384,68 @@ namespace asset
 		lineBuffer[i] = '\0';
 
 		return i;
+    }
+
+    bool AssetLoader::parseTga(DataBlob buffer, rendering::Image& image)
+    {
+        TgaHeader header;
+        memcpy(&header, buffer->data(), sizeof(TgaHeader));
+
+        bool imageIDExists   = (header.idLength != 0);
+        bool colorMapExists  = (header.colorMapType != 0);
+        bool imageDataExists = (header.imageType != 0);
+
+        TgaFooter footer;
+        memcpy(&footer, buffer->data() + buffer->size() - sizeof(TgaFooter), sizeof(TgaFooter));
+
+        bool footerValid = (strncmp(footer.signature, "TRUEVISION-XFILE", 16) == 0);        
+
+        uint32_t index = sizeof(TgaHeader);
+
+        // Image ID
+        if (imageIDExists)
+        {
+            index += header.idLength;
+        }
+
+        // Color map
+        if (colorMapExists)
+        {
+            uint8_t bytesPerEntry   = math::divRoundUp<uint8_t>(header.colorMapEntrySize, 8);
+            uint32_t colorMapBytes  = header.colorMapLength * bytesPerEntry;
+            index += colorMapBytes;
+        }
+
+        // Image data
+        if (imageDataExists)
+        {
+            uint8_t bytesPerPixel   = math::divRoundUp<uint8_t>(header.bitsPerPixel, 8);
+            size_t imageDataSize  = header.widthInPixels * header.heightInPixels * bytesPerPixel;
+
+#ifdef VERBOSE_MODE
+            std::string msg("Image data: ");
+            msg.append(std::to_string(header.widthInPixels)).append(" x ");
+            msg.append(std::to_string(header.heightInPixels)).append(" @ ");
+            msg.append(std::to_string(header.bitsPerPixel)).append(" bpp\n");
+            OutputDebugString(msg.c_str());
+#endif
+            image.setDimensions(header.widthInPixels, header.heightInPixels, header.bitsPerPixel);
+            auto bytes = vectorAsByteRange(*buffer);
+            image.fillData(Range<const uint8_t>(bytes.begin() + index, imageDataSize));
+        }
+
+        if (footerValid)
+        {
+#ifdef VERBOSE_MODE
+            OutputDebugString("Valid TGA 2.0 file\n");
+#endif
+            // Developer area
+
+            // Extension area
+            TgaExtension extension;
+            memcpy(&extension, buffer->data() + footer.extensionOffset, sizeof(TgaExtension));
+        }
+
+        return true;
     }
 }

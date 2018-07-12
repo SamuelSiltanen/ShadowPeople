@@ -6,10 +6,9 @@ namespace rendering
 {
 	ScreenBuffers::ScreenBuffers(Device& device, int2 screenSize)
 	{
-		desc::Format depthFormat;
-		depthFormat.channels	= desc::FormatChannels::Depth;
-		depthFormat.bytes		= desc::FormatBytesPerChannel::B32;
-		depthFormat.type		= desc::FormatType::Float;
+		desc::Format depthFormat(desc::FormatChannels::Depth,
+                                 desc::FormatBytesPerChannel::B32,
+                                 desc::FormatType::Float);
 
 		m_zBuffer = device.createTexture(desc::Texture()
 			.width(screenSize[0])
@@ -25,10 +24,9 @@ namespace rendering
 			desc::TextureView(m_zBuffer.descriptor())
 				.type(desc::ViewType::SRV));
 
-		desc::Format gFormat;
-		gFormat.channels	= desc::FormatChannels::RGBA;
-		gFormat.bytes		= desc::FormatBytesPerChannel::B32;
-		gFormat.type		= desc::FormatType::UInt;
+		desc::Format gFormat(desc::FormatChannels::RGBA,
+                             desc::FormatBytesPerChannel::B32,
+                             desc::FormatType::UInt);
 
 		m_gBuffer = device.createTexture(desc::Texture()
 			.width(screenSize[0])

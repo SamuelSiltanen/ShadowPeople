@@ -33,28 +33,27 @@ namespace rendering
 	{
 		Matrix4x4 rot = math::rotationMatrix(m_yaw, m_pitch);
 
-		Matrix4x4 mov;
+        Matrix4x4 mov;
 		mov(0, 3) = -m_position[0];
 		mov(1, 3) = -m_position[1];
 		mov(2, 3) = -m_position[2];
 
-		Matrix4x4 view = rot * mov;
-
-		return view;
+		return rot * mov;
 	}
 
 	Matrix4x4 Camera::projectionMatrix() const
 	{
 		Matrix4x4 mat;
 
+        // https://docs.microsoft.com/en-us/windows/desktop/dxtecharts/the-direct3d-transformation-pipeline
 		if (m_projection == Projection::Perspective)
 		{
 			float r = 1.f / (m_far - m_near);
 			float f = tanf(0.5f * m_fov);
-			mat(0, 0) = f / m_aspectRatio;
-			mat(1, 1) = f;
-			mat(2, 2) = (m_far + m_near) * r;
-			mat(2, 3) = -2.f * m_far * m_near * r;
+			mat(0, 0) = 1.f / (f * m_aspectRatio);
+			mat(1, 1) = 1.f / f;
+			mat(2, 2) = m_far * r;
+			mat(2, 3) = -m_far * m_near * r;
 			mat(3, 2) = 1.f;
 			mat(3, 3) = 0.f;
 		}
@@ -62,14 +61,33 @@ namespace rendering
 		{
 			float r = 1.f / (m_far - m_near);
 			int2 s = m_orthoDimensions.size();
-			mat(0, 0) = 0.5f * s[0];
-			mat(1, 1) = 0.5f * s[1];
-			mat(2, 2) = 2.f * r;
-			mat(2, 3) = -(m_far + m_near) * r;
+			mat(0, 0) = 2.f / s[0];
+			mat(1, 1) = 2.f / s[1];
+			mat(2, 2) = r;
+			mat(2, 3) = -m_near * r;
 		}
 
 		return mat;
 	}
+
+    Matrix4x4 Camera::invViewMatrix() const
+    {
+        Matrix4x4 invRot = math::rotationMatrix(m_yaw, m_pitch).transpose();
+
+        Matrix4x4 invMov;
+		invMov(0, 3) = m_position[0];
+		invMov(1, 3) = m_position[1];
+		invMov(2, 3) = m_position[2];
+
+        Matrix4x4 invView = invMov * invRot;
+
+        return invView;
+    }
+
+    Matrix4x4 Camera::invProjMatrix() const
+    {
+        return Matrix4x4(); // TODO
+    }
 
 	float4 Camera::position() const
 	{
