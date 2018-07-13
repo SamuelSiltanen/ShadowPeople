@@ -22,6 +22,10 @@ namespace rendering
 
         void updateGPUBuffers(graphics::CommandBuffer& gfx);
 
+        // Returns start + size of the allocated range
+        int2 allocatedVertices() const { return { 0, static_cast<int>(m_vertices.size()) }; }
+        int2 allocatedIndices()  const { return { 0, static_cast<int>(m_indices.size()) }; }
+
         const graphics::BufferView& vertexBuffer() const { return m_vertexBufferSRV; }
         const graphics::Buffer& indexBuffer() const { return m_indexBuffer; }
     private:

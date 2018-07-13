@@ -18,6 +18,8 @@ namespace rendering
         const std::vector<Vertex>& vertices() const { return m_vertices; }
         const std::vector<uint32_t>& indices() const { return m_indices; }
 	private:
+        void calculateOrientations();
+
 		std::vector<Vertex>		m_vertices;
 		std::vector<uint32_t>	m_indices;
 	};

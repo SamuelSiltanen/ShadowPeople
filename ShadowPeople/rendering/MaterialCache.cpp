@@ -88,8 +88,10 @@ namespace rendering
         {
             RG16* dstTyped = reinterpret_cast<RG16*>(dst);
             const BGR* srcTyped = reinterpret_cast<const BGR*>(src);
-            float3 norm{ srcTyped->r / 255.f, srcTyped->g / 255.f, srcTyped->b / 255.f };
-            float2 octaNorm = math::encodeOctahedral(norm);
+            float3 norm{ (static_cast<float>(srcTyped->r) - 128.f) / 128.f,
+                         (static_cast<float>(srcTyped->g) - 128.f) / 128.f,
+                         (static_cast<float>(srcTyped->b) - 128.f) / 128.f };
+            float2 octaNorm = math::encodeOctahedral(normalize(norm));
             dstTyped->r = static_cast<uint16_t>(octaNorm[0] * 65535.f + 0.5f);
             dstTyped->g = static_cast<uint16_t>(octaNorm[1] * 65535.f + 0.5f);
         };
@@ -115,5 +117,7 @@ namespace rendering
         // TODO: Better logic here
         gfx.update(m_albedoRoughness, Range<const uint8_t>(m_albedoRoughnessCache.data(), 
                                                            m_albedoRoughnessCache.dataSize()));
+        gfx.update(m_normal, Range<const uint8_t>(m_normalCache.data(), 
+                                                  m_normalCache.dataSize()));
     }
 }

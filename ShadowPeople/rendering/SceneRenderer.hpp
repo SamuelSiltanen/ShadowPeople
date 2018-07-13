@@ -9,6 +9,7 @@
 #include "ScreenBuffers.hpp"
 #include "ImageBuffers.hpp"
 #include "ImGuiRenderer.hpp"
+#include "DebugRenderer.hpp"
 
 namespace rendering
 {
@@ -39,6 +40,7 @@ namespace rendering
         void geometryRendering(graphics::CommandBuffer& gfx, const Camera& camera, const Scene& scene);
         void lighting(graphics::CommandBuffer& gfx, const Camera& camera);
         void postprocess(graphics::CommandBuffer& gfx);
+        void debugRendering(graphics::CommandBuffer& gfx, const Camera& camera, const Scene& scene);
 
         VisibleGeometry             m_visibleGeometry;
         ScreenBuffers               m_screenBuffers;
@@ -51,6 +53,7 @@ namespace rendering
         graphics::Sampler           m_bilinearSampler;
 
         ImGuiRenderer               m_imGuiRenderer;
+        DebugRenderer               m_debugRenderer;
 
         int2                        m_screenSize;
 

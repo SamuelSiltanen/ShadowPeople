@@ -86,7 +86,25 @@ namespace rendering
 
     Matrix4x4 Camera::invProjMatrix() const
     {
-        return Matrix4x4(); // TODO
+        Matrix4x4 mat;
+
+        if (m_projection == Projection::Perspective)
+        {
+			float f = tanf(0.5f * m_fov);
+			mat(0, 0) = f * m_aspectRatio;
+			mat(1, 1) = f;
+			mat(2, 2) = 0.f;
+
+			mat(2, 3) = 1.f;
+			mat(3, 2) = -(m_far - m_near) / (m_far * m_near);
+			mat(3, 3) = 1.f / m_near;
+        }
+        else
+        {
+            // TODO
+        }
+
+        return mat;
     }
 
 	float4 Camera::position() const

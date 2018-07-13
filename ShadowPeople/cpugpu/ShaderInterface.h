@@ -177,6 +177,8 @@ namespace graphics
 		const uint ThreadGroupSizeY = Y;		\
 		const uint ThreadGroupSizeZ = Z;
 
+    #define GRAPHICS_PIPELINE THREAD_GROUP_SIZE(0, 0, 0)
+
 #else				// HLSL
 
 #define CBuffer(x, body) cbuffer x body
@@ -189,6 +191,8 @@ namespace graphics
 	static const uint ThreadGroupsX = X; \
 	static const uint ThreadGroupsY = Y; \
 	static const uint ThreadGroupsZ = Z;
+
+#define GRAPHICS_PIPELINE THREAD_GROUP_SIZE(0, 0, 0)
 
 #endif
 

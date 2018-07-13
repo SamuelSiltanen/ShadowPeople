@@ -143,6 +143,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="rendering\Camera.cpp" />
+    <ClCompile Include="rendering\DebugRenderer.cpp" />
     <ClCompile Include="rendering\GeometryCache.cpp" />
     <ClCompile Include="rendering\Image.cpp" />
     <ClCompile Include="rendering\ImageBuffers.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="input\InputHandler.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="rendering\Camera.hpp" />
+    <ClInclude Include="rendering\DebugRenderer.hpp" />
     <ClInclude Include="rendering\GeometryCache.hpp" />
     <ClInclude Include="rendering\Image.hpp" />
     <ClInclude Include="rendering\ImageBuffers.hpp" />
@@ -203,6 +205,7 @@
     <ClInclude Include="shaders\GeometryRenderer.if.h" />
     <ClInclude Include="shaders\ImGuiRenderer.if.h" />
     <ClInclude Include="shaders\Lighting.if.h" />
+    <ClInclude Include="shaders\LineRenderer.if.h" />
     <ClInclude Include="Types.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +246,21 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="shaders\LineRenderer.ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shaders\LineRenderer.vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <ClInclude Include="shaders\Quaternion.h.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

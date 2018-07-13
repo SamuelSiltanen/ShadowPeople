@@ -167,6 +167,9 @@
     <ClCompile Include="rendering\Image.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="rendering\DebugRenderer.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Errors.hpp">
@@ -319,6 +322,15 @@
     <ClInclude Include="cpugpu\GeometryTypes.h">
       <Filter>Header Files\cpugpu</Filter>
     </ClInclude>
+    <ClInclude Include="rendering\DebugRenderer.hpp">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\LineRenderer.if.h">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\Quaternion.h.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\ImGuiRenderer.vs.hlsl">
@@ -334,6 +346,12 @@
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\Lighting.cs.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\LineRenderer.vs.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\LineRenderer.ps.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
   </ItemGroup>

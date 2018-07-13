@@ -14,6 +14,7 @@ namespace rendering
 
 		const graphics::TextureView& gBuffer() { return m_gBufferSRV; }
 		const graphics::TextureView& zBuffer() { return m_zBufferSRV; }
+        const graphics::TextureView& zBufferDSV() { return m_zBufferDSV; }
 	private:
 		graphics::Texture		m_gBuffer;
 		graphics::TextureView	m_gBufferRTV;

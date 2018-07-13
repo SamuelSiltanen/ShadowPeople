@@ -2,8 +2,9 @@
 
 struct VSOutput
 {
-    float3  normal  : COLOR0;
-    float2  uv      : COLOR1;
+    //float3  normal  : COLOR0;
+    float4 orientation : COLOR0;
+    float3  uv_bts      : COLOR1;
     float4  pos     : SV_POSITION;
 };
 
@@ -15,13 +16,12 @@ VSOutput main(uint vertexId : SV_VertexID)
     float4 viewPos  = mul(view, worldPos);
     float4 ndcPos   = mul(proj, viewPos);
 
-    float3 viewNorm = mul(view, float4(v.normal, 0.f)).xyz;
-
     VSOutput output;
 
-    output.normal   = viewNorm;
-    output.uv       = v.uv;
-    output.pos      = ndcPos;
+    //output.normal    = v.normal;
+    output.orientation = v.orientation;
+    output.uv_bts      = float3(v.uv, v.bitangentSign);
+    output.pos         = ndcPos;
 
 	return output;
 }

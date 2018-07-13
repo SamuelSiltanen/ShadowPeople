@@ -22,6 +22,7 @@ namespace rendering
 		m_screenBuffers(device, device.swapChainSize()),
 		m_imageBuffers(device, device.swapChainSize()),
 		m_imGuiRenderer(device),
+        m_debugRenderer(device),
 		m_screenSize(device.swapChainSize()),
         m_geometry(geometry),
         m_materials(materials)
@@ -42,7 +43,7 @@ namespace rendering
 			.binding<shaders::GeometryRenderer>()
 			.setPrimitiveTopology(desc::PrimitiveTopology::TriangleList)
 			.numRenderTargets(1)
-			.rasterizerState(desc::RasterizerState().cullMode(desc::CullMode::None))
+			.rasterizerState(desc::RasterizerState().cullMode(desc::CullMode::Front))
 			.depthStencilState(desc::DepthStencilState()
 				.depthTestingEnable(true)
 				.depthFunc(desc::ComparisonMode::Less)));
@@ -56,6 +57,7 @@ namespace rendering
 		geometryRendering(gfx, scene.camera(), scene);
 		lighting(gfx, scene.camera());
 		postprocess(gfx);
+        debugRendering(gfx, scene.camera(), scene);
 		gfx.copyToBackBuffer(m_outputImage.output);
 	}
 
@@ -96,9 +98,11 @@ namespace rendering
 		{
 			auto binding = m_lightingPipeline.bind<shaders::LightingCS>(gfx);
 
+            binding->constants.invProj  = camera.invProjMatrix();
             binding->constants.invView  = camera.invViewMatrix();
 			binding->constants.size	    = m_screenSize;
 			binding->gBuffer		    = m_screenBuffers.gBuffer();
+            binding->zBuffer            = m_screenBuffers.zBuffer();
 			binding->litBuffer		    = m_imageBuffers.litBuffer();
             binding->albedoRoughness    = m_materials.albedoRougness();
             binding->normal             = m_materials.normal();
@@ -117,8 +121,18 @@ namespace rendering
 		ImGui::EndFrame();
 		ImGui::Render();
 
-		gfx.setRenderTargets(m_outputImage.outputRTV);
+		gfx.setRenderTargets(m_outputImage.outputRTV);        
 		m_imGuiRenderer.render(gfx, ImGui::GetDrawData());
 		gfx.setRenderTargets();
 	}
+
+    void SceneRenderer::debugRendering(CommandBuffer& gfx, const Camera& camera, const Scene& scene)
+    {
+        if (false)
+        {
+            gfx.setRenderTargets(m_screenBuffers.zBufferDSV(), m_outputImage.outputRTV);        
+		    m_debugRenderer.render(gfx, camera, m_geometry.vertexBuffer(), m_geometry.allocatedVertices());
+		    gfx.setRenderTargets();
+        }
+    }
 }

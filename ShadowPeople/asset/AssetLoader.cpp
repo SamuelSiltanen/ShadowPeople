@@ -337,9 +337,13 @@ namespace asset
 				faceIndices.emplace_back(index);
 			}
 
+            // Note: Obj-files store vertices in counter-clockwise order by default, and
+            //       may have arbitrary polygons.
 			if (faceIndices.size() == 3)
 			{
-				indices.insert(indices.end(), faceIndices.begin(), faceIndices.end());
+                indices.emplace_back(faceIndices[0]);
+				indices.emplace_back(faceIndices[2]);
+				indices.emplace_back(faceIndices[1]);
 			}
 			else if (faceIndices.size() == 4)
 			{

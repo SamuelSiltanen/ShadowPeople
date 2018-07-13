@@ -1,6 +1,7 @@
 #include "Types.hpp"
 #include "Errors.hpp"
-#include <math.h>
+#include "Math.hpp"
+#include <cmath>
 
 static const float Epsilon = 1e-6f;
 
@@ -26,6 +27,94 @@ float4 cross(const float4& a, const float4& b)
 }
 
 // Matrices
+
+Matrix3x3::Matrix3x3()
+{
+	memset(m_elements.data(), 0, sizeof(float) * 9);
+	m_elements[0]	= 1.f;
+	m_elements[4]	= 1.f;
+	m_elements[8]	= 1.f;
+}
+
+Matrix3x3::Matrix3x3(float3 row0, float3 row1, float3 row2)
+{
+	memcpy(&m_elements[0], &row0, sizeof(float) * 3);
+	memcpy(&m_elements[3], &row1, sizeof(float) * 3);
+	memcpy(&m_elements[6], &row2, sizeof(float) * 3);
+}
+
+float& Matrix3x3::operator()(int row, int column)
+{
+	return m_elements[row * 3 + column];
+}
+
+const float& Matrix3x3::operator()(int row, int column) const
+{
+	return m_elements[row * 3 + column];
+}
+
+float3 Matrix3x3::operator*(float3 vec)
+{
+	float3 result({0.f, 0.f, 0.f});
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		for (uint32_t j = 0; j < 3; j++)
+		{
+			result[i] += m_elements[i * 3 + j] * vec[j];
+		}
+	}
+	return result;
+}
+
+float3 Matrix3x3::row(int row) const
+{
+    return { m_elements[row * 3 + 0], m_elements[row * 3 + 1], m_elements[row * 3 + 2] };
+}
+
+Matrix3x3 Matrix3x3::transpose() const
+{
+    Matrix3x3 result
+    {
+        { m_elements[0], m_elements[3], m_elements[6] },
+        { m_elements[1], m_elements[4], m_elements[7] },
+        { m_elements[2], m_elements[5], m_elements[8] },
+    };
+
+    return result;
+}
+
+std::string Matrix3x3::debugOutput() const
+{
+	std::string s("[");
+    for (uint32_t i = 0; i < 3; i++)
+    {
+        for (uint32_t j = 0; j < 3; j++)
+        {
+	        s += std::to_string(m_elements[i * 3 + j]);
+	        if (j < 3) s += ", ";
+        }
+        s += "]\n";
+    }
+	return s;
+}
+
+Matrix3x3 operator*(const Matrix3x3& lhs, const Matrix3x3& rhs)
+{
+	Matrix3x3 result;
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			float dot = 0.f;
+			for (int k = 0; k < 3; k++)
+			{
+				dot += lhs(i, k) * rhs(k, j);
+			}
+			result(i, j) = dot;
+		}
+	}
+	return result;
+}
 
 Matrix4x4::Matrix4x4()
 {
@@ -138,12 +227,30 @@ Quaternion::Quaternion(float4 axis, float angle)
 	m_rotation[3] = c;
 }
 
+// This uses the "alternative method" in
+// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+Quaternion::Quaternion(const Matrix3x3& rotation)
+{
+    float qx = 1.f + rotation(0, 0) - rotation(1, 1) - rotation(2, 2);
+    float qy = 1.f - rotation(0, 0) + rotation(1, 1) - rotation(2, 2);
+    float qz = 1.f - rotation(0, 0) - rotation(1, 1) + rotation(2, 2);
+    float qw = 1.f + rotation(0, 0) + rotation(1, 1) + rotation(2, 2);    
+    qx = sqrtf(qx < 0.f ? 0.f : qx) * 0.5f;
+    qy = sqrtf(qy < 0.f ? 0.f : qy) * 0.5f;
+    qz = sqrtf(qz < 0.f ? 0.f : qz) * 0.5f;
+    qw = sqrtf(qw < 0.f ? 0.f : qw) * 0.5f;
+    m_rotation[0] = qx * math::sign(rotation(1, 2) - rotation(2, 1));
+    m_rotation[1] = qy * math::sign(rotation(2, 0) - rotation(0, 2));
+    m_rotation[2] = qz * math::sign(rotation(0, 1) - rotation(1, 0));
+    m_rotation[3] = qw;
+}
+
 bool Quaternion::operator==(const Quaternion& q) const
 {
 	return (q.m_rotation[0] == m_rotation[0]) && 
-			(q.m_rotation[1] == m_rotation[1]) && 
-			(q.m_rotation[2] == m_rotation[2]) && 
-			(q.m_rotation[3] == m_rotation[3]);
+		   (q.m_rotation[1] == m_rotation[1]) && 
+		   (q.m_rotation[2] == m_rotation[2]) && 
+		   (q.m_rotation[3] == m_rotation[3]);
 }
 
 Quaternion Quaternion::conjugate() const
@@ -193,6 +300,11 @@ Matrix4x4 Quaternion::toMatrix() const
 	mat(2, 1) = 2.f * (qyz - qxw);
 
 	return mat;
+}
+
+float4 Quaternion::toFloat4() const
+{
+    return { m_rotation[0], m_rotation[1], m_rotation[2], m_rotation[3] };
 }
 
 std::string Quaternion::debugOutput() const

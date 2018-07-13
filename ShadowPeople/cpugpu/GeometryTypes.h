@@ -7,8 +7,10 @@
 
     struct Vertex
 	{
+        float4  orientation;    // Note: This is the geometric orientation quaternion
+        float   bitangentSign;
 		float3	position;
-        float3  normal;
+        float3  normal;         // Note: This might be non-geometric, i.e. bent, for artistic purposes
 		float2	uv;
     };
 

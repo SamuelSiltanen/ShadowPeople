@@ -13,6 +13,6 @@ CBuffer(constants,
 
 StructuredBuffer<Vertex>    vertexBuffer;
 
-THREAD_GROUP_SIZE(1, 1, 1)
+GRAPHICS_PIPELINE
 
 END_SHADER_INTERFACE(GeometryRenderer)

@@ -352,6 +352,28 @@ namespace std
 float3 cross(const float3& a, const float3& b);
 float4 cross(const float4& a, const float4& b);
 
+class Matrix3x3
+{
+public:
+	// Defaults to identity matrix
+	Matrix3x3();
+	Matrix3x3(float3 row0, float3 row1, float3 row2);
+
+	float& operator()(int row, int column);
+	const float& operator()(int row, int column) const;
+
+	float3 operator*(float3 vec);
+
+    float3 row(int row) const;
+    Matrix3x3 transpose() const;
+
+    std::string debugOutput() const;
+
+	friend Matrix3x3 operator*(const Matrix3x3& lhs, const Matrix3x3& rhs);
+private:
+	std::array<float, 9>	m_elements;	// Row-major order
+};
+
 class Matrix4x4
 {
 public:
@@ -380,13 +402,15 @@ public:
 	Quaternion();
 	Quaternion(float4 rotation);
 	Quaternion(float4 axis, float angle);
+    Quaternion(const Matrix3x3& rotation);
 
 	bool operator==(const Quaternion& q) const;
 
-	Quaternion conjugate() const;
-	float4 rotate(float4 position) const;
+	Quaternion  conjugate() const;
+	float4      rotate(float4 position) const;
 	
-	Matrix4x4 toMatrix() const;
+	Matrix4x4   toMatrix() const;
+    float4      toFloat4() const;
 
 	std::string debugOutput() const;
 
