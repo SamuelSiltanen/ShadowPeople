@@ -38,13 +38,11 @@ namespace asset
             std::vector<uint3> indices;
         };
 
-        using DataBlob = std::shared_ptr<std::vector<char>>;
-
-        bool parseObj(DataBlob buffer, rendering::Mesh& mesh);
+        bool parseObj(DataBlob<> buffer, rendering::Mesh& mesh);
         bool constructMesh(Range<float3> positions, Range<float2> texcoords, Range<float3> normals,
                            Range<Face> faces, rendering::Mesh& mesh);
 
-        DataBlob fileToBlob(const std::string& filename);
+        DataBlob<> fileToBlob(const std::string& filename);
         int getLine(char *lineBuffer, Range<const char> sourceBuffer, int pos);
 
 #pragma pack(push, 1)   // This is required, because the TGA fields are not aligned
@@ -92,7 +90,7 @@ namespace asset
             uint8_t     attributesType;
         };
 #pragma pack(pop)
-        bool parseTga(DataBlob buffer, rendering::Image& image);
+        bool parseTga(DataBlob<> buffer, rendering::Image& image);
 
         rendering::GeometryCache& m_geometry;
         rendering::MaterialCache& m_materials;

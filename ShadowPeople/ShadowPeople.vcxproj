@@ -132,6 +132,7 @@
     <ClCompile Include="dx11\MappingImpl.cpp" />
     <ClCompile Include="dx11\TextureImpl.cpp" />
     <ClCompile Include="dx11\TextureViewImpl.cpp" />
+    <ClCompile Include="FreeList.cpp" />
     <ClCompile Include="game\GameLogic.cpp" />
     <ClCompile Include="graphics\Graphics.cpp" />
     <ClCompile Include="graphics\ShaderManager.cpp" />
@@ -150,6 +151,8 @@
     <ClCompile Include="rendering\ImGuiRenderer.cpp" />
     <ClCompile Include="rendering\MaterialCache.cpp" />
     <ClCompile Include="rendering\Mesh.cpp" />
+    <ClCompile Include="rendering\PatchCache.cpp" />
+    <ClCompile Include="rendering\PatchGenerator.cpp" />
     <ClCompile Include="rendering\Scene.cpp" />
     <ClCompile Include="rendering\SceneRenderer.cpp" />
     <ClCompile Include="rendering\ScreenBuffers.cpp" />
@@ -175,6 +178,7 @@
     <ClInclude Include="dx11\TextureImpl.hpp" />
     <ClInclude Include="dx11\TextureViewImpl.hpp" />
     <ClInclude Include="Errors.hpp" />
+    <ClInclude Include="FreeList.hpp" />
     <ClInclude Include="game\GameLogic.hpp" />
     <ClInclude Include="graphics\Descriptors.hpp" />
     <ClInclude Include="graphics\DX11Graphics.hpp" />
@@ -198,6 +202,9 @@
     <ClInclude Include="rendering\ImGuiRenderer.hpp" />
     <ClInclude Include="rendering\MaterialCache.hpp" />
     <ClInclude Include="rendering\Mesh.hpp" />
+    <ClInclude Include="rendering\Patch.hpp" />
+    <ClInclude Include="rendering\PatchCache.hpp" />
+    <ClInclude Include="rendering\PatchGenerator.hpp" />
     <ClInclude Include="rendering\Scene.hpp" />
     <ClInclude Include="rendering\SceneRenderer.hpp" />
     <ClInclude Include="rendering\ScreenBuffers.hpp" />

@@ -28,7 +28,7 @@ namespace asset
         m_materials(materials)
     {}
 
-    AssetLoader::DataBlob AssetLoader::fileToBlob(const std::string& filename)
+    DataBlob<> AssetLoader::fileToBlob(const std::string& filename)
     {
         HANDLE file = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
                                  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -40,7 +40,7 @@ namespace asset
                 err.append(filename).append("\n");
                 OutputDebugString(err.c_str());
             }
-            return nullptr;
+            return DataBlob<>();
         }
 
         LARGE_INTEGER fileSize;
@@ -48,39 +48,39 @@ namespace asset
         {
             OutputDebugString("Unable to read file size\n");
             CloseHandle(file);
-            return nullptr;
+            return DataBlob<>();
         }
 
         if (fileSize.QuadPart > (1 << 30))
         {
             OutputDebugString("File too big to read\n");
             CloseHandle(file);
-            return nullptr;
+            return DataBlob<>();
         }
 
         DWORD bytesToRead = fileSize.LowPart;
 
-        std::shared_ptr<std::vector<char>> buffer = std::make_shared<std::vector<char>>(bytesToRead);
+        DataBlob<> dataBlob(bytesToRead);
 
         DWORD bytesActualRead;
-        if (!ReadFile(file, buffer->data(), bytesToRead, &bytesActualRead, NULL))
+        if (!ReadFile(file, dataBlob.data(), bytesToRead, &bytesActualRead, NULL))
         {
             OutputDebugString("Could not read file contents\n");
             CloseHandle(file);
-            return nullptr;
+            return DataBlob<>();
         }
 
         CloseHandle(file);
 
-        buffer->resize(bytesActualRead);
+        dataBlob.resize(bytesActualRead);
 
-        return buffer;
+        return dataBlob;
     }
 
     bool AssetLoader::loadModel(const std::string& filename, rendering::Mesh& mesh)
     {
-        DataBlob buffer = fileToBlob(filename);
-        if (buffer == nullptr) return false;
+        DataBlob<> buffer = fileToBlob(filename);
+        if (buffer.data() == nullptr) return false;
 
         if (!parseObj(buffer, mesh)) return false;
 
@@ -89,15 +89,15 @@ namespace asset
 
     bool AssetLoader::loadScene(const std::string& filename, rendering::Scene& scene)
     {
-        DataBlob buffer = fileToBlob(filename);
-        if (buffer == nullptr) return false;
+        DataBlob<> buffer = fileToBlob(filename);
+        if (buffer.data() == nullptr) return false;
 
         char line[256];
 
         uint32_t index = 0;
-        while(index < buffer->size())
+        while(index < buffer.size())
         {
-            int bytesRead = getLine(line, Range<const char>(buffer->data(), buffer->size()), index);
+            int bytesRead = getLine(line, Range<const char>(buffer.data(), buffer.size()), index);
             index += bytesRead;
 
             // Parse line
@@ -143,8 +143,8 @@ namespace asset
 
     bool AssetLoader::loadImage(const std::string& filename, rendering::Image& image)
     {
-        DataBlob buffer = fileToBlob(filename);
-        if (buffer == nullptr) return false;
+        DataBlob<> buffer = fileToBlob(filename);
+        if (buffer.data() == nullptr) return false;
 
         if (!parseTga(buffer, image)) return false;
 
@@ -157,7 +157,7 @@ namespace asset
         return true;
     }
 
-	bool AssetLoader::parseObj(DataBlob buffer, rendering::Mesh& mesh)
+	bool AssetLoader::parseObj(DataBlob<> buffer, rendering::Mesh& mesh)
 	{
 		std::vector<float3>	vtxPositions;
 		std::vector<float2>	vtxTexCoords;
@@ -168,9 +168,9 @@ namespace asset
 		char line[256];
 
 		uint32_t index = 0;
-		while (index < buffer->size())
+		while (index < buffer.size())
 		{
-            int bytesRead = getLine(line, Range<const char>(buffer->data(), buffer->size()), index);
+            int bytesRead = getLine(line, Range<const char>(buffer.data(), buffer.size()), index);
             index += bytesRead;
 
 			// Parse line
@@ -390,17 +390,17 @@ namespace asset
 		return i;
     }
 
-    bool AssetLoader::parseTga(DataBlob buffer, rendering::Image& image)
+    bool AssetLoader::parseTga(DataBlob<> buffer, rendering::Image& image)
     {
         TgaHeader header;
-        memcpy(&header, buffer->data(), sizeof(TgaHeader));
+        memcpy(&header, buffer.data(), sizeof(TgaHeader));
 
         bool imageIDExists   = (header.idLength != 0);
         bool colorMapExists  = (header.colorMapType != 0);
         bool imageDataExists = (header.imageType != 0);
 
         TgaFooter footer;
-        memcpy(&footer, buffer->data() + buffer->size() - sizeof(TgaFooter), sizeof(TgaFooter));
+        memcpy(&footer, buffer.data() + buffer.size() - sizeof(TgaFooter), sizeof(TgaFooter));
 
         bool footerValid = (strncmp(footer.signature, "TRUEVISION-XFILE", 16) == 0);        
 
@@ -434,7 +434,7 @@ namespace asset
             OutputDebugString(msg.c_str());
 #endif
             image.setDimensions(header.widthInPixels, header.heightInPixels, header.bitsPerPixel);
-            auto bytes = vectorAsByteRange(*buffer);
+            auto bytes = blobAsByteRange(buffer);
             image.fillData(Range<const uint8_t>(bytes.begin() + index, imageDataSize));
         }
 
@@ -447,7 +447,7 @@ namespace asset
 
             // Extension area
             TgaExtension extension;
-            memcpy(&extension, buffer->data() + footer.extensionOffset, sizeof(TgaExtension));
+            memcpy(&extension, buffer.data() + footer.extensionOffset, sizeof(TgaExtension));
         }
 
         return true;

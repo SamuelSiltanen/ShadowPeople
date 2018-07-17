@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <memory>
 
 template<int N>
 class BooleanVector
@@ -442,6 +443,7 @@ private:
 using Color3 = ArithmeticVector<float, 3>;
 using Color4 = ArithmeticVector<float, 4>;
 
+// Non-owning data range reference
 template<typename T>
 class Range
 {
@@ -477,6 +479,50 @@ private:
 
 template<typename T>
 Range<const uint8_t> vectorAsByteRange(std::vector<T>& vector)
+{
+    return Range<const uint8_t>(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T));
+}
+
+// Owning data container
+template<typename T = char>
+class DataBlob
+{
+public:
+    DataBlob() :
+        m_data(nullptr)
+    {}
+
+    DataBlob(size_t elements)
+    {
+        m_data = std::make_shared<std::vector<T>>(elements);
+    }
+
+    void resize(size_t elements)
+    {
+        if (m_data == nullptr)
+        {
+            m_data = std::make_shared<std::vector<T>>(elements);
+        }
+        else
+        {
+            if (elements != m_data->size())
+            {
+                m_data->resize(elements);
+            }
+        }
+    }
+
+    size_t size() const      { return (m_data == nullptr) ? 0 :m_data->size(); }
+    size_t bytesSize() const { return (m_data == nullptr) ? 0 : m_data->size() * sizeof(T); }
+
+    T* data()                { return (m_data == nullptr) ? nullptr : m_data->data(); }
+    const T* data() const    { return (m_data == nullptr) ? nullptr : m_data->data(); }
+private:
+    std::shared_ptr<std::vector<T>> m_data;
+};
+
+template<typename T>
+Range<const uint8_t> blobAsByteRange(DataBlob<T>& vector)
 {
     return Range<const uint8_t>(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T));
 }
