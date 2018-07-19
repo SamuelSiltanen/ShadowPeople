@@ -352,6 +352,15 @@
     <ClInclude Include="dx11\ShaderResourcesImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
+    <ClInclude Include="shaders\SkyModel.h.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\ColorSpaces.h.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="cpugpu\Constants.h">
+      <Filter>Header Files\cpugpu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\ImGuiRenderer.vs.hlsl">

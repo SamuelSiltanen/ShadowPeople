@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="asset\AssetLoader.hpp" />
+    <ClInclude Include="cpugpu\Constants.h" />
     <ClInclude Include="cpugpu\GeometryTypes.h" />
     <ClInclude Include="cpugpu\ShaderInterface.h" />
     <ClInclude Include="dx11\BufferImpl.hpp" />
@@ -216,6 +217,9 @@
     <ClInclude Include="Types.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="shaders\ColorSpaces.h.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
     <FxCompile Include="shaders\GeometryRenderer.ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -266,6 +270,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <ClInclude Include="shaders\Quaternion.h.hlsl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="shaders\SkyModel.h.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>
