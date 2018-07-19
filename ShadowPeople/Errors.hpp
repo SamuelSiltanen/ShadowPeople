@@ -1,9 +1,14 @@
-#pragma once
+/*
+    Copyright 2018 Samuel Siltanen
+    Errors.hpp
 
-// The purpose of this file is to unify error handling accross the project,
-// remove mundane details off the main code path, and collect error strings
-// in one place. This should clarify the main code and help localization if
-// necessary.
+    The purpose of this file is to unify error handling accross the project,
+    remove mundane details off the main code path, and collect error strings
+    in one place. This should clarify the main code and help localization if
+    necessary.
+*/
+
+#pragma once
 
 #include <cassert>
 

@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    PatchGenerator.hpp
+*/
+
 #pragma once
 
 #include "Patch.hpp"

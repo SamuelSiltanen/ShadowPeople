@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    ShaderImpl.hpp
+*/
+
 #pragma once
 
 #include <d3d11.h>
@@ -13,8 +18,6 @@ namespace graphics
 		~ShaderImpl();
 
 		NO_COPY_CLASS(ShaderImpl);
-
-		
 
 		ID3DBlob* compiledSource() { return m_compiledSource; };
 	private:

@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    ShaderManager.hpp
+*/
+
 #pragma once
 
 #include <memory>

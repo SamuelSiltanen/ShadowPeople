@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Types.hpp
+*/
+
 #pragma once
 
 #include <array>

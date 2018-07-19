@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    ImGuiInputHandler.hpp
+*/
+
 #pragma once
 
 // Unfortunately, this is windows-specific

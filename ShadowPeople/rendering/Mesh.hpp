@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Mesh.hpp
+*/
+
 #pragma once
 
 #include <vector>

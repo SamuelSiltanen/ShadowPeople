@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    DebugRenderer.hpp
+*/
+
 #pragma once
 
 #include "../graphics/Graphics.hpp"

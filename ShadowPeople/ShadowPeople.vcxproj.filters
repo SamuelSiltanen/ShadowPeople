@@ -223,9 +223,6 @@
     <ClInclude Include="Math.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderResourcesImpl.hpp">
-      <Filter>Header Files\graphics\dx11</Filter>
-    </ClInclude>
     <ClInclude Include="dx11\ShaderManagerImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
@@ -351,6 +348,9 @@
     </ClInclude>
     <ClInclude Include="FreeList.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\ShaderResourcesImpl.hpp">
+      <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

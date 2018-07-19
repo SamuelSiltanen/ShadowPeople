@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Graphics.hpp
+*/
+
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN

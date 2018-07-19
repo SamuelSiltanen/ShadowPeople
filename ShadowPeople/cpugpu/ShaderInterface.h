@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    ShaderInterface.h
+*/
+
 #ifndef SP_SHADER_INTERFACE_H
 #define SP_SHADER_INTERFACE_H
 

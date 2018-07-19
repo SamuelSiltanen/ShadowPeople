@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    FreeList.hpp
+*/
+
 #pragma once
 
 #include <vector>

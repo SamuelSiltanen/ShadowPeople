@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    GraphicsPipelineImpl.hpp
+*/
+
 #pragma once
 
 #include <d3d11.h>

@@ -175,6 +175,7 @@
     <ClInclude Include="dx11\SamplerImpl.hpp" />
     <ClInclude Include="dx11\ShaderImpl.hpp" />
     <ClInclude Include="dx11\ShaderManagerImpl.hpp" />
+    <ClInclude Include="dx11\ShaderResourcesImpl.hpp" />
     <ClInclude Include="dx11\TextureImpl.hpp" />
     <ClInclude Include="dx11\TextureViewImpl.hpp" />
     <ClInclude Include="Errors.hpp" />
@@ -208,7 +209,6 @@
     <ClInclude Include="rendering\Scene.hpp" />
     <ClInclude Include="rendering\SceneRenderer.hpp" />
     <ClInclude Include="rendering\ScreenBuffers.hpp" />
-    <ClInclude Include="ShaderResourcesImpl.hpp" />
     <ClInclude Include="shaders\GeometryRenderer.if.h" />
     <ClInclude Include="shaders\ImGuiRenderer.if.h" />
     <ClInclude Include="shaders\Lighting.if.h" />

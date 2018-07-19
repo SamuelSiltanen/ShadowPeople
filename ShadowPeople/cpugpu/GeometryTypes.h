@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    GeometryTypes.h
+*/
+
 #ifndef SP_GEOMETRY_TYPES_H
 #define SP_GEOMETRY_TYPES_H
 

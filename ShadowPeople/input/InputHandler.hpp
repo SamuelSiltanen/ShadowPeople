@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    InputHandler.hpp
+*/
+
 #pragma once
 
 #include <stdint.h>

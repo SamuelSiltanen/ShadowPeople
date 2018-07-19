@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Camera.hpp
+*/
+
 #pragma once
 
 #include "../Types.hpp"

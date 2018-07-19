@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    Patch.hpp
+*/
+
 #pragma once
 
 #include <functional>

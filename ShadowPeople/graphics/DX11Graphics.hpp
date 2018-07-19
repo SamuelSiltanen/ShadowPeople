@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    DX11Graphics.hpp
+*/
+
 #pragma once
 
 #include "../dx11/DeviceImpl.hpp"

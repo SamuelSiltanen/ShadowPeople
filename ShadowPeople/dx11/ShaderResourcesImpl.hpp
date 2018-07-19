@@ -1,3 +1,8 @@
+/*
+    Copyright 2018 Samuel Siltanen
+    ShaderResourcesImpl.hpp
+*/
+
 #pragma once
 
 #include <vector>
