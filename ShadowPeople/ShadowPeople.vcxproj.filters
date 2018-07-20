@@ -164,9 +164,6 @@
     <ClCompile Include="rendering\MaterialCache.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
-    <ClCompile Include="rendering\Image.cpp">
-      <Filter>Source Files\rendering</Filter>
-    </ClCompile>
     <ClCompile Include="rendering\DebugRenderer.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
@@ -178,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="rendering\PatchGenerator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Image.cpp">
+      <Filter>Source Files\graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,9 +313,6 @@
     <ClInclude Include="shaders\OctahedralNormal.h.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="rendering\Image.hpp">
-      <Filter>Header Files\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="rendering\MaterialCache.hpp">
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
@@ -360,6 +357,9 @@
     </ClInclude>
     <ClInclude Include="cpugpu\Constants.h">
       <Filter>Header Files\cpugpu</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Image.hpp">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,8 @@
 
 namespace rendering
 {
-    constexpr uint32_t PatchResolution = 256;
+    constexpr uint32_t PatchResolution = 128;
+    constexpr uint32_t ZeroLevelHeight = (1 << 31); 
 
     struct PatchId
     {
@@ -41,17 +42,27 @@ namespace rendering
 
     struct Patch
     {
-        PatchId id;
+        PatchId  id;
 
         uint32_t cacheOffset;
 
         uint32_t seed;
-        uint32_t steepness;
+        float    steepness;
 
         uint32_t minHeight;
         uint32_t maxHeight;
 
-        DataBlob<uint32_t> data;
+        bool     dataReady;
+
+        Patch(PatchId id = PatchId::InvalidId) :
+            id(id),
+            cacheOffset(0),
+            seed(0),
+            steepness(1.f),
+            minHeight(0),
+            maxHeight(0),
+            dataReady(false)
+        {}
     };
 }
 

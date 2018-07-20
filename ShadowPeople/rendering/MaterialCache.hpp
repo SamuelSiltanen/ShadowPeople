@@ -7,8 +7,6 @@
 
 #include "../graphics/Graphics.hpp"
 
-#include "Image.hpp"
-
 namespace rendering
 {
     enum class MaterialChannel
@@ -24,7 +22,7 @@ namespace rendering
         MaterialCache(graphics::Device& device);
 
         Rect<int, 2> allocate(int2 size);
-        void preloadMaterial(Image& image, Rect<int, 2> dstRect, MaterialChannel channel);
+        void preloadMaterial(graphics::Image& image, Rect<int, 2> dstRect, MaterialChannel channel);
 
         void updateGPUTextures(graphics::CommandBuffer& gfx);
 
@@ -36,7 +34,7 @@ namespace rendering
         graphics::Texture       m_normal;
         graphics::TextureView   m_normalSRV;
 
-        Image                   m_albedoRoughnessCache;
-        Image                   m_normalCache;
+        graphics::Image         m_albedoRoughnessCache;
+        graphics::Image         m_normalCache;
     };
 }

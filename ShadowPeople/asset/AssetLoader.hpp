@@ -11,12 +11,16 @@
 
 #include "../Types.hpp"
 
+namespace graphics
+{
+    class Image;
+}
+
 namespace rendering
 {
     class Mesh;
     class Scene;
     class GeometryCache;
-    class Image;
     struct Material;
     class MaterialCache;
 }
@@ -30,7 +34,7 @@ namespace asset
 
         bool loadModel(const std::string& filename, rendering::Mesh& mesh);
         bool loadScene(const std::string& filename, rendering::Scene& scene);
-        bool loadImage(const std::string& filename, rendering::Image& image);
+        bool loadImage(const std::string& filename, graphics::Image& image);
         bool loadMaterial(const std::string& filename, rendering::Material& material);
     private:
         struct Face 
@@ -90,7 +94,7 @@ namespace asset
             uint8_t     attributesType;
         };
 #pragma pack(pop)
-        bool parseTga(DataBlob<> buffer, rendering::Image& image);
+        bool parseTga(DataBlob<> buffer, graphics::Image& image);
 
         rendering::GeometryCache& m_geometry;
         rendering::MaterialCache& m_materials;

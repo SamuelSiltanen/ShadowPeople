@@ -7,6 +7,13 @@
 
 #include "Patch.hpp"
 
+#include <random>
+
+namespace graphics
+{
+    class Image;
+}
+
 namespace rendering
 {
     class PatchCache;
@@ -18,6 +25,11 @@ namespace rendering
 
         void generatePatchData(PatchId id);
     private:
-        PatchCache& m_patchCache;
+        void generatePermanentlyResidentPatches();
+        void generateRootPatch(Patch& patch, graphics::Image& targetLayer);
+        void generateChildPatch(Patch& patch, graphics::Image& targetLayer);
+
+        PatchCache&     m_patchCache;
+        std::mt19937    m_random;
     };
 }

@@ -1,7 +1,16 @@
 #include "Math.hpp"
+#include "Errors.hpp"
+#include <intrin.h>
 
 namespace math
 {
+    uint32_t log2(uint32_t value)
+    {
+        unsigned long result = 0;
+        SP_ASSERT(_BitScanReverse(&result, value), "Log of zero is undefined");
+        return static_cast<uint32_t>(result);
+    }
+
 	Matrix4x4 rotateAroundY(float angle)
 	{
 		Matrix4x4 mat;
@@ -60,7 +69,7 @@ namespace math
 
     float saturate(float a)
     {
-        return std::min(0.f, std::max(1.f, a));
+        return std::min<float>(0.f, std::max<float>(1.f, a));
     }
 
     float2 encodeOctahedral(float3 n)

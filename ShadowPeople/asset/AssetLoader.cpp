@@ -122,7 +122,7 @@ namespace asset
         }
 
         
-        rendering::Image image;
+        graphics::Image image;
         if (!loadImage("data/models/house/house_diffuse.tga", image)) return false;
 
         int2 size{ image.width(), image.height() };
@@ -141,7 +141,7 @@ namespace asset
         return true;
     }
 
-    bool AssetLoader::loadImage(const std::string& filename, rendering::Image& image)
+    bool AssetLoader::loadImage(const std::string& filename, graphics::Image& image)
     {
         DataBlob<> buffer = fileToBlob(filename);
         if (buffer.data() == nullptr) return false;
@@ -390,7 +390,7 @@ namespace asset
 		return i;
     }
 
-    bool AssetLoader::parseTga(DataBlob<> buffer, rendering::Image& image)
+    bool AssetLoader::parseTga(DataBlob<> buffer, graphics::Image& image)
     {
         TgaHeader header;
         memcpy(&header, buffer.data(), sizeof(TgaHeader));
@@ -433,7 +433,7 @@ namespace asset
             msg.append(std::to_string(header.bitsPerPixel)).append(" bpp\n");
             OutputDebugString(msg.c_str());
 #endif
-            image.setDimensions(header.widthInPixels, header.heightInPixels, header.bitsPerPixel);
+            image.setDimensions(header.bitsPerPixel, header.widthInPixels, header.heightInPixels);
             auto bytes = blobAsByteRange(buffer);
             image.fillData(Range<const uint8_t>(bytes.begin() + index, imageDataSize));
         }

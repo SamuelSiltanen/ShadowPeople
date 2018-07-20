@@ -24,6 +24,9 @@ namespace math
         return (T(0) < val) - (val < T(0));
     }
 
+    // This assumes power of 2 value, for other values it rounds downwards
+    uint32_t log2(uint32_t value);
+
 	Matrix4x4 rotateAroundY(float angle);
 	Matrix4x4 rotateAroundX(float angle);
 	Matrix4x4 rotateAroundZ(float angle);

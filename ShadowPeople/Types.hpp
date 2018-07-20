@@ -475,6 +475,7 @@ public:
 	size_t  byteSize() const	{ return m_byteSize; }
 
 	const T& operator[](uint32_t i) const { return m_begin[i]; }
+    T& operator[](uint32_t i) { return m_begin[i]; }
 
 	// TODO: Fill other member as required
 private:

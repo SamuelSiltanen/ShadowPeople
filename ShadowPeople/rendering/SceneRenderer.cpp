@@ -8,6 +8,7 @@
 #include "Scene.hpp"
 #include "GeometryCache.hpp"
 #include "MaterialCache.hpp"
+#include "PatchCache.hpp"
 
 #include "../shaders/Lighting.if.h"
 #include "../shaders/GeometryRenderer.if.h"
@@ -18,14 +19,15 @@ using namespace graphics;
 
 namespace rendering
 {
-	SceneRenderer::SceneRenderer(Device& device, GeometryCache& geometry, MaterialCache& materials) :
+	SceneRenderer::SceneRenderer(Device& device, GeometryCache& geometry, MaterialCache& materials, PatchCache& patches) :
 		m_screenBuffers(device, device.swapChainSize()),
 		m_imageBuffers(device, device.swapChainSize()),
 		m_imGuiRenderer(device),
         m_debugRenderer(device),
 		m_screenSize(device.swapChainSize()),
         m_geometry(geometry),
-        m_materials(materials)
+        m_materials(materials),
+        m_patches(patches)
 	{
 		m_outputImage.output = device.createTexture(desc::Texture()
 			.width(m_screenSize[0])
@@ -70,6 +72,7 @@ namespace rendering
 	{
         m_geometry.updateGPUBuffers(gfx);
         m_materials.updateGPUTextures(gfx); // TODO: This is too heavy
+        m_patches.updateGPUBuffersAndTextures(gfx);
 
 		m_screenBuffers.clear(gfx);
 		m_screenBuffers.setRenderTargets(gfx);

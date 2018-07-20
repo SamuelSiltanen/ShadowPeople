@@ -6,22 +6,24 @@
 #include "Image.hpp"
 #include "../Math.hpp"
 
-namespace rendering
+namespace graphics
 {
-    Image::Image(uint16_t width, uint16_t height, uint8_t bpp) :
-        m_width(0),
+    Image::Image(uint8_t bpp, uint16_t width, uint16_t height, uint16_t depth) :
+        m_width(0), // Note: Set everything to zero so that setDimensions() detects a change
         m_height(0),
+        m_depth(0),
         m_bpp(0)
     {
-        setDimensions(width, height, bpp);
+        setDimensions(bpp, width, height, depth);
     }
 
-    void Image::setDimensions(uint16_t width, uint16_t height, uint8_t bpp)
+    void Image::setDimensions(uint8_t bpp, uint16_t width, uint16_t height, uint16_t depth)
     {
-        if ((m_width != width) || (m_height != height) || (m_bpp != bpp))
+        if ((m_bpp != bpp) || (m_width != width) || (m_height != height) || (m_depth != depth))
         {
             m_width     = width;
             m_height    = height;
+            m_depth     = depth;
             m_bpp       = bpp;
 
             m_data = std::make_shared<std::vector<uint8_t>>(dataSize());
@@ -64,7 +66,19 @@ namespace rendering
     uint32_t Image::dataSize() const
     {
         uint32_t bytesPerPixel  = math::divRoundUp<uint8_t>(m_bpp, 8);
-        uint32_t dataSize       = m_width * m_height * bytesPerPixel;
+        uint32_t dataSize       = m_width * m_height * m_depth * bytesPerPixel;
         return dataSize;
+    }
+
+    uint32_t Image::stride() const
+    {
+        uint32_t bytesPerPixel  = math::divRoundUp<uint8_t>(m_bpp, 8);
+        return m_width * bytesPerPixel;
+    }
+
+    uint32_t Image::depthStride() const
+    {
+        uint32_t bytesPerPixel  = math::divRoundUp<uint8_t>(m_bpp, 8);
+        return m_width * m_height * bytesPerPixel;
     }
 }

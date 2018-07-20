@@ -12,6 +12,7 @@
 #include <cstdint>
 
 #include "Descriptors.hpp"
+#include "Image.hpp"
 #include "../Types.hpp"
 
 namespace graphics
@@ -164,8 +165,9 @@ namespace graphics
 
 		void copyToBackBuffer(Texture src);
 
-        void update(Texture dst, Range<const uint8_t> cpuData, Subresource dstSubresource = Subresource());
-        void update(Buffer dst, Range<const uint8_t> cpuData);
+        void update(Texture dst, Range<const uint8_t> cpuData,
+                    int2 dstCorner = { 0, 0 }, Subresource dstSubresource = Subresource());
+        void update(Buffer dst, Range<const uint8_t> cpuData, uint32_t dstOffset = 0);
 
 		void setRenderTargets();
 		void setRenderTargets(TextureView rtv);

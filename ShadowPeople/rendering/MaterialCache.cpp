@@ -13,8 +13,8 @@ namespace rendering
     constexpr uint32_t MaterialCacheTextureSize = 2048;//8192;
 
     MaterialCache::MaterialCache(Device& device) :
-        m_albedoRoughnessCache(MaterialCacheTextureSize, MaterialCacheTextureSize, 32),
-        m_normalCache(MaterialCacheTextureSize, MaterialCacheTextureSize, 32)
+        m_albedoRoughnessCache(32, MaterialCacheTextureSize, MaterialCacheTextureSize),
+        m_normalCache(32, MaterialCacheTextureSize, MaterialCacheTextureSize)
     {
         // 8-bit RGBA - albedo + roughness
         m_albedoRoughness = device.createTexture(desc::Texture()

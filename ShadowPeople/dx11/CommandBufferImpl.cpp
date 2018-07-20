@@ -165,16 +165,18 @@ namespace graphics
 		}
 	}
 
-    void CommandBufferImpl::update(TextureImpl& dst, Range<const uint8_t> cpuData, Subresource dstSubresource)
+    void CommandBufferImpl::update(TextureImpl& dst, Range<const uint8_t> cpuData,
+                                   int2 dstCorner, 
+                                   Subresource dstSubresource)
     {
         UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
 														dstSubresource.mipLevel,
 														dst.descriptor().mipLevels);
         // TODO: This assumes the sizes of destination and source match
         D3D11_BOX dstBox;
-        dstBox.left     = 0;
+        dstBox.left     = dstCorner[0];
         dstBox.right    = dst.descriptor().width;
-        dstBox.top      = 0;
+        dstBox.top      = dstCorner[1];
         dstBox.bottom   = dst.descriptor().height;
         dstBox.front    = 0;
         dstBox.back     = 1;
@@ -182,13 +184,14 @@ namespace graphics
         uint32_t srcRowPitch    = dst.descriptor().width * dst.descriptor().format.byteWidth();
         uint32_t srcDepthPitch  = 0;
 		// TODO
-        m_context.UpdateSubresource(dst.m_texture, dstSubresourceIndex, &dstBox, cpuData.begin(), srcRowPitch, srcDepthPitch);
+        m_context.UpdateSubresource(dst.m_texture, dstSubresourceIndex, &dstBox, cpuData.begin(),
+                                    srcRowPitch, srcDepthPitch);
     }
 
-    void CommandBufferImpl::update(BufferImpl& dst, Range<const uint8_t> cpuData)
+    void CommandBufferImpl::update(BufferImpl& dst, Range<const uint8_t> cpuData, uint32_t dstOffset)
     {
         D3D11_BOX dstBox;
-        dstBox.left     = 0;
+        dstBox.left     = dstOffset;
         dstBox.right    = cpuData.byteSize();
         dstBox.top      = 0;
         dstBox.bottom   = 1;

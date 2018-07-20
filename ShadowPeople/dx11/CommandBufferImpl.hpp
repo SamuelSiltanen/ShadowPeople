@@ -52,8 +52,9 @@ namespace graphics
             m_context.Unmap(dst.m_buffer, 0);
         }
 
-        void update(TextureImpl& dst, Range<const uint8_t> cpuData, Subresource dstSubresource = Subresource());
-        void update(BufferImpl& dst, Range<const uint8_t> cpuData);
+        void update(TextureImpl& dst, Range<const uint8_t> cpuData,
+                    int2 dstCorner = { 0, 0 }, Subresource dstSubresource = Subresource());
+        void update(BufferImpl& dst, Range<const uint8_t> cpuData, uint32_t dstOffset = 0);
 
         void setRenderTargets();
         void setRenderTargets(TextureViewImpl& rtv);

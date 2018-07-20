@@ -133,16 +133,17 @@ namespace graphics
 		pImpl->copyToBackBuffer(*src.pImpl);
 	}
 
-    void CommandBuffer::update(Texture dst, Range<const uint8_t> cpuData, Subresource dstSubresource)
+    void CommandBuffer::update(Texture dst, Range<const uint8_t> cpuData,
+                               int2 dstCorner, Subresource dstSubresource)
     {
         SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
-        pImpl->update(*dst.pImpl, cpuData, dstSubresource);
+        pImpl->update(*dst.pImpl, cpuData, dstCorner, dstSubresource);
     }
 
-    void CommandBuffer::update(Buffer dst, Range<const uint8_t> cpuData)
+    void CommandBuffer::update(Buffer dst, Range<const uint8_t> cpuData, uint32_t dstOffset)
     {
         SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_COMMAND_BUFFER_NULL);
-        pImpl->update(*dst.pImpl, cpuData);
+        pImpl->update(*dst.pImpl, cpuData, dstOffset);
     }
 
 	void CommandBuffer::setRenderTargets()

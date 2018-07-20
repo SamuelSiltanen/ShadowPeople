@@ -17,6 +17,7 @@ namespace rendering
     class Scene;
     class GeometryCache;
     class MaterialCache;
+    class PatchCache;
 
     struct VisibleGeometry
     {
@@ -32,7 +33,7 @@ namespace rendering
     class SceneRenderer
     {
     public:
-        SceneRenderer(graphics::Device& device, GeometryCache& geometry, MaterialCache& materials);
+        SceneRenderer(graphics::Device& device, GeometryCache& geometry, MaterialCache& materials, PatchCache& patches);
 
         void render(graphics::CommandBuffer& gfx, const Scene& scene);
     private:
@@ -59,5 +60,6 @@ namespace rendering
 
         GeometryCache&              m_geometry;
         MaterialCache&              m_materials;
+        PatchCache&                 m_patches;
     };
 }

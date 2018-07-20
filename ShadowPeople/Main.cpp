@@ -15,6 +15,8 @@
 
 #include "rendering/GeometryCache.hpp"
 #include "rendering/MaterialCache.hpp"
+#include "rendering/PatchCache.hpp"
+#include "rendering/PatchGenerator.hpp"
 #include "rendering/SceneRenderer.hpp"
 #include "rendering/Scene.hpp"
 
@@ -54,9 +56,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     // Create caches for geometry and material
     rendering::GeometryCache geometry(device);
     rendering::MaterialCache materials(device);
+    rendering::PatchCache patches(device);
 
     // Create asset loader
     asset::AssetLoader assetLoader(geometry, materials);
+
+    // Create terrain patch generator
+    rendering::PatchGenerator patchGenerator(patches);
 
     // Initialize game logic
     std::shared_ptr<game::GameLogic> gameLogic = std::make_shared<game::GameLogic>(screenSize);
@@ -70,7 +76,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     // Create scene renderer
     // TODO: Separate ImGui-initialization stuff out of SceneRenderer, so that it can be loaded earlier
-    rendering::SceneRenderer sceneRenderer(device, geometry, materials);
+    rendering::SceneRenderer sceneRenderer(device, geometry, materials, patches);
 
     // Initialize input handlers
     imGuiInputHandler = std::make_unique<input::ImGuiInputHandler>(hWnd);
