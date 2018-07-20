@@ -165,8 +165,9 @@ namespace graphics
 
 		void copyToBackBuffer(Texture src);
 
-        void update(Texture dst, Range<const uint8_t> cpuData,
-                    int2 dstCorner = { 0, 0 }, Subresource dstSubresource = Subresource());
+        void update(Texture dst, const Image src,
+                    int2 dstCorner = { 0, 0 }, Rect<int, 2> srcRect = Rect<int, 2>(),
+                    Subresource dstSubresource = Subresource());
         void update(Buffer dst, Range<const uint8_t> cpuData, uint32_t dstOffset = 0);
 
 		void setRenderTargets();

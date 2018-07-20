@@ -8,6 +8,7 @@
 #include "GraphicsPipelineImpl.hpp"
 #include "ComputePipelineImpl.hpp"
 #include "ShaderResourcesImpl.hpp"
+#include "../graphics/Image.hpp"
 #include "../Errors.hpp"
 
 #include <vector>
@@ -165,27 +166,31 @@ namespace graphics
 		}
 	}
 
-    void CommandBufferImpl::update(TextureImpl& dst, Range<const uint8_t> cpuData,
-                                   int2 dstCorner, 
+    void CommandBufferImpl::update(TextureImpl& dst, const Image& src,
+                                   int2 dstCorner, Rect<int, 2> srcRect,
                                    Subresource dstSubresource)
     {
         UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
 														dstSubresource.mipLevel,
 														dst.descriptor().mipLevels);
-        // TODO: This assumes the sizes of destination and source match
+
+        // If the source rectangle is assume the whole image is copied
+        if (srcRect.size()[0] == 0)  srcRect = int2{src.width(), src.height()};
+        
         D3D11_BOX dstBox;
         dstBox.left     = dstCorner[0];
-        dstBox.right    = dst.descriptor().width;
+        dstBox.right    = std::min<int>(dstCorner[0] + srcRect.size()[0], dst.descriptor().width);
         dstBox.top      = dstCorner[1];
-        dstBox.bottom   = dst.descriptor().height;
+        dstBox.bottom   = std::min<int>(dstCorner[1] + srcRect.size()[1], dst.descriptor().height);
         dstBox.front    = 0;
         dstBox.back     = 1;
 
-        uint32_t srcRowPitch    = dst.descriptor().width * dst.descriptor().format.byteWidth();
-        uint32_t srcDepthPitch  = 0;
-		// TODO
-        m_context.UpdateSubresource(dst.m_texture, dstSubresourceIndex, &dstBox, cpuData.begin(),
-                                    srcRowPitch, srcDepthPitch);
+        uint32_t srcRowPitch    = src.stride();
+        uint32_t srcDepthPitch  = src.depthStride();		
+        uint32_t srcStartOffset = src.byteOffset(srcRect.minCorner()[0], srcRect.minCorner()[1]);
+
+        m_context.UpdateSubresource(dst.m_texture, dstSubresourceIndex, &dstBox,
+                                    src.data() + srcStartOffset, srcRowPitch, srcDepthPitch);
     }
 
     void CommandBufferImpl::update(BufferImpl& dst, Range<const uint8_t> cpuData, uint32_t dstOffset)

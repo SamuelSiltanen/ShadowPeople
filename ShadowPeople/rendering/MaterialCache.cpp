@@ -115,9 +115,7 @@ namespace rendering
     void MaterialCache::updateGPUTextures(graphics::CommandBuffer& gfx)
     {
         // TODO: Better logic here
-        gfx.update(m_albedoRoughness, Range<const uint8_t>(m_albedoRoughnessCache.data(), 
-                                                           m_albedoRoughnessCache.dataSize()));
-        gfx.update(m_normal, Range<const uint8_t>(m_normalCache.data(), 
-                                                  m_normalCache.dataSize()));
+        gfx.update(m_albedoRoughness, m_albedoRoughnessCache);            
+        gfx.update(m_normal, m_normalCache);            
     }
 }

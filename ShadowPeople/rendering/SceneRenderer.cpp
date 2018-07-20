@@ -111,6 +111,8 @@ namespace rendering
             binding->normal             = m_materials.normal();
             binding->bilinearSampler    = m_bilinearSampler;
 		
+            binding->heightMap          = m_patches.patchDataGPU();
+
 			gfx.dispatch(*binding, m_screenSize[0], m_screenSize[1], 1);
 		}
 

@@ -44,6 +44,7 @@ namespace rendering
         // Access patch data
         const graphics::Image& patchData(uint32_t i) const { return m_patchDataCPU[i]; }
         graphics::Image& patchData(uint32_t i)             { return m_patchDataCPU[i]; }
+        const graphics::TextureView patchDataGPU() const   { return m_patchDataSRV; }
 
         const Patch& patchMetadata(PatchId id) const;
         Patch& patchMetadata(PatchId id);

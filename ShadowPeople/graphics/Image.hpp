@@ -38,6 +38,8 @@ namespace graphics
 
         uint32_t stride() const;
         uint32_t depthStride() const;
+
+        uint32_t byteOffset(int x, int y = 0, int z = 0) const;
     private:
         std::shared_ptr<std::vector<uint8_t>> m_data;
 

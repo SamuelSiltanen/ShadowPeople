@@ -81,4 +81,10 @@ namespace graphics
         uint32_t bytesPerPixel  = math::divRoundUp<uint8_t>(m_bpp, 8);
         return m_width * m_height * bytesPerPixel;
     }
+
+    uint32_t Image::byteOffset(int x, int y, int z) const
+    {
+        uint32_t bytesPerPixel  = math::divRoundUp<uint8_t>(m_bpp, 8);
+        return ((z * m_height + y) * m_width + x) * bytesPerPixel;
+    }
 }

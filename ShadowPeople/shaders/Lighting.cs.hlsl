@@ -86,6 +86,10 @@ void main(uint3 DTid : SV_DispatchThreadID)
         {
             color = skyColor(viewDir, L);
         }
+
+        uint value = heightMap[int3(DTid.xy / 4, 0)];
+        float grey = float(value & 65535) / 65535.f;
+        color = float3(grey, grey, grey);
     }
     else
     {

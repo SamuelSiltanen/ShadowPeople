@@ -87,7 +87,7 @@ namespace rendering
                         static_cast<uint32_t>(data[c1Index]) +
                         static_cast<uint32_t>(data[c2Index]) +
                         static_cast<uint32_t>(data[c3Index]);
-                    uint16_t midValue = static_cast<uint16_t>(avg + scale * dist(m_random));
+                    uint16_t midValue = static_cast<uint16_t>(avg / 4 + scale * dist(m_random));
 
                     // Store mid-point value
                     uint32_t midIndex = wrappingIndex(x * step + step / 2, y * step + step / 2);
@@ -96,32 +96,52 @@ namespace rendering
                     // Record min and max
                     minH = std::min<uint16_t>(minH, midValue);
                     maxH = std::max<uint16_t>(maxH, midValue);
+                }
+            }
+
+            for (int y = 0; y < parts; y++)
+            {
+                for (int x = 0; x < parts; x++)
+                {
+                    // Corner indices
+                    uint32_t c0Index = wrappingIndex(x * step, y * step);
+                    uint32_t c1Index = wrappingIndex((x + 1) * step, y * step);
+                    uint32_t c2Index = wrappingIndex(x * step, (y + 1) * step);
+                    uint32_t midIndex = wrappingIndex(x * step + step / 2, y * step + step / 2);
 
                     // Wrapping left and top indices
-                    uint32_t c4Index = wrappingIndex(x * step - step / 2, y * step);
-                    uint32_t c5Index = wrappingIndex(x * step, y * step - step / 2);
+                    uint32_t c4Index = wrappingIndex(x * step - step / 2, y * step + step / 2);
+                    uint32_t c5Index = wrappingIndex(x * step + step / 2, y * step - step / 2);
 
                     // Left value
-                    avg = static_cast<uint32_t>(data[c0Index]) +
+                    uint32_t avg = static_cast<uint32_t>(data[c0Index]) +
                         static_cast<uint32_t>(data[c4Index]) +
                         static_cast<uint32_t>(data[c2Index]) +
                         static_cast<uint32_t>(data[midIndex]);
-                    uint16_t leftValue = static_cast<uint16_t>(avg + scale * dist(m_random));
+                    uint16_t leftValue = static_cast<uint16_t>(avg / 4 + scale * dist(m_random));
 
                     // Store left value
                     uint32_t leftIndex = wrappingIndex(x * step, y * step + step / 2);
                     data[leftIndex] = leftValue;
+
+                    // Record min and max
+                    minH = std::min<uint16_t>(minH, leftValue);
+                    maxH = std::max<uint16_t>(maxH, leftValue);
 
                     // Top value
                     avg = static_cast<uint32_t>(data[c0Index]) +
                         static_cast<uint32_t>(data[c1Index]) +
                         static_cast<uint32_t>(data[c5Index]) +
                         static_cast<uint32_t>(data[midIndex]);
-                    uint16_t topValue = static_cast<uint16_t>(avg + scale * dist(m_random));
+                    uint16_t topValue = static_cast<uint16_t>(avg / 4 + scale * dist(m_random));
 
                     // Store top value
-                    uint32_t topIndex = wrappingIndex(x * step + step / 2, y);
+                    uint32_t topIndex = wrappingIndex(x * step + step / 2, y * step);
                     data[topIndex] = topValue;
+
+                    // Record min and max
+                    minH = std::min<uint16_t>(minH, topValue);
+                    maxH = std::max<uint16_t>(maxH, topValue);
                 }
             }
 
@@ -129,7 +149,7 @@ namespace rendering
             parts <<= 1;
             scale >>= 1;
         }
-
+        
         for (int y = 0; y < PatchResolution; y++)
         {
             for (int x = 0; x < PatchResolution; x++)
@@ -138,7 +158,7 @@ namespace rendering
                 data[index] -= minH;
             }
         }
-
+        
         patch.minHeight = ZeroLevelHeight + minH;
         patch.maxHeight = ZeroLevelHeight + maxH;
         

@@ -23,6 +23,8 @@ namespace graphics
     class ComputePipelineImpl;
     class ResourceViewImpl;
 
+    class Image;
+
     class CommandBufferImpl
     {
     public:
@@ -52,8 +54,9 @@ namespace graphics
             m_context.Unmap(dst.m_buffer, 0);
         }
 
-        void update(TextureImpl& dst, Range<const uint8_t> cpuData,
-                    int2 dstCorner = { 0, 0 }, Subresource dstSubresource = Subresource());
+        void update(TextureImpl& dst, const Image& src,
+                    int2 dstCorner = { 0, 0 }, Rect<int, 2> srcRect = Rect<int, 2>(),
+                    Subresource dstSubresource = Subresource());
         void update(BufferImpl& dst, Range<const uint8_t> cpuData, uint32_t dstOffset = 0);
 
         void setRenderTargets();

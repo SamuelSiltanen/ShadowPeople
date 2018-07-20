@@ -130,11 +130,20 @@ namespace rendering
         for (auto id : m_dirtyPatches)
         {
             auto it = m_idToOffset.find(id);
-            if (it != m_idToOffset.end()) continue; // Note: Patch was evicted while the data was being generated
+            if (it == m_idToOffset.end()) continue; // Note: Patch was evicted while the data was being generated
             m_patchMetadataCPU[it->second].dataReady = true;
+            
+            int x = static_cast<int>(id.x()) * PatchResolution;
+            int y = static_cast<int>(id.y()) * PatchResolution;
+            int s = static_cast<int>(PatchResolution);
+            gfx.update(m_patchData, m_patchDataCPU[id.mip()], { x, y }, Rect<int, 2>({ x, y }, { s, s }));
+        }
 
+        // TODO: Measure if it is faster to update the whole buffer once than separate patches here and there.
+        // Currently, the buffer takes 189 kB
+        if (!m_dirtyPatches.empty())
+        {
             gfx.update(m_patchMetadata, vectorAsByteRange(m_patchMetadataCPU));
-            //gfx.update(m_patchData, m_patchDataCPU[id.mip()]);
         }
 
         m_dirtyPatches.clear();
