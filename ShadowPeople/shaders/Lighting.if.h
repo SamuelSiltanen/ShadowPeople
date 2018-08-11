@@ -19,8 +19,8 @@ Texture2D<float4>   albedoRoughness;
 Texture2D<float2>   normal;
 sampler             bilinearSampler;
 
-Texture2DArray<uint> heightMap;
 StructuredBuffer<Patch> patchMetadata;
+Texture2DArray<uint> heightMap;
 
 THREAD_GROUP_SIZE(16, 16, 1)
 

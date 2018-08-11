@@ -89,12 +89,13 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
         uint patchIdx = DTid.x / 128;
         uint patchIdy = DTid.y / 128;
-        uint patchId = /*1 + 4 + 16 + */(patchIdy << 3) + patchIdx;
+        uint patchId = 1 + 4 + 16 + 64 + (patchIdy << 4) + patchIdx;
         Patch patch = patchMetadata[patchId];
         float scale = float(patch.maxHeight - patch.minHeight) / 65535.f;
 
-        uint value = heightMap[int3(DTid.xy, 3)];
-        float grey = /*float(value & 65535) / 65535.f*/patch.cacheOffset / 256.f;
+        uint value = heightMap[int3(DTid.xy, 4)];
+        float grey = float(value & 65535) * scale + patch.minHeight;
+        grey *= 1.f / 2048.f;
         color = float3(grey, grey, grey);
     }
     else
