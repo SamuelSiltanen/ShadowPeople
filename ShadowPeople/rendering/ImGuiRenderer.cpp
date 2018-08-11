@@ -58,7 +58,8 @@ namespace rendering
 		const uint32_t BytesPerPixel = 4;
 		m_fontTexture		= m_device.createTexture(desc::Texture()
 								.width(width).height(height)
-								.initialData(desc::InitialData(pixels, width * BytesPerPixel)));
+								.initialData(desc::InitialData(pixels, width * BytesPerPixel))
+                                .name("ImGui fonts"));
 		m_fontTextureSRV	= m_device.createTextureView(m_fontTexture, m_fontTexture.descriptor());
 
 		io.Fonts->TexID		= (void *)&m_fontTextureSRV;
@@ -74,7 +75,8 @@ namespace rendering
 			.elements(minVertices + VertexBufferResizeIncrement)
 			.format<ImDrawVert>()
 			.type(desc::BufferType::Vertex)
-			.usage(desc::Usage::CpuToGpuFrequent));
+			.usage(desc::Usage::CpuToGpuFrequent)
+            .name("ImGui vertex buffer"));
 	}
 
 	void ImGuiRenderer::createIndexBuffer(uint32_t minVertices)
@@ -85,7 +87,8 @@ namespace rendering
 			.elements(minVertices + IndexBufferResizeIncrement)
 			.format<ImDrawIdx>()
 			.type(desc::BufferType::Index)
-			.usage(desc::Usage::CpuToGpuFrequent));
+			.usage(desc::Usage::CpuToGpuFrequent)
+            .name("ImGui index buffer"));
 	}
 
 	void ImGuiRenderer::render(graphics::CommandBuffer& gfx, ImDrawData* drawData)

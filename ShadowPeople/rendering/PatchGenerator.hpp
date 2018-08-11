@@ -6,13 +6,8 @@
 #pragma once
 
 #include "Patch.hpp"
-
-#include <random>
-
-namespace graphics
-{
-    class Image;
-}
+#include "../graphics/Image.hpp"
+#include "../Hash.hpp"
 
 namespace rendering
 {
@@ -29,7 +24,11 @@ namespace rendering
         void generateRootPatch(Patch& patch, graphics::Image& targetLayer);
         void generateChildPatch(Patch& patch, graphics::Image& targetLayer);
 
+        void collectProcessedPatch(graphics::Image& targetLayer, float minH, float maxH,
+                                   int xOffset = 0, int yOffset = 0);
+
         PatchCache&     m_patchCache;
-        std::mt19937    m_random;
+        FNV1a           m_random;
+        graphics::Image m_processingPatch;
     };
 }

@@ -442,6 +442,7 @@ namespace graphics
 				Multisampling	multisampling;
 				Usage			usage;
 				InitialData		initialData;
+                std::string     name;
 			};
 
 			Texture()
@@ -455,6 +456,7 @@ namespace graphics
 				desc.format			= Format();
 				desc.multisampling	= Multisampling::None;
 				desc.usage			= Usage::GpuReadWrite;
+                desc.name           = "<untitled>";
 			}
 
 			const Descriptor& descriptor() const	{ return desc; }
@@ -469,6 +471,7 @@ namespace graphics
 			Texture& multisampling(Multisampling m) { desc.multisampling = m; return *this; }
 			Texture& usage(Usage u)					{ desc.usage = u; return *this; }
 			Texture& initialData(InitialData i)		{ desc.initialData = i; return *this; }
+            Texture& name(const std::string& name)  { desc.name = name; return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -525,6 +528,7 @@ namespace graphics
 				bool		raw;
 				bool		structured;
 				InitialData initialData;
+                std::string name;
 			};
 
 			Buffer()
@@ -537,20 +541,27 @@ namespace graphics
 				desc.indirectArgs	= false;
 				desc.raw			= false;
 				desc.structured		= false;
+                desc.name           = "<untitled>";
 			}
 
 			const Descriptor& descriptor() const { return desc; }
 
-			Buffer& type(BufferType t)		{ desc.type = t; return *this; }
-			Buffer& elements(int e)			{ desc.elements = e; return *this; }
-			Buffer& usage(Usage u)			{ desc.usage = u; return *this; }
-			Buffer& format(Format f)		{ desc.format = f; desc.stride = 0; return *this; }
+			Buffer& type(BufferType t)		        { desc.type = t; return *this; }
+			Buffer& elements(int e)			        { desc.elements = e; return *this; }
+			Buffer& usage(Usage u)			        { desc.usage = u; return *this; }
+			Buffer& format(Format f)		        { desc.format = f; desc.stride = 0; return *this; }
 			template<typename T>
-			Buffer& format()				{ desc.format = Format::unknown(); desc.stride = sizeof(T); return *this; }
-			Buffer& indirectArgs(bool i)	{ desc.indirectArgs = i; return *this; }
-			Buffer& raw(bool r)				{ desc.raw = r; return *this; }
-			Buffer& structured(bool s)		{ desc.structured = s; return *this; }
-			Buffer& initialData(InitialData i) { desc.initialData = i; return *this; }
+			Buffer& format()
+            {
+                desc.format = Format::unknown();
+                desc.stride = sizeof(T);
+                return *this;
+            }
+			Buffer& indirectArgs(bool i)	        { desc.indirectArgs = i; return *this; }
+			Buffer& raw(bool r)				        { desc.raw = r; return *this; }
+			Buffer& structured(bool s)		        { desc.structured = s; return *this; }
+			Buffer& initialData(InitialData i)      { desc.initialData = i; return *this; }
+            Buffer& name(const std::string& name)   { desc.name = name; return *this; }
 		private:
 			Descriptor desc;
 		};
@@ -605,6 +616,7 @@ namespace graphics
 				int						anisotropy;
 				ComparisonMode			compFunc;
 				Color4					borderColor;
+                std::string             name;
 			};
 
 			Sampler()
@@ -619,6 +631,7 @@ namespace graphics
 				desc.anisotropy		= 1;
 				desc.compFunc		= ComparisonMode::GreaterEqual;
 				desc.borderColor	= { 0.f, 0.f, 0.f, 0.f };
+                desc.name           = "<untitled>";
 			}
 
 			const Descriptor& descriptor() const { return desc; }
@@ -633,6 +646,7 @@ namespace graphics
 			Sampler& anisotropy(int a)				{ desc.anisotropy = a; return *this; }
 			Sampler& compFunc(ComparisonMode c)		{ desc.compFunc = c; return *this; }
 			Sampler& borderColor(Color4 c)			{ desc.borderColor = c; return *this; }
+            Sampler& name(const std::string& name)  { desc.name = name; return *this; }
 		private:
 			Descriptor desc;
 		};

@@ -14,7 +14,8 @@ namespace rendering
 			.width(screenSize[0])
 			.height(screenSize[1])
 			.format(depthFormat)
-			.usage(desc::Usage::DepthBuffer));
+			.usage(desc::Usage::DepthBuffer)
+            .name("Z-buffer"));
 
 		m_zBufferDSV = device.createTextureView(m_zBuffer,
 			desc::TextureView(m_zBuffer.descriptor())
@@ -32,7 +33,8 @@ namespace rendering
 			.width(screenSize[0])
 			.height(screenSize[1])
 			.format(gFormat)
-			.usage(desc::Usage::RenderTarget));
+			.usage(desc::Usage::RenderTarget)
+            .name("G-buffer"));
 	
 		m_gBufferRTV = device.createTextureView(m_gBuffer,
 			desc::TextureView(m_gBuffer.descriptor())

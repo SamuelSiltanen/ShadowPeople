@@ -32,7 +32,8 @@ namespace rendering
 		m_outputImage.output = device.createTexture(desc::Texture()
 			.width(m_screenSize[0])
 			.height(m_screenSize[1])
-			.usage(desc::Usage::RenderTarget));
+			.usage(desc::Usage::RenderTarget)
+            .name("Output image"));
 	
 		m_outputImage.outputRTV = device.createTextureView(m_outputImage.output,
 			desc::TextureView(m_outputImage.output.descriptor())
@@ -50,7 +51,9 @@ namespace rendering
 				.depthTestingEnable(true)
 				.depthFunc(desc::ComparisonMode::Less)));
 
-        m_bilinearSampler = device.createSampler(desc::Sampler().type(desc::SamplerType::Bilinear));
+        m_bilinearSampler = device.createSampler(desc::Sampler()
+            .type(desc::SamplerType::Bilinear)
+            .name("Scene renderer bilinear sampler"));
 	}
 
 	void SceneRenderer::render(CommandBuffer& gfx, const Scene& scene)
@@ -112,6 +115,7 @@ namespace rendering
             binding->bilinearSampler    = m_bilinearSampler;
 		
             binding->heightMap          = m_patches.patchDataGPU();
+            binding->patchMetadata      = m_patches.patchMetadataGPU();
 
 			gfx.dispatch(*binding, m_screenSize[0], m_screenSize[1], 1);
 		}

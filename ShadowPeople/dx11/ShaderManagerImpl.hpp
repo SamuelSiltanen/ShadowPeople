@@ -34,6 +34,7 @@ namespace graphics
 	private:
 		std::string getShaderName(const std::string& bindingName, desc::ShaderType type);
 		std::string getShaderTarget(desc::ShaderType type);
+        void setShaderDebugName(ShaderImpl& shader);
 
 		DeviceImpl& m_device;
 

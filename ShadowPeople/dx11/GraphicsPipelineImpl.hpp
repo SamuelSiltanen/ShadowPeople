@@ -23,6 +23,7 @@ namespace graphics
 		GraphicsPipelineImpl(DeviceImpl&					device,
 							 ShaderManagerImpl&				shaderManager,
 							 const desc::GraphicsPipeline&	desc);
+        ~GraphicsPipelineImpl();
 
 		NO_COPY_CLASS(GraphicsPipelineImpl)
 

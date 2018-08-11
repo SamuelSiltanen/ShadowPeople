@@ -39,6 +39,14 @@ namespace graphics
 		}
 	}
 
+    GraphicsPipelineImpl::~GraphicsPipelineImpl()
+    {
+        SAFE_RELEASE(m_depthStencilState);
+        SAFE_RELEASE(m_blendState);
+        SAFE_RELEASE(m_rasterizerState);
+        SAFE_RELEASE(m_inputLayout);
+    }
+
 	void GraphicsPipelineImpl::setScissorRect(Rect<int, 2> rect)
 	{
 		D3D11_RECT dxrect;

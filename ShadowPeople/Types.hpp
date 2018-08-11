@@ -328,11 +328,12 @@ private:
 	std::array<T, N>	m_elements;
 };
 
-// Common specializations
+// Common specializations - corrspond to HLSL types
 using int2 = ArithmeticVector<int, 2>;
 using int3 = ArithmeticVector<int, 3>;
 using int4 = ArithmeticVector<int, 4>;
 
+using uint  = unsigned;
 using uint2 = ArithmeticVector<unsigned, 2>;
 using uint3 = ArithmeticVector<unsigned, 3>;
 using uint4 = ArithmeticVector<unsigned, 4>;

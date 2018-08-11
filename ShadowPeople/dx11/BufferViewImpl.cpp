@@ -57,6 +57,10 @@ namespace graphics
 			MessageBox(NULL, _T("CreateShaderResourceView() failed!"), _T("Error"), NULL);
 			m_view = nullptr;
 		}
+
+        auto name = buffer.descriptor().name;
+        name.append(" SRV");
+        m_view->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	void BufferViewImpl::createUAV(DeviceImpl& device, const desc::BufferView::Descriptor& desc, const BufferImpl& buffer)
@@ -95,5 +99,9 @@ namespace graphics
 			MessageBox(NULL, _T("CreateUnorderedAccessView() failed!"), _T("Error"), NULL);
 			m_view = nullptr;
 		}
+
+        auto name = buffer.descriptor().name;
+        name.append(" UAV");
+        m_view->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 }

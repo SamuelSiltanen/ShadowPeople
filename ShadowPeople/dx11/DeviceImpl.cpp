@@ -9,7 +9,7 @@ namespace graphics
 		IDXGIAdapter* pAdapter				= NULL;
 		D3D_DRIVER_TYPE driverType			= D3D_DRIVER_TYPE_HARDWARE;
 		HMODULE hSoftware					= NULL;
-		unsigned flags						= D3D11_CREATE_DEVICE_SINGLETHREADED;
+		unsigned flags						= D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG; // Note: Remove the debug layer when finished!
 		D3D_FEATURE_LEVEL* pRequestFeatLvls = NULL;
 		unsigned featureLevels				= 0;
 		D3D_FEATURE_LEVEL* pGivenFeatLvl	= NULL;
@@ -44,6 +44,9 @@ namespace graphics
 			m_context	= nullptr;
 			m_swapChain = nullptr;
 		}
+
+        std::string name("DX11 Device");
+        m_device->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	DeviceImpl::~DeviceImpl()

@@ -9,7 +9,8 @@ namespace rendering
 		m_litBuffer = device.createTexture(desc::Texture()
 			.width(screenSize[0])
 			.height(screenSize[1])
-			.usage(desc::Usage::GpuReadWrite));
+			.usage(desc::Usage::GpuReadWrite)
+            .name("Lit buffer"));
 	
 		m_litBufferUAV = device.createTextureView(m_litBuffer,
 			desc::TextureView(m_litBuffer.descriptor())

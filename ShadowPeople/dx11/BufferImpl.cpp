@@ -2,6 +2,8 @@
 #include "DeviceImpl.hpp"
 #include "../Errors.hpp"
 
+#include <d3dcommon.h>
+
 namespace graphics
 {
 	BufferImpl::BufferImpl(DeviceImpl& device, const desc::Buffer& desc) :
@@ -57,6 +59,9 @@ namespace graphics
 			MessageBox(NULL, _T("CreateBuffer() failed!"), _T("Error"), NULL);
 			m_buffer = nullptr;
 		}
+
+        auto name = desc.descriptor().name;
+        m_buffer->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	BufferImpl::~BufferImpl()

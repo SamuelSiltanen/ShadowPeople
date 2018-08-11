@@ -21,7 +21,8 @@ namespace rendering
             .width(MaterialCacheTextureSize)
             .height(MaterialCacheTextureSize)
             .format(desc::Format())
-            .usage(desc::Usage::GpuReadWrite));
+            .usage(desc::Usage::GpuReadWrite)
+            .name("Material cache albedo roughness"));
         m_albedoRoughnessSRV = device.createTextureView(m_albedoRoughness,
             desc::TextureView(m_albedoRoughness.descriptor()).type(desc::ViewType::SRV));
 
@@ -33,7 +34,8 @@ namespace rendering
                 .channels(desc::FormatChannels::RG)
                 .bytes(desc::FormatBytesPerChannel::B16)
                 .type(desc::FormatType::UNorm))
-            .usage(desc::Usage::GpuReadWrite));
+            .usage(desc::Usage::GpuReadWrite)
+            .name("Material cache normal"));
         m_normalSRV = device.createTextureView(m_normal,
             desc::TextureView(m_normal.descriptor()).type(desc::ViewType::SRV));
     }

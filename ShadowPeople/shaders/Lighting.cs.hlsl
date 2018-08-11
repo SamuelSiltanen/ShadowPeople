@@ -87,8 +87,14 @@ void main(uint3 DTid : SV_DispatchThreadID)
             color = skyColor(viewDir, L);
         }
 
-        uint value = heightMap[int3(DTid.xy / 4, 0)];
-        float grey = float(value & 65535) / 65535.f;
+        uint patchIdx = DTid.x / 128;
+        uint patchIdy = DTid.y / 128;
+        uint patchId = /*1 + 4 + 16 + */(patchIdy << 3) + patchIdx;
+        Patch patch = patchMetadata[patchId];
+        float scale = float(patch.maxHeight - patch.minHeight) / 65535.f;
+
+        uint value = heightMap[int3(DTid.xy, 3)];
+        float grey = /*float(value & 65535) / 65535.f*/patch.cacheOffset / 256.f;
         color = float3(grey, grey, grey);
     }
     else
@@ -127,11 +133,11 @@ void main(uint3 DTid : SV_DispatchThreadID)
         
         color    = albedo * Ambient + SunIntensity * SunColor * (diff + spec);
     }
-
+    /*
     // Cheap tone mapping
     float lum = dot(color, float3(0.2126f, 0.7152f, 0.0722f));
     color *= 1.f / (1.f + lum);
     color = pow(color, 1.f / 2.2f);
-
+    */
     litBuffer[DTid.xy] = float4(color, 1.f);
 }

@@ -130,6 +130,10 @@ namespace graphics
 			MessageBox(NULL, _T("CreateShaderResourceView() failed!"), _T("Error"), NULL);
 			m_view = nullptr;
 		}
+
+        auto name = texture.descriptor().name;
+        name.append(" SRV");
+        m_view->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	void TextureViewImpl::createUAV(DeviceImpl& device,
@@ -194,6 +198,10 @@ namespace graphics
 			MessageBox(NULL, _T("CreateUnorderedAccessView() failed!"), _T("Error"), NULL);
 			m_view = nullptr;
 		}
+
+        auto name = texture.descriptor().name;
+        name.append(" UAV");
+        m_view->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	void TextureViewImpl::createRTV(DeviceImpl& device,
@@ -271,6 +279,10 @@ namespace graphics
 			MessageBox(NULL, _T("CreateRenderTargetView() failed!"), _T("Error"), NULL);
 			m_view = nullptr;
 		}
+
+        auto name = texture.descriptor().name;
+        name.append(" RTV");
+        m_view->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	void TextureViewImpl::createDSV(DeviceImpl& device,
@@ -346,5 +358,9 @@ namespace graphics
 			MessageBox(NULL, _T("CreateDepthStencilView() failed!"), _T("Error"), NULL);
 			m_view = nullptr;
 		}
+
+        auto name = texture.descriptor().name;
+        name.append(" DSV");
+        m_view->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 }

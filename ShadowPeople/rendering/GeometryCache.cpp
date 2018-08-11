@@ -18,7 +18,8 @@ namespace rendering
             .elements(VertexBufferSize)
             .format<Vertex>()
             .structured(true)
-            .usage(desc::Usage::GpuReadWrite));
+            .usage(desc::Usage::GpuReadWrite)
+            .name("Geometry cache vertex buffer"));
         m_vertexBufferSRV = device.createBufferView(m_vertexBuffer,
             desc::BufferView(m_vertexBuffer.descriptor()).type(desc::ViewType::SRV));
 
@@ -26,7 +27,8 @@ namespace rendering
             .elements(IndexBufferSize)
             .format<uint32_t>()
             .type(desc::BufferType::Index)
-            .usage(desc::Usage::GpuReadWrite));
+            .usage(desc::Usage::GpuReadWrite)
+            .name("Geometry cache index buffer"));
     }
 
     int2 GeometryCache::preloadMesh(const Mesh& mesh)

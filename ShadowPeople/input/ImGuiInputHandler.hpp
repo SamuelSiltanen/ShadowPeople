@@ -10,6 +10,7 @@
 #include <windows.h>
 
 #include "../Types.hpp"
+#include "../Timer.hpp"
 
 namespace input
 {
@@ -40,9 +41,7 @@ namespace input
 		void setKeyboardMappings();		
 		void updateMousePosition(HWND hWnd);
 
-		int64_t	m_ticksPerSecond;
-		int64_t	m_time;
-
+		Timer   m_timer;
 		int		m_lastMouseCursor;
 	};
 }

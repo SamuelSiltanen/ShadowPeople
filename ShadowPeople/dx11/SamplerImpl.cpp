@@ -65,5 +65,13 @@ namespace graphics
 			MessageBox(NULL, _T("CreateSamplerState() failed!"), _T("Error"), NULL);
 			m_sampler = nullptr;
 		}
+
+        auto name = desc.descriptor().name;
+        m_sampler->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
+
+    SamplerImpl::~SamplerImpl()
+    {
+        SAFE_RELEASE(m_sampler);
+    }
 }

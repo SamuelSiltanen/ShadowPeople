@@ -19,4 +19,16 @@
 		float2	uv;
     };
 
+    struct Patch
+    {
+        uint    id1;
+        uint    id2;
+        uint    cacheOffset;
+        uint    seed;
+        float   steepness;
+        float   minHeight;
+        float   maxHeight;
+        bool    dataReady;
+    };
+
 #endif

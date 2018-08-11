@@ -32,6 +32,9 @@ namespace graphics
         template<typename T>
         Range<T> asRange() { return Range<T>(reinterpret_cast<T*>(m_data->data()), dataSize()); }
 
+        template<typename T>
+        Range<T> asRange() const { return Range<T>(reinterpret_cast<T*>(m_data->data()), dataSize()); }
+
         uint16_t width() const  { return m_width; }
         uint16_t height() const { return m_height; }
         uint8_t  bpp() const    { return m_bpp; }

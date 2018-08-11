@@ -179,6 +179,12 @@
     <ClCompile Include="graphics\Image.cpp">
       <Filter>Source Files\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Hash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Errors.hpp">
@@ -251,9 +257,6 @@
       <Filter>Shader Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="dx11\MappingImpl.hpp">
-      <Filter>Header Files\graphics\dx11</Filter>
-    </ClInclude>
-    <ClInclude Include="dx11\InputLayoutImpl.hpp">
       <Filter>Header Files\graphics\dx11</Filter>
     </ClInclude>
     <ClInclude Include="rendering\Camera.hpp">
@@ -360,6 +363,12 @@
     </ClInclude>
     <ClInclude Include="graphics\Image.hpp">
       <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

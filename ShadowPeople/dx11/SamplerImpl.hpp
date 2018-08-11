@@ -17,6 +17,7 @@ namespace graphics
 	{
 	public:
 		SamplerImpl(DeviceImpl& device, const desc::Sampler& desc);
+        ~SamplerImpl();
 
 		NO_COPY_CLASS(SamplerImpl)
 

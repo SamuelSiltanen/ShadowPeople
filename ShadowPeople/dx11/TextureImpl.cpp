@@ -2,6 +2,8 @@
 #include "DeviceImpl.hpp"
 #include "../Errors.hpp"
 
+#include <d3dcommon.h>
+
 namespace graphics
 {
 	TextureImpl::TextureImpl(DeviceImpl& device, const desc::Texture& desc) :
@@ -22,6 +24,9 @@ namespace graphics
 			createTexture2D(device, desc);
 			break;
 		}
+
+        auto name = desc.descriptor().name;
+        m_texture->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
 	}
 
 	TextureImpl::TextureImpl(ID3D11Texture2D* pTexture)

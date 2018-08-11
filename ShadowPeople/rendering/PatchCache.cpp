@@ -14,6 +14,7 @@ namespace rendering
             .height(PatchCacheSize)
             .arraySize(PatchMipLevels)
             .usage(desc::Usage::GpuReadWrite)
+            .name("Patch data")
         );
         m_patchDataSRV = device.createTextureView(m_patchData, 
                             desc::TextureView(m_patchData.descriptor()).type(desc::ViewType::SRV));
@@ -27,7 +28,8 @@ namespace rendering
             .format<Patch>()
             .elements(PatchCacheMaxElements)
             .structured(true)
-            .usage(desc::Usage::GpuReadWrite));
+            .usage(desc::Usage::GpuReadWrite)
+            .name("Patch metadata"));
         m_patchMetadataSRV = device.createBufferView(m_patchMetadata,
                                 desc::BufferView(m_patchMetadata.descriptor()).type(desc::ViewType::SRV));
 
@@ -136,13 +138,17 @@ namespace rendering
             int x = static_cast<int>(id.x()) * PatchResolution;
             int y = static_cast<int>(id.y()) * PatchResolution;
             int s = static_cast<int>(PatchResolution);
-            gfx.update(m_patchData, m_patchDataCPU[id.mip()], { x, y }, Rect<int, 2>({ x, y }, { s, s }));
+            int2 dstPos{ x, y };
+            Rect<int, 2> srcRect({ x, y }, { s, s });
+            Subresource dstSubresource{ 0, static_cast<int>(id.mip()) };
+            gfx.update(m_patchData, m_patchDataCPU[id.mip()], dstPos, srcRect, dstSubresource);
         }
 
         // TODO: Measure if it is faster to update the whole buffer once than separate patches here and there.
         // Currently, the buffer takes 189 kB
         if (!m_dirtyPatches.empty())
         {
+
             gfx.update(m_patchMetadata, vectorAsByteRange(m_patchMetadataCPU));
         }
 
@@ -165,9 +171,9 @@ namespace rendering
     {
         for (uint32_t mip = 0; mip < PatchMipsAlwaysResident; mip++)
         {
-            for (uint32_t y = 0; y < (1 << mip); y++)
+            for (uint32_t y = 0; y < (1U << mip); y++)
             {
-                for (uint32_t x = 0; x < (1 << mip); x++)
+                for (uint32_t x = 0; x < (1U << mip); x++)
                 {
                     PatchId id(x, y, mip);
                     addPatch(id);

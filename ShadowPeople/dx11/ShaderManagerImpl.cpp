@@ -155,6 +155,8 @@ namespace graphics
 															shaderBlob->GetBufferSize(),
 															NULL, (ID3D11ComputeShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_COMPUTE_SHADER_NOT_CREATED);
+
+        setShaderDebugName(shader);
 	}
 		
 	void ShaderManagerImpl::createVertexShader(ShaderImpl& shader)
@@ -166,6 +168,8 @@ namespace graphics
 														   shaderBlob->GetBufferSize(),
 														   NULL, (ID3D11VertexShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_VERTEX_SHADER_NOT_CREATED);
+
+        setShaderDebugName(shader);
 	}
 	
 	void ShaderManagerImpl::createPixelShader(ShaderImpl& shader)
@@ -177,7 +181,9 @@ namespace graphics
 														  shaderBlob->GetBufferSize(),
 														  NULL, (ID3D11PixelShader**)&shader.m_shader);
 		SP_ASSERT_HR(hr, ERROR_CODE_PIXEL_SHADER_NOT_CREATED);
-	}
+
+        setShaderDebugName(shader);
+	}    
 
 	void ShaderManagerImpl::createConstantBuffers(ShaderResourcesImpl& resources, const desc::ShaderBinding& binding)
 	{
@@ -186,8 +192,14 @@ namespace graphics
 			uint32_t byteSize = static_cast<uint32_t>(cb.byteSize());
 			SP_ASSERT(byteSize % 16 == 0, "Size of a constant buffer must be multipler of 16 bytes.");
 			uint32_t numElems = byteSize / 16;
+
+            std::string name("Constant buffer ");
+            std::string filename(binding.filename());
+            const auto pos = filename.find_last_of('\\');
+            name.append(filename.substr(pos + 1));
+
 			auto desc = desc::Buffer().type(desc::BufferType::Constant)
-				.elements(numElems).usage(desc::Usage::CpuToGpuFrequent);
+				.elements(numElems).usage(desc::Usage::CpuToGpuFrequent).name(name);
 			std::shared_ptr<BufferImpl> constantBuf = std::make_shared<BufferImpl>(m_device, desc);
 			resources.cbs.emplace_back(constantBuf);
 		}
@@ -244,4 +256,28 @@ namespace graphics
 
 		return target;
 	}
+
+    void ShaderManagerImpl::setShaderDebugName(ShaderImpl& shader)
+    {
+        std::string shaderName	= getShaderName(shader.m_bindingName, shader.m_type);
+        const auto lastPart = shaderName.substr(shaderName.find_last_of('\\') + 1);
+        std::string name = "";
+        switch (shader.m_type)
+		{
+		case desc::ShaderType::Compute:
+			name = "Compute";
+			break;
+		case desc::ShaderType::Vertex:
+			name = "Vertex";
+			break;
+		case desc::ShaderType::Pixel:
+			name = "Pixel";
+			break;
+		default:
+			SP_ASSERT(false, "Shader type unknown - Cannot determine target");
+			break;
+		}
+        name.append(" shader ").append(lastPart);
+        shader.m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, name.size(), name.c_str());
+    }
 }

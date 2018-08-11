@@ -8,9 +8,8 @@ namespace input
 	ImGuiInputHandler::ImGuiInputHandler(HWND hWnd) :
 		m_lastMouseCursor(ImGuiMouseCursor_COUNT)
 	{
-		SP_ASSERT(QueryPerformanceFrequency((LARGE_INTEGER *)&m_ticksPerSecond), "Failed to query performance counter");
-		SP_ASSERT(QueryPerformanceCounter((LARGE_INTEGER *)&m_time), "Failes to query performace counter");
-
+		m_timer.start();
+		
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
@@ -122,10 +121,7 @@ namespace input
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
-		int64_t currentTime;
-		QueryPerformanceCounter((LARGE_INTEGER *)&currentTime);
-		io.DeltaTime = static_cast<float>(currentTime - m_time) / m_ticksPerSecond;
-		m_time = currentTime;
+		io.DeltaTime = m_timer.stopAndRestart();
 
 		io.KeyCtrl	= (GetKeyState(VK_CONTROL) & 0x8000) != 0;
 		io.KeyShift	= (GetKeyState(VK_SHIFT) & 0x8000) != 0;

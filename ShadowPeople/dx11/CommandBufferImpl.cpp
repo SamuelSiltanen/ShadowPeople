@@ -141,10 +141,10 @@ namespace graphics
 	{
 		// TODO: Asserts
 		UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
-														dstSubresource.mipLevel,
+														dstSubresource.arraySlice,
 														dst.descriptor().mipLevels);
 		UINT srcSubresourceIndex = D3D11CalcSubresource(srcSubresource.mipLevel,
-														srcSubresource.mipLevel,
+														srcSubresource.arraySlice,
 														src.descriptor().mipLevels);
 		D3D11_BOX srcBox;
 		// TODO
@@ -171,7 +171,7 @@ namespace graphics
                                    Subresource dstSubresource)
     {
         UINT dstSubresourceIndex = D3D11CalcSubresource(dstSubresource.mipLevel,
-														dstSubresource.mipLevel,
+														dstSubresource.arraySlice,
 														dst.descriptor().mipLevels);
 
         // If the source rectangle is assume the whole image is copied

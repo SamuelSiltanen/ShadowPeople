@@ -1,4 +1,5 @@
 #include "../cpugpu/ShaderInterface.h"
+#include "../cpugpu/GeometryTypes.h"
 
 BEGIN_SHADER_INTERFACE(LightingCS)
 
@@ -19,6 +20,7 @@ Texture2D<float2>   normal;
 sampler             bilinearSampler;
 
 Texture2DArray<uint> heightMap;
+StructuredBuffer<Patch> patchMetadata;
 
 THREAD_GROUP_SIZE(16, 16, 1)
 
