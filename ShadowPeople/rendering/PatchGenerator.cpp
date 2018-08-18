@@ -192,7 +192,26 @@ namespace rendering
         auto data           = m_processingPatch.asRange<float>();
         auto pData          = pLayer.asRange<const uint16_t>();
         
-        uint32_t parentWrapSize = std::min<uint32_t>(PatchResolution << (patch.id.mip() - 1), PatchCacheSize);
+        uint32_t parentWrapSize = std::min<uint32_t>(PatchResolution << (patch.id.mip() - 1), PatchCacheSize);        
+        uint32_t parentPatchDim = (1 << (patch.id.mip() - 1));
+
+        // Pre-compute height re-scaling
+        float2 hMulAdd[9];
+        for (int y = -1; y <= 1; y++)
+        {
+            int py = ((patch.id.y() + y) / 2 + parentPatchDim) & (parentPatchDim - 1);
+            for (int x = -1; x <= 1; x++)
+            {
+                int px = ((patch.id.x() + x) / 2 + parentPatchDim) & (parentPatchDim - 1);
+                PatchId parent(px, py, patch.id.mip() - 1);
+                Patch& parentPatch  = m_patchCache.patchMetadata(parent);
+                hMulAdd[(y + 1) * 3 + (x + 1)] = { (parentPatch.maxHeight - parentPatch.minHeight) / 65535.f,
+                                                   parentPatch.minHeight };
+            }
+        }
+
+        // Debug
+        //hMulAdd[8] = 0.f;
 
         auto indexWithWrapping = [&](int x, int y) -> uint32_t
         {
@@ -208,16 +227,12 @@ namespace rendering
             return static_cast<uint32_t>(y * PatchSizeWithBorders + x);
         };        
 
-        auto fValue = [&](uint16_t scaledValue, int px, int py) -> float
-        {
-            int x = (px + parentWrapSize) & (parentWrapSize - 1);
-            int y = (py + parentWrapSize) & (parentWrapSize - 1);
-            PatchId parent(x / PatchResolution, y / PatchResolution, patch.id.mip() - 1);
-            // TODO: Fetching parent over and over again is expensive, although for the majority of pixels
-            //       it stays the same. Optimize this!
-            Patch& parentPatch  = m_patchCache.patchMetadata(parent);
-            float hScaleInv     = (parentPatch.maxHeight - parentPatch.minHeight) / 65535.f;
-            return scaledValue * hScaleInv + parentPatch.minHeight;
+        auto fValue = [&](uint16_t scaledValue, int dx, int dy) -> float
+        {            
+            int x = (dx < 0) ? -1 : ((dx >= PatchResolution / 2) ? 1 : 0);
+            int y = (dy < 0) ? -1 : ((dy >= PatchResolution / 2) ? 1 : 0);
+            int i = (y + 1) * 3 + (x + 1);
+            return scaledValue * hMulAdd[i][0] + hMulAdd[i][1];
         };
 
         int vx = patch.id.x() * PatchResolution / 2;
@@ -225,13 +240,15 @@ namespace rendering
 
         uint32_t topLeft = indexWithWrapping(vx, vy);
 
-        float value      = fValue(pData[topLeft], vx, vy);
+        float value      = fValue(pData[topLeft], 0, 0);
         float minH       = value;
         float maxH       = value;
 
         // Generate 2x2 square of pixels at a time
+        // y = 0, 2, 4, ... 128, 130
         for (int y = 0; y < PatchSizeWithBorders; y += 2)
         {
+            // dy = -1, 0, 1, ... 63, 64
             int dy      = (y - PatchBorder) / 2;
             int py      = vy + dy;
 
@@ -247,7 +264,7 @@ namespace rendering
                 uint32_t i3     = indexWithWrapping(px + 1, py + 1);
 
                 // Copy parent top-left corner
-                float topLeftValue  = fValue(pData[i0], px, py);
+                float topLeftValue  = fValue(pData[i0], dx, dy);
 
                 uint32_t it     = indexWithBorders(x - PatchBorder, y - PatchBorder);
                 data[it]        = topLeftValue;
@@ -259,10 +276,10 @@ namespace rendering
                 // Mid-point value
                 int mx          = x + 1 - PatchBorder;
                 int my          = y + 1 - PatchBorder;
-                float avg       = 0.25f * (fValue(pData[i0], px, py) +
-                                           fValue(pData[i1], px + 1, py) +
-                                           fValue(pData[i2], px, py + 1) +
-                                           fValue(pData[i3], px + 1, py + 1));
+                float avg       = 0.25f * (fValue(pData[i0],     dx,     dy) +
+                                           fValue(pData[i1], dx + 1,     dy) +
+                                           fValue(pData[i2],     dx, dy + 1) +
+                                           fValue(pData[i3], dx + 1, dy + 1));
                 float bump      = amplitude * dist(m_random.consume(patch.id.seed(mx, my)));
                 float midValue  = avg + bump;
 
