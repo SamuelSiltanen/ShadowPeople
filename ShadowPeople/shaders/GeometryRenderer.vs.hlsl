@@ -2,10 +2,9 @@
 
 struct VSOutput
 {
-    //float3  normal  : COLOR0;
-    float4 orientation : COLOR0;
+    float4  orientation : COLOR0;
     float3  uv_bts      : COLOR1;
-    float4  pos     : SV_POSITION;
+    float4  pos         : SV_POSITION;
 };
 
 VSOutput main(uint vertexId : SV_VertexID)
@@ -18,7 +17,6 @@ VSOutput main(uint vertexId : SV_VertexID)
 
     VSOutput output;
 
-    //output.normal    = v.normal;
     output.orientation = v.orientation;
     output.uv_bts      = float3(v.uv, v.bitangentSign);
     output.pos         = ndcPos;

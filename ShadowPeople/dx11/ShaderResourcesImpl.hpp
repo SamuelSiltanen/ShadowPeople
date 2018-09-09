@@ -17,7 +17,7 @@ namespace graphics
 	struct ShaderResourcesImpl
 	{
 		std::vector<std::shared_ptr<BufferImpl>>	cbs;
-		std::vector<const ResourceViewImpl*>		srvs;
+		std::vector<const ResourceViewImpl*>	    srvs;
 		std::vector<const ResourceViewImpl*>		uavs;
 		std::vector<const SamplerImpl*>				samplers;
 	};

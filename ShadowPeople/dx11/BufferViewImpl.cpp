@@ -6,7 +6,8 @@
 namespace graphics
 {
 	BufferViewImpl::BufferViewImpl(DeviceImpl& device, const BufferImpl& buffer, const desc::BufferView::Descriptor& desc) :
-		m_descriptor(desc)
+		m_descriptor(desc),
+        m_buffer(buffer)
 	{
 		switch (desc.type)
 		{

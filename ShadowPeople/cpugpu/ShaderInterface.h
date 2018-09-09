@@ -22,15 +22,7 @@ namespace graphics
 {
 	namespace shaders
 	{
-		namespace detail
-		{
-			extern std::vector<Range<const uint8_t>>			cbs;
-			extern std::vector<const graphics::ResourceView*>	srvs;
-			extern std::vector<const graphics::ResourceView*>	uavs;
-			extern std::vector<const graphics::Sampler*>		samplers;
-
-			void resetBindings();
-		}
+        extern SlotAllocator g_slotAllocator;
 
 		// Possible bindings:
 		// cbuffer TypeName
@@ -55,11 +47,11 @@ namespace graphics
 				CB##x() \
 				{ \
 					Range<const uint8_t> data(reinterpret_cast<const uint8_t*>(this), sizeof(Body##x)); \
-					index = static_cast<uint32_t>(detail::cbs.size()); \
-					detail::cbs.emplace_back(data); \
+					cbvSlot = g_slotAllocator.nextCBVSlot(); \
+                    g_slotAllocator.setCBV(cbvSlot, data); \
 				} \
 			private: \
-				uint32_t index; \
+				uint32_t cbvSlot; \
 			}; \
 			CB##x x
 
@@ -67,17 +59,16 @@ namespace graphics
 			template<typename T> \
 			struct X \
 			{ \
-				uint32_t index; \
+				uint32_t srvSlot; \
 				X() \
 				{ \
-					index = static_cast<uint32_t>(detail::srvs.size()); \
-					detail::srvs.emplace_back(nullptr); \
+					srvSlot = g_slotAllocator.nextSRVSlot(); \
 				} \
 				X& operator=(const graphics::Y& view) \
 				{ \
 					SP_ASSERT(view.descriptor().type == graphics::desc::ViewType::SRV, \
 							  "Only SRVs can be bound to SRV slot."); \
-					detail::srvs[index] = &view; \
+                    g_slotAllocator.setSRV(srvSlot, view); \
 					return *this; \
 				} \
 			};
@@ -98,17 +89,16 @@ namespace graphics
 			template<typename T> \
 			struct X \
 			{ \
-				uint32_t index; \
+				uint32_t uavSlot; \
 				X() \
 				{ \
-					index = static_cast<uint32_t>(detail::uavs.size()); \
-					detail::uavs.emplace_back(nullptr); \
+					uavSlot = g_slotAllocator.nextUAVSlot(); \
 				} \
-				X& operator=(const graphics::Y& view) \
+				__declspec(noinline) X& operator=(const graphics::Y& view) \
 				{ \
 					SP_ASSERT(view.descriptor().type == graphics::desc::ViewType::UAV, \
 							  "Only UAVs can be bound to UAV slot."); \
-					detail::uavs[index] = &view; \
+                    g_slotAllocator.setUAV(uavSlot, view); \
 					return *this; \
 				} \
 			};
@@ -125,15 +115,14 @@ namespace graphics
 
 		struct sampler
 		{
-			uint32_t index;
+			uint32_t samplerSlot;
 			sampler()
 			{
-				index = static_cast<uint32_t>(detail::samplers.size());
-				detail::samplers.emplace_back(nullptr);
+				samplerSlot = g_slotAllocator.nextSamplerSlot();
 			}
 			sampler& operator=(const graphics::Sampler& s)
 			{
-				detail::samplers[index] = &s;
+                g_slotAllocator.setSampler(samplerSlot, &s);
 				return *this;
 			}
 		};
@@ -154,10 +143,10 @@ namespace graphics
 					const char* filename() const override { return __FILE__; } \
 					ComputePipeline* computePipeline() override { return m_computePipeline; } \
 					GraphicsPipeline* graphicsPipeline() override { return m_graphicsPipeline; } \
-					const std::vector<Range<const uint8_t>> cbs() const override { return detail::cbs; } \
-					const std::vector<const graphics::ResourceView*>& srvs() const override { return detail::srvs; } \
-					const std::vector<const graphics::ResourceView*>& uavs() const override { return detail::uavs; } \
-					const std::vector<const graphics::Sampler*>& samplers() const override { return detail::samplers; } \
+					const std::vector<Range<const uint8_t>>& cbs() const override { return g_slotAllocator.cbs(); } \
+					const std::vector<graphics::ResourceView>& srvs() const override { return g_slotAllocator.srvs(); } \
+					const std::vector<graphics::ResourceView>& uavs() const override { return g_slotAllocator.uavs(); } \
+					const std::vector<const graphics::Sampler*>& samplers() const override { return g_slotAllocator.samplers(); } \
 					uint32_t threadGroupSizeX() const { return ThreadGroupSizeX; } \
 					uint32_t threadGroupSizeY() const { return ThreadGroupSizeY; } \
 					uint32_t threadGroupSizeZ() const { return ThreadGroupSizeZ; } \

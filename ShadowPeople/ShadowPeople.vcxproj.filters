@@ -370,6 +370,9 @@
     <ClInclude Include="Timer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shaders\PatchRenderer.if.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\ImGuiRenderer.vs.hlsl">
@@ -393,5 +396,6 @@
     <FxCompile Include="shaders\LineRenderer.ps.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
+    <FxCompile Include="shaders\PatchRenderer.vs.hlsl" />
   </ItemGroup>
 </Project>

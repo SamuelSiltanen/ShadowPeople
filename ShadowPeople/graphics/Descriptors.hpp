@@ -656,9 +656,9 @@ namespace graphics
 			virtual const char* filename() const = 0;
 			virtual graphics::ComputePipeline* computePipeline() = 0;
 			virtual graphics::GraphicsPipeline* graphicsPipeline() = 0;
-			virtual const std::vector<Range<const uint8_t>> cbs() const = 0;
-			virtual const std::vector<const graphics::ResourceView*>& srvs() const = 0;
-			virtual const std::vector<const graphics::ResourceView*>& uavs() const = 0;
+			virtual const std::vector<Range<const uint8_t>>& cbs() const = 0;
+			virtual const std::vector<graphics::ResourceView>& srvs() const = 0;
+			virtual const std::vector<graphics::ResourceView>& uavs() const = 0;
 			virtual const std::vector<const graphics::Sampler*>& samplers() const = 0;
 			virtual uint32_t threadGroupSizeX() const = 0;
 			virtual uint32_t threadGroupSizeY() const = 0;
@@ -714,7 +714,7 @@ namespace graphics
 			template<typename T>
 			GraphicsPipeline& binding()
 			{
-				shaders::detail::resetBindings();
+				shaders::g_slotAllocator.resetBindings();
 				desc.binding = std::make_shared<T>();
 				return *this;
 			}
@@ -747,7 +747,7 @@ namespace graphics
 			template<typename T>
 			ComputePipeline& binding()
 			{
-				shaders::detail::resetBindings();
+				shaders::g_slotAllocator.resetBindings();
 				desc.binding = std::make_shared<T>();
 				return *this;
 			}

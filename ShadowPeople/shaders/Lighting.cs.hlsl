@@ -61,6 +61,29 @@ float3 worldPos(uint2 coords, float depth)
     return worldPos.xyz;
 }
 
+static const float A = 0.15f;
+static const float B = 0.50f;
+static const float C = 0.10f;
+static const float D = 0.20f;
+static const float E = 0.02f;
+static const float F = 0.30f;
+static const float W = 11.2f;
+
+float3 Uncharted2Tonemap(float3 x)
+{
+    return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;
+}
+
+float3 toneMapping(float3 HDRColor)
+{
+    static const float ExposureBias = 2.f;
+    float3 color = Uncharted2Tonemap(ExposureBias * HDRColor) / Uncharted2Tonemap(W);
+
+    color = pow(abs(color), 1.f / 2.2f);
+
+    return color;
+}
+
 [numthreads(ThreadGroupsX, ThreadGroupsY, ThreadGroupsZ)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
@@ -86,17 +109,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
         {
             color = skyColor(viewDir, L);
         }
-
-        uint patchIdx = DTid.x / 128;
-        uint patchIdy = DTid.y / 128;
-        uint patchId = 1 + 4 + 16 + 64 + (patchIdy << 4) + patchIdx;
-        Patch patch = patchMetadata[patchId];
-        float scale = float(patch.maxHeight - patch.minHeight) / 65535.f;
-
-        uint value = heightMap[int3(DTid.xy, 4)];
-        float grey = float(value & 65535) * scale + patch.minHeight;
-        grey *= 1.f / 2048.f;
-        color = float3(grey, grey, grey);
     }
     else
     {
@@ -133,12 +145,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
         float3 spec     = specularLight(detailNorm, SunDir, viewDir, alpha, F0Dielectric);
         
         color    = albedo * Ambient + SunIntensity * SunColor * (diff + spec);
-    }
-    /*
-    // Cheap tone mapping
-    float lum = dot(color, float3(0.2126f, 0.7152f, 0.0722f));
-    color *= 1.f / (1.f + lum);
-    color = pow(color, 1.f / 2.2f);
-    */
-    litBuffer[DTid.xy] = float4(color, 1.f);
+    }    
+    
+    litBuffer[DTid.xy] = float4(toneMapping(color), 1.f);
 }

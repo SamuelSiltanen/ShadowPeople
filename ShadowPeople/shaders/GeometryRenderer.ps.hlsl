@@ -1,9 +1,7 @@
 #include "GeometryRenderer.if.h"
-//#include "OctahedralNormal.h.hlsl"
 
 struct PSInput
 {
-    //float3 normal    : COLOR0;
     float4 orientation : COLOR0;
     float3 uv_bts      : COLOR1;   
 };
@@ -16,7 +14,6 @@ uint packFloat2ToUint(float2 f)
 uint4 main(PSInput input) : SV_TARGET
 {
     float4 orientation  = normalize(input.orientation);
-    //float3 normal     = input.normal;
     float2 uv           = input.uv_bts.xy;
     float bitangentSign = input.uv_bts.z;
 

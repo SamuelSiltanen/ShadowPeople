@@ -34,6 +34,10 @@ namespace graphics
 
 	class Device;
 	class ShaderManager;
+    namespace shaders
+    {
+        class SlotAllocator;
+    }
 
 	class Texture
 	{
@@ -56,11 +60,17 @@ namespace graphics
 	class ResourceView
 	{
 	public:
-		virtual bool valid() const = 0;
+        ResourceView() : pImpl(nullptr) {}
+        ResourceView(std::shared_ptr<ResourceViewImpl> pImpl) : pImpl(pImpl) {}
+
+        virtual bool valid() const { return (pImpl != nullptr); }
 	protected:
 		friend class CommandBuffer;
+        friend class shaders::SlotAllocator;
 
-		virtual ResourceViewImpl* impl() const = 0;
+        virtual std::string debugName() const { return std::string(); }
+
+        std::shared_ptr<ResourceViewImpl> pImpl; // TODO: This will be empty
 	};
 
 	class TextureView : public ResourceView
@@ -73,8 +83,8 @@ namespace graphics
 
 		const desc::TextureView::Descriptor& descriptor() const;
 
-	protected:
-		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
+	protected:		
+        std::string debugName() const override;
 
 	private:
 		friend class CommandBuffer;
@@ -109,7 +119,7 @@ namespace graphics
 		const desc::BufferView::Descriptor& descriptor() const;
 
 	protected:
-		ResourceViewImpl* impl() const override { return reinterpret_cast<ResourceViewImpl*>(pImpl.get()); }
+        std::string debugName() const override;
 
 	private:
 		friend class CommandBuffer;		
@@ -217,6 +227,37 @@ namespace graphics
 		std::shared_ptr<ShaderImpl> pImpl;
 	};
 
+    namespace shaders
+    {
+        class SlotAllocator
+        {
+        public:
+            uint32_t nextCBVSlot();
+            uint32_t nextSRVSlot();
+            uint32_t nextUAVSlot();
+            uint32_t nextSamplerSlot();
+
+            void setCBV(uint32_t cbvSlot, Range<const uint8_t> constants);
+            void setSRV(uint32_t srvSlot, const ResourceView& srv);
+            void setUAV(uint32_t uavSlot, const ResourceView& uav);
+            void setSampler(uint32_t samplerSlot, const Sampler* sampler);
+
+            const std::vector<Range<const uint8_t>>& cbs()      { return m_cbs; }
+            const std::vector<ResourceView>&         srvs()     { return m_srvs; }
+            const std::vector<ResourceView>&         uavs()     { return m_uavs; }
+            const std::vector<const Sampler*>&       samplers() { return m_samplers; }
+
+            void resetBindings();
+        private:
+            std::vector<Range<const uint8_t>>	m_cbs;
+			std::vector<ResourceView>	        m_srvs;
+			std::vector<ResourceView>	        m_uavs;
+			std::vector<const Sampler*>		    m_samplers;
+        };
+
+        extern SlotAllocator g_slotAllocator;
+    }
+
 	class GraphicsPipeline
 	{
 	public:
@@ -231,7 +272,7 @@ namespace graphics
 		template<typename T>
 		std::unique_ptr<T> bind(CommandBuffer& gfx)
 		{
-			shaders::detail::resetBindings();
+			shaders::g_slotAllocator.resetBindings();
 			return std::make_unique<T>(this);
 		}
 
@@ -256,7 +297,7 @@ namespace graphics
 		template<typename T> 
 		std::unique_ptr<T> bind(CommandBuffer& gfx)
 		{
-			shaders::detail::resetBindings();
+			shaders::g_slotAllocator.resetBindings();
 			return std::make_unique<T>(this);
 		}
 	private:

@@ -19,9 +19,6 @@ Texture2D<float4>   albedoRoughness;
 Texture2D<float2>   normal;
 sampler             bilinearSampler;
 
-StructuredBuffer<Patch> patchMetadata;
-Texture2DArray<uint> heightMap;
-
 THREAD_GROUP_SIZE(16, 16, 1)
 
 END_SHADER_INTERFACE(LightingCS)

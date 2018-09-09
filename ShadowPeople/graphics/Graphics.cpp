@@ -20,6 +20,7 @@ namespace graphics
 	TextureView::TextureView(Device& device, const Texture& texture, const desc::TextureView::Descriptor& desc)
 	{
 		pImpl = std::make_shared<TextureViewImpl>(*device.pImpl, *texture.pImpl, desc);
+        ResourceView::pImpl = pImpl;
 	}
 
 	const desc::TextureView::Descriptor& TextureView::descriptor() const
@@ -27,6 +28,11 @@ namespace graphics
 		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_TEXTURE_VIEW_NULL);
 		return pImpl->descriptor();
 	}
+
+    std::string TextureView::debugName() const
+    {
+        return pImpl->texture().descriptor().name;
+    }
 
 	Buffer::Buffer(Device& device, const desc::Buffer& desc)
 	{
@@ -44,6 +50,7 @@ namespace graphics
         SP_EXPECT_NOT_NULL(device.pImpl, ERROR_CODE_DEVICE_NULL);
         SP_EXPECT_NOT_NULL(buffer.pImpl, ERROR_CODE_BUFFER_NULL);
 		pImpl = std::make_shared<BufferViewImpl>(*device.pImpl, *buffer.pImpl, desc);
+        ResourceView::pImpl = pImpl;
 	}
 
 	const desc::BufferView::Descriptor& BufferView::descriptor() const
@@ -51,6 +58,11 @@ namespace graphics
 		SP_EXPECT_NOT_NULL(pImpl, ERROR_CODE_BUFFER_VIEW_NULL);
 		return pImpl->descriptor();
 	}
+
+    std::string BufferView::debugName() const
+    {
+        return pImpl->buffer().descriptor().name;
+    }
 
 	Mapping::Mapping(std::shared_ptr<MappingImpl> impl) : pImpl(impl) {}
 
@@ -226,12 +238,12 @@ namespace graphics
 		
 		for (auto srv: binding.srvs())
 		{
-			resources.srvs.emplace_back(srv->impl());
+			resources.srvs.emplace_back(srv.pImpl.get());
 		}
 		
 		for (auto uav: binding.uavs())
 		{
-			resources.uavs.emplace_back(uav->impl());
+			resources.uavs.emplace_back(uav.pImpl.get());
 		}
 
 		for (auto sampler : binding.samplers())
@@ -473,20 +485,69 @@ namespace graphics
 	// These are needed for the shader bindings
 	namespace shaders
 	{
-		namespace detail
-		{
-			std::vector<Range<const uint8_t>>			cbs;
-			std::vector<const graphics::ResourceView*>	srvs;
-			std::vector<const graphics::ResourceView*>	uavs;
-			std::vector<const graphics::Sampler*>		samplers;
+        uint32_t SlotAllocator::nextCBVSlot()
+        {
+            uint32_t cbvSlot = static_cast<uint32_t>(m_cbs.size());
+            m_cbs.resize(cbvSlot + 1);
+            return cbvSlot;
+        }
 
-			void resetBindings()
-			{
-				cbs.clear();
-				srvs.clear();
-				uavs.clear();
-				samplers.clear();
-			}
+        uint32_t SlotAllocator::nextSRVSlot()
+        {
+            uint32_t srvSlot = static_cast<uint32_t>(m_srvs.size());
+            m_srvs.resize(srvSlot + 1);
+            m_srvs[srvSlot] = ResourceView();
+            return srvSlot;
+        }
+
+        uint32_t SlotAllocator::nextUAVSlot()
+        {
+            uint32_t uavSlot = static_cast<uint32_t>(m_uavs.size());
+            m_uavs.resize(uavSlot + 1);
+            m_uavs[uavSlot] = ResourceView();
+            return uavSlot;
+        }
+
+        uint32_t SlotAllocator::nextSamplerSlot()
+        {
+            uint32_t samplerSlot = static_cast<uint32_t>(m_samplers.size());
+            m_samplers.resize(samplerSlot + 1);
+            m_samplers[samplerSlot] = nullptr;
+            return samplerSlot;
+        }
+
+        void SlotAllocator::setCBV(uint32_t cbvSlot, Range<const uint8_t> constants)
+        {
+            SP_ASSERT(cbvSlot < m_cbs.size(), "Trying to assign to an unreserved CBV slot!");
+            m_cbs[cbvSlot] = constants;
+        }
+
+        void SlotAllocator::setSRV(uint32_t srvSlot, const ResourceView& srv)
+        {
+            SP_ASSERT(srvSlot < m_srvs.size(), "Trying to assign to an unreserved SRV slot!");
+            m_srvs[srvSlot] = srv;
+        }
+
+        void SlotAllocator::setUAV(uint32_t uavSlot, const ResourceView& uav)
+        {
+            SP_ASSERT(uavSlot < m_uavs.size(), "Trying to assign to an unreserved UAV slot!");
+            m_uavs[uavSlot] = uav;
+        }
+
+        void SlotAllocator::setSampler(uint32_t samplerSlot, const Sampler* sampler)
+        {
+            SP_ASSERT(samplerSlot < m_samplers.size(), "Trying to assign to an unreserved sampler slot!");
+            m_samplers[samplerSlot] = sampler;
+        }
+
+		void SlotAllocator::resetBindings()
+		{
+			m_cbs.clear();
+			m_srvs.clear();
+			m_uavs.clear();
+			m_samplers.clear();
 		}
+
+        SlotAllocator g_slotAllocator;
 	}
 }

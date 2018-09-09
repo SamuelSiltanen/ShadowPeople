@@ -68,7 +68,7 @@ namespace rendering
 
 	void SceneRenderer::culling(CommandBuffer& gfx, const Camera& camera)
 	{
-
+        
 	}
 	
 	void SceneRenderer::geometryRendering(CommandBuffer& gfx, const Camera& camera, const Scene& scene)
@@ -79,6 +79,8 @@ namespace rendering
 
 		m_screenBuffers.clear(gfx);
 		m_screenBuffers.setRenderTargets(gfx);
+
+        
 
         gfx.setIndexBuffer(m_geometry.indexBuffer());
 
@@ -102,20 +104,17 @@ namespace rendering
 	void SceneRenderer::lighting(CommandBuffer& gfx, const Camera& camera)
 	{
 		{
-			auto binding = m_lightingPipeline.bind<shaders::LightingCS>(gfx);
+			auto binding = m_lightingPipeline.bind<shaders::LightingCS>(gfx);            
 
             binding->constants.invProj  = camera.invProjMatrix();
             binding->constants.invView  = camera.invViewMatrix();
 			binding->constants.size	    = m_screenSize;
 			binding->gBuffer		    = m_screenBuffers.gBuffer();
             binding->zBuffer            = m_screenBuffers.zBuffer();
-			binding->litBuffer		    = m_imageBuffers.litBuffer();
+			binding->litBuffer		    = m_imageBuffers.litBuffer();            
             binding->albedoRoughness    = m_materials.albedoRougness();
             binding->normal             = m_materials.normal();
             binding->bilinearSampler    = m_bilinearSampler;
-		
-            binding->heightMap          = m_patches.patchDataGPU();
-            binding->patchMetadata      = m_patches.patchMetadataGPU();
 
 			gfx.dispatch(*binding, m_screenSize[0], m_screenSize[1], 1);
 		}

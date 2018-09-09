@@ -25,7 +25,7 @@ namespace graphics
         NO_COPY_CLASS(BufferViewImpl)
 
         const desc::BufferView::Descriptor& descriptor() { return m_descriptor; }
-
+        const BufferImpl& buffer() const { return m_buffer; }
         const ID3D11View* view() const override { return m_view; }
     private:
         void createSRV(DeviceImpl& device, const desc::BufferView::Descriptor& desc, const BufferImpl& buffer);
@@ -33,5 +33,6 @@ namespace graphics
 
         ID3D11View*                     m_view;
         desc::BufferView::Descriptor    m_descriptor;
+        const BufferImpl&               m_buffer;
     };
 }
