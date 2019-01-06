@@ -162,6 +162,9 @@
     <ClCompile Include="rendering\Scene.cpp" />
     <ClCompile Include="rendering\SceneRenderer.cpp" />
     <ClCompile Include="rendering\ScreenBuffers.cpp" />
+    <ClCompile Include="sound\Mixer.cpp" />
+    <ClCompile Include="sound\RawAudioBuffer.cpp" />
+    <ClCompile Include="sound\SoundDevice.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Types.cpp" />
   </ItemGroup>
@@ -222,6 +225,10 @@
     <ClInclude Include="shaders\Lighting.if.h" />
     <ClInclude Include="shaders\LineRenderer.if.h" />
     <ClInclude Include="shaders\PatchRenderer.if.h" />
+    <ClInclude Include="sound\AudioFormat.hpp" />
+    <ClInclude Include="sound\Mixer.hpp" />
+    <ClInclude Include="sound\RawAudioBuffer.hpp" />
+    <ClInclude Include="sound\SoundDevice.hpp" />
     <ClInclude Include="Timer.hpp" />
     <ClInclude Include="Types.hpp" />
   </ItemGroup>

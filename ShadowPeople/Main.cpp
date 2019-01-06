@@ -20,6 +20,9 @@
 #include "rendering/SceneRenderer.hpp"
 #include "rendering/Scene.hpp"
 
+#include "sound/SoundDevice.hpp"
+#include "sound/Mixer.hpp"
+
 #include "game/GameLogic.hpp"
 
 #include "Errors.hpp"
@@ -58,6 +61,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     rendering::MaterialCache materials(device);
     rendering::PatchCache patches(device);
 
+    // Create sound device
+    sound::SoundDevice soundDevice;
+    sound::Mixer soundMixer(soundDevice.getFormat());
+
     // Create asset loader
     asset::AssetLoader assetLoader(geometry, materials);
 
@@ -77,6 +84,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     // Create scene renderer
     // TODO: Separate ImGui-initialization stuff out of SceneRenderer, so that it can be loaded earlier
     rendering::SceneRenderer sceneRenderer(device, geometry, materials, patches);
+
+    // Fill initial sound data and start playing
+    soundMixer.mix(soundDevice.getBuffer(sound::AudioBufferType::WholeBuffer));
+    soundDevice.play();
 
     // Initialize input handlers
     imGuiInputHandler = std::make_unique<input::ImGuiInputHandler>(hWnd);
@@ -117,7 +128,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         sceneRenderer.render(gfx, scene);
         device.submit(gfx);
         device.present(1);
+
+        // Mix sound
+        soundMixer.mix(soundDevice.getBuffer(sound::AudioBufferType::PartialBuffer));
     }
+
+    // Quit playing sound
+    soundDevice.stop();
 
     return msg.wParam;
 }

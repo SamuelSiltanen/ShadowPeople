@@ -12,6 +12,7 @@
 
 #include "../shaders/Lighting.if.h"
 #include "../shaders/GeometryRenderer.if.h"
+#include "../shaders/PatchRenderer.if.h"
 
 #include "../imgui/imgui.h"
 
@@ -51,6 +52,15 @@ namespace rendering
 				.depthTestingEnable(true)
 				.depthFunc(desc::ComparisonMode::Less)));
 
+        m_patchRenderingPipeline = device.createGraphicsPipeline(desc::GraphicsPipeline()
+            .binding<shaders::PatchRenderer>()
+            .setPrimitiveTopology(desc::PrimitiveTopology::TriangleList)
+            .numRenderTargets(1)
+            .rasterizerState(desc::RasterizerState().cullMode(desc::CullMode::Front))
+            .depthStencilState(desc::DepthStencilState()
+                .depthWriteEnable(true)
+                .depthFunc(desc::ComparisonMode::Less)));
+
         m_bilinearSampler = device.createSampler(desc::Sampler()
             .type(desc::SamplerType::Bilinear)
             .name("Scene renderer bilinear sampler"));
@@ -80,7 +90,18 @@ namespace rendering
 		m_screenBuffers.clear(gfx);
 		m_screenBuffers.setRenderTargets(gfx);
 
-        
+        /*
+        uint32_t patchesToDraw = 1;
+
+        {
+            auto binding = m_patchRenderingPipeline.bind<shaders::PatchRenderer>(gfx);
+
+            binding->patchBuffer = m_patches.patchMetadataGPU();
+            binding->patchIndices = m_culler.patchIndices();
+
+            gfx.drawIndexedInstanced(*binding, PatchResolution * PatchResolution, patchesToDraw, 0, 0, 0);
+        }
+        */
 
         gfx.setIndexBuffer(m_geometry.indexBuffer());
 

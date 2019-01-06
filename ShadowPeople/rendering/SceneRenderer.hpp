@@ -50,6 +50,7 @@ namespace rendering
 
         graphics::ComputePipeline   m_lightingPipeline;
         graphics::GraphicsPipeline  m_geometryRenderingPipeline;
+        graphics::GraphicsPipeline  m_patchRenderingPipeline;
 
         graphics::Sampler           m_bilinearSampler;
 

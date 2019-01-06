@@ -60,6 +60,12 @@
     <Filter Include="Header Files\cpugpu">
       <UniqueIdentifier>{ee79438a-7097-40a1-ae32-1f8aae1a945d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\sound">
+      <UniqueIdentifier>{aa92ea1c-3462-44ca-ae7d-b61f2c7d11b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sound">
+      <UniqueIdentifier>{f5d4729d-87ed-4da4-af64-52afb2254a6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -184,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sound\SoundDevice.cpp">
+      <Filter>Source Files\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="sound\Mixer.cpp">
+      <Filter>Source Files\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="sound\RawAudioBuffer.cpp">
+      <Filter>Source Files\sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,7 +386,19 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shaders\PatchRenderer.if.h">
-      <Filter>Header Files</Filter>
+      <Filter>Shader Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="sound\SoundDevice.hpp">
+      <Filter>Header Files\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="sound\Mixer.hpp">
+      <Filter>Header Files\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="sound\RawAudioBuffer.hpp">
+      <Filter>Header Files\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="sound\AudioFormat.hpp">
+      <Filter>Header Files\sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -396,6 +423,8 @@
     <FxCompile Include="shaders\LineRenderer.ps.hlsl">
       <Filter>Shader Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\PatchRenderer.vs.hlsl" />
+    <FxCompile Include="shaders\PatchRenderer.vs.hlsl">
+      <Filter>Shader Files\shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

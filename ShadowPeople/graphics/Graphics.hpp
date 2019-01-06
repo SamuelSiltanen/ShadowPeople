@@ -70,7 +70,7 @@ namespace graphics
 
         virtual std::string debugName() const { return std::string(); }
 
-        std::shared_ptr<ResourceViewImpl> pImpl; // TODO: This will be empty
+        std::shared_ptr<ResourceViewImpl> pImpl;
 	};
 
 	class TextureView : public ResourceView
